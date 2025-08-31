@@ -1,0 +1,11 @@
+safelist: [
+  "bg-gradient-hero",
+  "bg-gradient-card",
+  "bg-gradient-accent",
+  "shadow-elegant",
+  "shadow-glow",
+  "shadow-card",
+  "text-gradient-hero",
+  "text-gradient-card",
+  "text-gradient-accent",
+],
