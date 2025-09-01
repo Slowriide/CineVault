@@ -5,3 +5,5 @@ export type MovieCategory =
   | "upcoming";
 
 export type TrendingCategory = "movie" | "tv";
+
+export type Type = "movie" | "tv";

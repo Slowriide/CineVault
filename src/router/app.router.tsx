@@ -4,7 +4,8 @@ import { RegisterPage } from "@/auth/pages/RegisterPage";
 import { MoviesLayout } from "@/movies/layouts/MoviesLayout";
 import { FavoritesPage } from "@/movies/pages/FavoritesPage";
 import { HomePage } from "@/movies/pages/HomePage";
-import { MovieDetailsPage } from "@/movies/pages/MovieDetailsPage";
+import MovieDetailsPage from "@/movies/pages/MovieDetailsPage";
+
 import { createBrowserRouter, Navigate } from "react-router";
 
 export const appRouter = createBrowserRouter([
@@ -17,7 +18,7 @@ export const appRouter = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "movie-page",
+        path: ":type/:id",
         element: <MovieDetailsPage />,
       },
       {
@@ -45,9 +46,5 @@ export const appRouter = createBrowserRouter([
         element: <RegisterPage />,
       },
     ],
-  },
-  {
-    path: "*",
-    element: <Navigate to={"/"} />,
   },
 ]);

@@ -48,7 +48,7 @@ export const CustomHeader = () => {
         </Link>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-md mx-8">
+        <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input

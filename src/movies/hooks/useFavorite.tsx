@@ -1,13 +1,12 @@
-import type {
-  MovieMovieDB,
-  TvShowMovieDB,
-} from "@/interfaces/MovieDB.response";
 import { useState, useEffect } from "react";
 
-export type FavoriteItem = (MovieMovieDB | TvShowMovieDB) & {
+export type FavoriteItem = {
+  id: number;
+  title?: string; // movies
+  name?: string; // tv shows
+  poster_path?: string;
   media_type: "movie" | "tv";
 };
-
 const FAVORITES_KEY = "movieapp_favorites";
 
 export const useFavorites = () => {
@@ -29,13 +28,12 @@ export const useFavorites = () => {
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
   };
 
-  const addFavorite = (
-    item: MovieMovieDB | TvShowMovieDB,
-    mediaType: "movie" | "tv"
-  ) => {
-    const favoriteItem: FavoriteItem = { ...item, media_type: mediaType };
-    const newFavorites = [...favorites, favoriteItem];
-    saveFavorites(newFavorites);
+  const addFavorite = (item: FavoriteItem) => {
+    setFavorites((prev) => {
+      const newFavs = [...prev, item];
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavs));
+      return newFavs;
+    });
   };
 
   const removeFavorite = (id: number) => {
@@ -47,17 +45,17 @@ export const useFavorites = () => {
     return favorites.some((item) => item.id === id);
   };
 
-  const toggleFavorite = (
-    item: MovieMovieDB | TvShowMovieDB,
-    mediaType: "movie" | "tv"
-  ) => {
-    if (isFavorite(item.id)) {
-      removeFavorite(item.id);
+  const toggleFavorite = (item: FavoriteItem) => {
+    if (favorites.some((fav) => fav.id === item.id)) {
+      setFavorites((prev) => {
+        const newFavs = prev.filter((fav) => fav.id !== item.id);
+        localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavs));
+        return newFavs;
+      });
     } else {
-      addFavorite(item, mediaType);
+      addFavorite(item);
     }
   };
-
   return {
     favorites,
     addFavorite,

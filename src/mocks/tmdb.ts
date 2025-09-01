@@ -104,13 +104,8 @@ export interface Person {
 
 export const tmdbService = {
   // Movies
-  getPopularMovies: () => tmdbApi.get("/movie/popular"),
-  getTrendingMovies: () => tmdbApi.get("/trending/movie/week"),
-  getNowPlayingMovies: () => tmdbApi.get("/movie/now_playing"),
-  getTopRatedMovies: () => tmdbApi.get("/movie/top_rated"),
-  getUpcomingMovies: () => tmdbApi.get("/movie/upcoming"),
-  getMovieDetails: (id: number) =>
-    tmdbApi.get(`/movie/${id}`, {
+  getMovieDetails: (type: string, id: number) =>
+    tmdbApi.get(`/${type}/${id}`, {
       params: { append_to_response: "credits,similar,videos" },
     }),
 
