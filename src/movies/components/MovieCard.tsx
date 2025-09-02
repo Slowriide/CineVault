@@ -74,7 +74,7 @@ export const MovieCard = ({
                 className="absolute top-2 right-2 h-8 w-8 p-0 bg-background/20 hover:bg-background/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 onClick={(e) => {
                   e.preventDefault();
-                  toggleFavorite(item, mediaType);
+                  toggleFavorite({ id: item.id, media_type: mediaType });
                 }}
               >
                 <Heart
