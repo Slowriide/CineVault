@@ -2,6 +2,7 @@ import AuthLayout from "@/auth/layout/AuthLayout";
 import { LoginPage } from "@/auth/pages/LoginPage";
 import { RegisterPage } from "@/auth/pages/RegisterPage";
 import { MoviesLayout } from "@/movies/layouts/MoviesLayout";
+import ActorPage from "@/movies/pages/ActorPage";
 import { FavoritesPage } from "@/movies/pages/FavoritesPage";
 import { HomePage } from "@/movies/pages/HomePage";
 import MovieDetailsPage from "@/movies/pages/MovieDetailsPage";
@@ -24,6 +25,10 @@ export const appRouter = createBrowserRouter([
       {
         path: "favorites-page",
         element: <FavoritesPage />,
+      },
+      {
+        path: "person/:id",
+        element: <ActorPage />,
       },
     ],
   },

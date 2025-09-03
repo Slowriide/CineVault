@@ -13,7 +13,7 @@ import type {
 interface MovieCardProps {
   item: MovieMovieDB | TvShowMovieDB;
   mediaType: "movie" | "tv";
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   showFavorite?: boolean;
 }
 
@@ -35,12 +35,14 @@ export const MovieCard = ({
     sm: "w-32",
     md: "w-40",
     lg: "w-48",
+    xl: "w-full",
   };
 
   const imageSize = {
     sm: "w342",
     md: "w500",
     lg: "w780",
+    xl: "w780",
   };
 
   const linkTo = mediaType === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`;
