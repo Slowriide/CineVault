@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Carousel } from "../components/Carousel";
 import { HeroSection } from "../components/HeroSection";
 import { useMovies } from "../hooks/usePopularMovies";
 import { usePopularTvShows } from "../hooks/usePopularTvShows";
@@ -17,9 +16,11 @@ import {
 } from "@/components/ui/select";
 import { useSearchParams } from "react-router";
 import { getTimeWindow } from "@/interfaces/TimeWindow";
+import { CustomLoading } from "@/components/custom/CustomLoading";
+import { SectionCarrusel } from "../components/SectionCarrusel";
 
 export const HomePage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams() || "";
 
   const timeWindowM = getTimeWindow(searchParams.get("timeWindowMovie"));
   const timeWindowT = getTimeWindow(searchParams.get("timeWindowTV"));
@@ -54,6 +55,7 @@ export const HomePage = () => {
     isLoading: loadingTrendingMovies,
     error: errorTrendingMovies,
   } = useTrending("movie", timeWindowM);
+  const { data: featuredMovieData } = useTrending("movie", "week");
   const {
     data: trendingTVShowData,
     isLoading: loadingTrendingTVShow,
@@ -66,6 +68,7 @@ export const HomePage = () => {
   const upcomingMovies = upcomingMoviesData?.results;
   const popularTVShows = popularTvShowsData?.results;
   const trendingMovies = trendingMoviesData?.results;
+  const featuredMovies = featuredMovieData?.results;
   const trendingTVShow = trendingTVShowData?.results;
 
   const [featuredMovie, setFeaturedMovie] = useState<
@@ -73,13 +76,13 @@ export const HomePage = () => {
   >();
 
   useEffect(() => {
-    if (trendingMovies && trendingMovies.length > 0) {
+    if (featuredMovies && featuredMovies.length > 0) {
       const randomIndex = Math.floor(
-        Math.random() * Math.min(5, trendingMovies.length)
+        Math.random() * Math.min(5, featuredMovies.length)
       );
-      setFeaturedMovie(trendingMovies[randomIndex]);
+      setFeaturedMovie(featuredMovies[randomIndex]);
     }
-  }, [trendingMovies]);
+  }, [featuredMovies]);
 
   if (
     loadingPopular ||
@@ -89,7 +92,7 @@ export const HomePage = () => {
     loadingPpopularTvShows ||
     loadingTrendingTVShow
   ) {
-    return <p>Cargando...</p>;
+    return <CustomLoading />;
   }
 
   return (
@@ -100,127 +103,111 @@ export const HomePage = () => {
       {/* Content Sections */}
       <div className="max-w-[1600px] mx-auto py-12 space-y-12">
         {/* Trending Movies */}
-        {errorTrendingMovies ? (
-          <p className="text-red-500">Error loading movies</p>
-        ) : (
-          <Carousel
-            header={
-              <div className="flex items-center gap-4">
-                <h2 className="text-xl font-bold">Trending Movies</h2>
-                <Select
-                  value={timeWindowM}
-                  onValueChange={(value: "day" | "week") => {
-                    setSearchParams((prev) => {
-                      const newParams = new URLSearchParams(prev);
-                      newParams.set("timeWindowMovie", value);
-                      return newParams;
-                    });
-                  }}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Time Window" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="day">Today</SelectItem>
-                    <SelectItem value="week">This Week</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            }
-            items={trendingMovies ?? []}
-            mediaType="movie"
-            loading={loadingTrendingMovies}
-            title={""}
-          />
-        )}
+        <SectionCarrusel
+          header={
+            <div className="flex items-center gap-4">
+              <h2 className="text-xl font-bold">Trending Movies</h2>
+              <Select
+                value={timeWindowM}
+                onValueChange={(value: "day" | "week") => {
+                  setSearchParams((prev) => {
+                    const newParams = new URLSearchParams(prev);
+                    newParams.set("timeWindowMovie", value);
+                    return newParams;
+                  });
+                }}
+              >
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Time Window" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="day">Today</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }
+          items={trendingMovies ?? []}
+          mediaType="movie"
+          loading={loadingTrendingMovies}
+          title={""}
+          error={errorTrendingMovies}
+        />
+
         {/* Trending TV shows */}
-        {errorTrendingTVShow ? (
-          <p className="text-red-500">Error loading TV shows</p>
-        ) : (
-          <Carousel
-            header={
-              <div className="flex items-center gap-4">
-                <h2 className="text-xl font-bold">Trending TV Shows</h2>
-                <Select
-                  value={timeWindowT}
-                  onValueChange={(value: "day" | "week") => {
-                    setSearchParams((prev) => {
-                      const newParams = new URLSearchParams(prev);
-                      newParams.set("timeWindowTV", value);
-                      return newParams;
-                    });
-                  }}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Time Window" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="day">Today</SelectItem>
-                    <SelectItem value="week">This Week</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            }
-            title="Trending TV Shows This Week"
-            items={trendingTVShow ?? []}
-            mediaType="tv"
-            loading={loadingTrendingTVShow}
-          />
-        )}
+        <SectionCarrusel
+          header={
+            <div className="flex items-center gap-4">
+              <h2 className="text-xl font-bold">Trending TV Shows</h2>
+              <Select
+                value={timeWindowT}
+                onValueChange={(value: "day" | "week") => {
+                  setSearchParams((prev) => {
+                    const newParams = new URLSearchParams(prev);
+                    newParams.set("timeWindowTV", value);
+                    return newParams;
+                  });
+                }}
+              >
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Time Window" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="day">Today</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }
+          title=""
+          items={trendingTVShow ?? []}
+          mediaType="tv"
+          loading={loadingTrendingTVShow}
+          error={errorTrendingTVShow}
+        />
         {/* Popular Movies */}
-        {errorPopular ? (
-          <p className="text-red-500">Error loading movies</p>
-        ) : (
-          <Carousel
-            title="Popular Movies"
-            items={popularMovies ?? []}
-            mediaType="movie"
-            loading={loadingPopular}
-          />
-        )}
-        {errorNow ? (
-          <p className="text-red-500">Error loading movies</p>
-        ) : (
-          <Carousel
-            title="Now Playing"
-            items={nowPlayingMovies ?? []}
-            mediaType="movie"
-            loading={loadingNow}
-          />
-        )}
+        <SectionCarrusel
+          title={"Popular Movies"}
+          items={popularMovies ?? []}
+          loading={loadingPopular}
+          mediaType={"movie"}
+          error={errorPopular}
+        />
+
+        <SectionCarrusel
+          title={"Now Playing"}
+          items={nowPlayingMovies ?? []}
+          loading={loadingNow}
+          mediaType={"movie"}
+          error={errorNow}
+        />
+
         {/* Popular TV Shows */}
-        {errorPopularTvShows ? (
-          <p className="text-red-500">Error loading movies</p>
-        ) : (
-          <Carousel
-            title="Top TV Shows"
-            items={popularTVShows ?? []}
-            mediaType="tv"
-            loading={loadingPpopularTvShows}
-          />
-        )}
+        <SectionCarrusel
+          title={"Top TV Shows"}
+          items={popularTVShows ?? []}
+          mediaType={"tv"}
+          loading={loadingPpopularTvShows}
+          error={errorPopularTvShows}
+        />
+
         {/* Top Rated Movies */}
-        {errorTop ? (
-          <p className="text-red-500">Error loading movies</p>
-        ) : (
-          <Carousel
-            title="Top Rated Movies"
-            items={topRatedMovies ?? []}
-            mediaType="movie"
-            loading={loadingTop}
-          />
-        )}
+        <SectionCarrusel
+          title={"Top Rated Movies"}
+          items={topRatedMovies ?? []}
+          mediaType={"movie"}
+          loading={loadingTop}
+          error={errorTop}
+        />
+
         {/* Upcoming Movies */}
-        {errorUpcoming ? (
-          <p className="text-red-500">Error loading movies</p>
-        ) : (
-          <Carousel
-            title="Upcoming Movies"
-            items={upcomingMovies ?? []}
-            mediaType="movie"
-            loading={loadingUpcoming}
-          />
-        )}
+        <SectionCarrusel
+          title={"Upcoming Movies"}
+          items={upcomingMovies ?? []}
+          mediaType={"movie"}
+          loading={loadingUpcoming}
+          error={errorUpcoming}
+        />
       </div>
     </div>
   );

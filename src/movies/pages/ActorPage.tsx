@@ -1,86 +1,79 @@
-import { useParams, Link } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-import { ExternalLink, Calendar, MapPin, ArrowLeft, Star } from "lucide-react";
+import { ExternalLink, MapPin } from "lucide-react";
 import { useState } from "react";
 import { getImageUrl } from "@/mocks/tmdb";
 import { MovieCard } from "../components/MovieCard";
 import { usePerson } from "../hooks/usePerson";
 import { getMovieDetails } from "@/utils/personUtils";
+import { CustomLoading } from "@/components/custom/CustomLoading";
+import { CustomError } from "@/components/custom/CustomError";
+import { MovieStat } from "../components/MovieStat";
+import { PersonDates } from "../components/PersonDates";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ActorPage() {
   const { id } = useParams<{ id: string }>();
   const [isBiographyOpen, setIsBiographyOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(21);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const orderByParam = searchParams.get("orderBy") || "all";
+
+  const orderBy: "all" | "score" | "popular" =
+    orderByParam === "score"
+      ? "score"
+      : orderByParam === "popular"
+      ? "popular"
+      : "all";
 
   if (!id) {
     return (
-      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Person Not Found</h1>
-          <Button asChild variant="outline">
-            <Link to="/">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <CustomError
+        title="Person Not Found"
+        message="No person ID provided"
+        action={{ to: "/", label: "Back to home" }}
+      />
     );
   }
-
   const {
     data: person,
     isLoading,
     error,
-    allCredits,
-    votedMovies,
-    knownFor,
     topRatedMovie,
     worstRatedMovie,
-  } = usePerson(id, "movie_credits,tv_credits", visibleCount);
+    birthYear,
+    deathYear,
+    filteredCredits,
+    totalMovies,
+  } = usePerson(id, "movie_credits,tv_credits", visibleCount, orderBy);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <CustomLoading />;
   }
 
   if (error || !person) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-foreground">
-            Person not found
-          </h1>
-          <p className="text-muted-foreground">
-            The person you're looking for doesn't exist.
-          </p>
-          <Link to="/">
-            <Button>Go back home</Button>
-          </Link>
-        </div>
-      </div>
+      <CustomError
+        title="Person Not Found"
+        message="The person you're looking for doesn't exist."
+        action={{ to: "/", label: "Back to home" }}
+      />
     );
   }
 
-  const personData = person;
-
-  const topRatedDetails = getMovieDetails(topRatedMovie!);
-  const worstRatedDetails = getMovieDetails(worstRatedMovie!);
-
-  const birthYear = personData.birthday
-    ? new Date(personData.birthday).getFullYear()
-    : null;
-
-  const deathYear = personData.deathday
-    ? new Date(personData.deathday).getFullYear()
-    : null;
+  const topRatedDetails = getMovieDetails(topRatedMovie);
+  const worstRatedDetails = getMovieDetails(worstRatedMovie);
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -93,8 +86,8 @@ export default function ActorPage() {
               <div className="md:col-span-1">
                 <div className="aspect-[2/3] relative overflow-hidden rounded-lg bg-muted">
                   <img
-                    src={getImageUrl(personData.profile_path, "w500")}
-                    alt={personData.name}
+                    src={getImageUrl(person.profile_path, "w500")}
+                    alt={person.name}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -104,101 +97,53 @@ export default function ActorPage() {
               <div className="md:col-span-2 space-y-6">
                 <div>
                   <h1 className="text-4xl font-bold text-foreground mb-2">
-                    {personData.name}
+                    {person.name}
                   </h1>
                   <Badge variant="secondary">
-                    {personData.known_for_department}
+                    {person.known_for_department}
                   </Badge>
                 </div>
 
                 {/* Top rated movie */}
-                <div className="flex flex-wrap items-center space-x-2 mb-6">
-                  <span className="font-bold text-lg">Top rated movie:</span>
-                  {topRatedMovie ? (
-                    <div className="flex items-center space-x-1 text-primary">
-                      <Star className="w-5 h-5 fill-current" />
-                      <span> {topRatedMovie.vote_average.toFixed(1)}</span>
-                      <Link to={topRatedDetails.link}>
-                        <span className="text-blue-400">
-                          {topRatedDetails.title} ({topRatedDetails.year})
-                        </span>
-                      </Link>
-                    </div>
-                  ) : (
-                    <p className="text-red-500">
-                      There is not a top rated movie
-                    </p>
-                  )}
-                </div>
+                <MovieStat
+                  label="Top rated movie:"
+                  movie={topRatedMovie}
+                  details={topRatedDetails}
+                  emptyMessage="There is not a top rated movie"
+                />
 
                 {/* Worst rated movie */}
-                <div className="flex flex-wrap items-center space-x-2 mb-6">
-                  <span className="font-bold text-lg">Worst rated movie:</span>
-                  {worstRatedMovie ? (
-                    <div className="flex items-center space-x-1 text-primary">
-                      <Star className="w-5 h-5 fill-current" />
-                      <span> {worstRatedMovie.vote_average.toFixed(1)}</span>
-                      <Link to={worstRatedDetails.link}>
-                        <span className="text-blue-400">
-                          {worstRatedDetails.title} ({worstRatedDetails.year})
-                        </span>
-                      </Link>
-                    </div>
-                  ) : (
-                    <p className="text-red-500">
-                      There is not a worst rated movie
-                    </p>
-                  )}
-                </div>
+                <MovieStat
+                  label="Worst rated movie:"
+                  movie={worstRatedMovie}
+                  details={worstRatedDetails}
+                  emptyMessage="There is not a worst rated movie"
+                />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                  {personData.birthday && (
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">Born:</span>
-                      <span className="text-foreground">
-                        {new Date(personData.birthday).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          }
-                        )}
-                        {birthYear &&
-                          ` (${
-                            new Date().getFullYear() - birthYear
-                          } years old)`}
-                      </span>
-                    </div>
+                  {person.birthday && (
+                    <PersonDates
+                      date={person.birthday}
+                      birthYear={birthYear}
+                      isBirth={true}
+                    />
                   )}
 
-                  {personData.deathday && (
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">Died:</span>
-                      <span className="text-foreground">
-                        {new Date(personData.deathday).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          }
-                        )}
-                        {birthYear &&
-                          deathYear &&
-                          ` (${deathYear - birthYear} years old)`}
-                      </span>
-                    </div>
+                  {person.deathday && (
+                    <PersonDates
+                      date={person.birthday}
+                      birthYear={birthYear}
+                      deathYear={deathYear}
+                      isBirth={false}
+                    />
                   )}
 
-                  {personData.place_of_birth && (
+                  {person.place_of_birth && (
                     <div className="flex items-center space-x-2">
                       <MapPin className="w-4 h-4 text-muted-foreground" />
                       <span className="text-muted-foreground">From:</span>
                       <span className="text-foreground">
-                        {personData.place_of_birth}
+                        {person.place_of_birth}
                       </span>
                     </div>
                   )}
@@ -206,10 +151,10 @@ export default function ActorPage() {
 
                 {/* External Links */}
                 <div className="flex flex-wrap gap-3">
-                  {personData.imdb_id && (
+                  {person.imdb_id && (
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={`https://www.imdb.com/name/${personData.imdb_id}`}
+                        href={`https://www.imdb.com/name/${person.imdb_id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -218,10 +163,10 @@ export default function ActorPage() {
                       </a>
                     </Button>
                   )}
-                  {personData.homepage && (
+                  {person.homepage && (
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={personData.homepage}
+                        href={person.homepage}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -239,12 +184,12 @@ export default function ActorPage() {
                       isBiographyOpen ? "" : "line-clamp-[15]"
                     }`}
                   >
-                    {personData.biography}
+                    {person.biography}
                   </p>
 
                   {/* Botón */}
-                  {personData.biography &&
-                    personData.biography.split(" ").length > 150 && ( //si tiene mas de 50 palabras
+                  {person.biography &&
+                    person.biography.split(" ").length > 150 && ( //si tiene mas de 50 palabras
                       <Button
                         variant="ghost"
                         size="sm"
@@ -260,7 +205,7 @@ export default function ActorPage() {
           </CardContent>
         </Card>
 
-        {/* Known For Section */}
+        {/* Known For Section
         {knownFor.length > 0 && (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-foreground">Known For</h2>
@@ -280,14 +225,38 @@ export default function ActorPage() {
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Full Filmography */}
-        {votedMovies.length > 0 && (
+        {filteredCredits.length > 0 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-foreground">Filmography</h2>
+            <div className="flex items-center gap-4">
+              <h2 className="text-2xl font-bold text-foreground">
+                Filmography
+              </h2>
+              <Select
+                value={orderBy}
+                onValueChange={(value: "all" | "score" | "popular") => {
+                  setSearchParams((prev) => {
+                    const newParams = new URLSearchParams(prev);
+                    newParams.set("orderBy", value);
+                    return newParams;
+                  });
+                }}
+              >
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Order by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="score">Score</SelectItem>
+                  <SelectItem value="popular">Popular</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-4">
-              {votedMovies.map((credit) => (
+              {filteredCredits.map((credit) => (
                 <MovieCard
                   key={`full-film${credit.id}-${
                     "title" in credit ? "movie" : "tv"
@@ -301,7 +270,8 @@ export default function ActorPage() {
             </div>
           </div>
         )}
-        {visibleCount < allCredits.length && (
+
+        {visibleCount < totalMovies && (
           <div className="flex justify-center mt-4">
             <Button
               variant="outline"

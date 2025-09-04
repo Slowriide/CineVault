@@ -6,49 +6,34 @@ import ActorPage from "@/movies/pages/ActorPage";
 import { FavoritesPage } from "@/movies/pages/FavoritesPage";
 import { HomePage } from "@/movies/pages/HomePage";
 import MovieDetailsPage from "@/movies/pages/MovieDetailsPage";
+import { ScrollToTopLayout } from "@/utils/ScrollToTopLayout";
 
 import { createBrowserRouter, Navigate } from "react-router";
 
 export const appRouter = createBrowserRouter([
   {
-    path: "/",
-    element: <MoviesLayout />,
+    element: <ScrollToTopLayout />,
     children: [
       {
-        index: true,
-        element: <HomePage />,
+        path: "/",
+        element: <MoviesLayout />,
+        children: [
+          { index: true, element: <HomePage /> },
+          { path: ":type/:id", element: <MovieDetailsPage /> },
+          { path: "favorites-page", element: <FavoritesPage /> },
+          { path: "person/:id", element: <ActorPage /> },
+        ],
       },
-      {
-        path: ":type/:id",
-        element: <MovieDetailsPage />,
-      },
-      {
-        path: "favorites-page",
-        element: <FavoritesPage />,
-      },
-      {
-        path: "person/:id",
-        element: <ActorPage />,
-      },
-    ],
-  },
 
-  //Auth Routes
-  {
-    path: "/auth",
-    element: <AuthLayout />,
-    children: [
+      // Auth Routes
       {
-        index: true,
-        element: <Navigate to={"auth/login"} />,
-      },
-      {
-        path: "login",
-        element: <LoginPage />,
-      },
-      {
-        path: "register",
-        element: <RegisterPage />,
+        path: "/auth",
+        element: <AuthLayout />,
+        children: [
+          { index: true, element: <Navigate to="auth/login" /> },
+          { path: "login", element: <LoginPage /> },
+          { path: "register", element: <RegisterPage /> },
+        ],
       },
     ],
   },

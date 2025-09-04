@@ -21,7 +21,7 @@ export function getRatedMovie(
   credits: (MovieMovieDB | TvShowMovieDB)[],
   type: "best" | "worst"
 ) {
-  if (credits.length === 0) return null;
+  if (credits.length === 0) return undefined;
   const sorted = [...credits].sort((a, b) =>
     type === "best"
       ? b.vote_average - a.vote_average
@@ -30,7 +30,10 @@ export function getRatedMovie(
   return sorted[0];
 }
 
-export function getMovieDetails(item: MovieMovieDB | TvShowMovieDB) {
+export function getMovieDetails(
+  item: MovieMovieDB | TvShowMovieDB | undefined
+) {
+  if (!item) return undefined;
   const isMovie = "title" in item;
   return {
     title: isMovie ? item.title : item.name,

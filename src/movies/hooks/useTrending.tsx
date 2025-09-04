@@ -12,5 +12,6 @@ export const useTrending = (
     queryKey: ["trending", language, trendingCategory, timeWindow],
     queryFn: () =>
       getTrendingAction({ trendingCategory, timeWindow, language }),
+    staleTime: 1000 * 60 * 5,
   });
 };

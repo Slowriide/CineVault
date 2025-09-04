@@ -2,9 +2,31 @@ import { useQuery } from "@tanstack/react-query";
 import { getTvShowDetails } from "../api/get-tvShow-details.action";
 
 export const useTVShowDetails = (id: string, language: string = "us-US") => {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["tvShowDetails", id, language],
     queryFn: () => getTvShowDetails({ id, language }),
     staleTime: 1000 * 60 * 5,
   });
+
+  const normalizedData = query.data
+    ? {
+        id: query.data.id,
+        title: query.data.name,
+        overview: query.data.overview,
+        poster_path: query.data.poster_path ?? "/placeholder.svg",
+        backdrop_path: query.data.backdrop_path ?? "",
+        release_date: query.data.first_air_date,
+        runtime: query.data.episode_run_time[0],
+        vote_average: query.data.vote_average,
+        vote_count: query.data.vote_count,
+        genres: query.data.genres ?? [],
+        homepage: query.data.homepage ?? null,
+        tagline: query.data.tagline ?? "",
+      }
+    : null;
+
+  return {
+    ...query,
+    data: normalizedData,
+  };
 };
