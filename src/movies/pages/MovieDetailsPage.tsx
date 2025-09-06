@@ -12,7 +12,7 @@ import { CustomError } from "@/components/custom/CustomError";
 import { CustomLoading } from "@/components/custom/CustomLoading";
 import { ContentTabs } from "../components/ContentTabs";
 import { MovieDetailsHeader } from "../components/MovieDetailsHeader";
-import type { NormalizedData } from "@/interfaces/NormalizedData";
+import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 
 export default function MovieDetailsPage() {
   const { type, id } = useParams();
@@ -95,7 +95,7 @@ export default function MovieDetailsPage() {
 
             {/* Details */}
             <MovieDetailsHeader
-              data={data as NormalizedData}
+              data={data as NormalizedMovieDetailsData}
               isFavorite={isFavorite}
               toggleFavorite={toggleFavorite}
               favoriteData={favoriteData}

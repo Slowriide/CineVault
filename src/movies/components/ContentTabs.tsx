@@ -1,11 +1,9 @@
-import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Type } from "@/interfaces/MovieCategory";
-import { getImageUrl } from "@/mocks/tmdb";
-import { Link } from "react-router";
 import { SectionCarrusel } from "./SectionCarrusel";
 import type { Credits } from "@/interfaces/Credits";
 import type { PaginatedResponse } from "../api/get-similar.action";
+import { ActorCard } from "./ActorCard";
 
 interface ContentTabsProps {
   credits?: Credits;
@@ -37,33 +35,7 @@ export const ContentTabs: React.FC<ContentTabsProps> = ({
           {isErrorCredits ? (
             <p className="text-red-500">Error loading movies</p>
           ) : (
-            credits?.cast.map((actor) => (
-              <Card
-                key={actor.id}
-                className="overflow-hidden bg-gradient-card border-border/50 hover:border-primary/30 transition-colors duration-300"
-              >
-                <Link key={actor.id} to={`/person/${actor.id}`}>
-                  <div className="aspect-[2/3] relative">
-                    <img
-                      src={
-                        getImageUrl(actor.profile_path ?? "", "w342") ??
-                        "/placeholder.svg"
-                      }
-                      alt={actor.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-3">
-                    <h3 className="font-medium text-sm text-foreground line-clamp-1">
-                      {actor.name}
-                    </h3>
-                    <p className="text-xs text-muted-foreground line-clamp-1">
-                      {actor.character}
-                    </p>
-                  </div>
-                </Link>
-              </Card>
-            ))
+            credits?.cast.map((actor) => <ActorCard {...actor} />)
           )}
         </div>
       </TabsContent>

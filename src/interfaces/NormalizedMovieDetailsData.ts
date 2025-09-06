@@ -1,6 +1,6 @@
 import type { Genre } from "./MovieDetails";
 
-export interface NormalizedData {
+export interface NormalizedMovieDetailsData {
   id: number;
   title: string;
   overview: string;

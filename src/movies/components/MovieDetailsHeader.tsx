@@ -2,10 +2,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, ExternalLink, Heart, Star } from "lucide-react";
 import { PopularReviews } from "./PopularReviews";
-import type { NormalizedData } from "@/interfaces/NormalizedData";
+import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 
 interface MovieDetailsProps {
-  data: NormalizedData;
+  data: NormalizedMovieDetailsData;
 
   isFavorite: (id: number) => boolean;
   toggleFavorite: (data: {

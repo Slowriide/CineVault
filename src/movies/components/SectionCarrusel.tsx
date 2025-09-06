@@ -1,8 +1,12 @@
+import type {
+  MovieMovieDB,
+  TvShowMovieDB,
+} from "@/interfaces/MovieDB.response";
 import { Carousel } from "./Carousel";
 
 type SectionProps = {
   title: string;
-  items: any[];
+  items: (MovieMovieDB | TvShowMovieDB)[];
   loading: boolean | undefined;
   error?: unknown;
   mediaType: "movie" | "tv";

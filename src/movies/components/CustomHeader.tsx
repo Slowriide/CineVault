@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Film, Search, Heart, Home } from "lucide-react";
 
 export const CustomHeader = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+
+  //! TODO:  mirar cosas
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
 
   const isActive = (path: string) => location.pathname === path;
   useEffect(() => {
@@ -19,14 +21,12 @@ export const CustomHeader = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
-    }
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // evita que el form recargue la página
+    const query = inputRef.current?.value.trim();
+    if (!query) return;
+    navigate(`/search?query=${encodeURIComponent(query)}`);
   };
-
   return (
     <header
       className={`sticky top-0 z-50 w-full border-b transition-colors duration-300 ${
@@ -48,14 +48,12 @@ export const CustomHeader = () => {
         </Link>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-8">
+        <form onSubmit={handleSubmit} className="flex-1 max-w-xl mx-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              type="text"
+              ref={inputRef}
               placeholder="Search movies, TV shows, actors..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-muted/50 border-border/50 focus:border-primary/50"
             />
           </div>

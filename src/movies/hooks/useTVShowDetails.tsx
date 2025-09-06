@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTvShowDetails } from "../api/get-tvShow-details.action";
-import type { NormalizedData } from "@/interfaces/NormalizedData";
+import type { NormalizedData } from "@/interfaces/NormalizedMovieDetailsData";
 
 export const useTVShowDetails = (id: string, language: string = "us-US") => {
   const query = useQuery({

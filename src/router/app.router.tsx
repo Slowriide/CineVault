@@ -6,6 +6,8 @@ import ActorPage from "@/movies/pages/ActorPage";
 import { FavoritesPage } from "@/movies/pages/FavoritesPage";
 import { HomePage } from "@/movies/pages/HomePage";
 import MovieDetailsPage from "@/movies/pages/MovieDetailsPage";
+import { SearchPage } from "@/movies/pages/SearchPage";
+
 import { ScrollToTopLayout } from "@/utils/ScrollToTopLayout";
 
 import { createBrowserRouter, Navigate } from "react-router";
@@ -22,6 +24,7 @@ export const appRouter = createBrowserRouter([
           { path: ":type/:id", element: <MovieDetailsPage /> },
           { path: "favorites-page", element: <FavoritesPage /> },
           { path: "person/:id", element: <ActorPage /> },
+          { path: "search/", element: <SearchPage /> },
         ],
       },
 
