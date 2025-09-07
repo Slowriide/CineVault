@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
-
 import { Play, Info, Star, Calendar } from "lucide-react";
-
 import { getBackdropUrl } from "@/mocks/tmdb";
 import { Link } from "react-router";
 import type {
@@ -9,6 +7,7 @@ import type {
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
 import { Badge } from "@/components/ui/badge";
+import { slugify } from "@/utils/slugify";
 
 interface HeroSectionProps {
   featuredMovie?: MovieMovieDB | TvShowMovieDB;
@@ -56,8 +55,8 @@ export const HeroSection = ({ featuredMovie }: HeroSectionProps) => {
   const rating = featuredMovie.vote_average;
 
   const detailLink = isMovie
-    ? `/movie/${featuredMovie.id}`
-    : `/tv/${featuredMovie.id}`;
+    ? `/movie/${slugify(title, featuredMovie.id)}`
+    : `/tv/${slugify(title, featuredMovie.id)}`;
 
   return (
     <div

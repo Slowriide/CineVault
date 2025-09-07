@@ -2,6 +2,7 @@ import type {
   MovieMovieDB,
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
+import { slugify } from "./slugify";
 
 export function normalizeCredit(credit: any) {
   return {
@@ -40,6 +41,8 @@ export function getMovieDetails(
     year: isMovie
       ? new Date(item.release_date).getFullYear()
       : new Date(item.first_air_date).getFullYear(),
-    link: isMovie ? `/movie/${item.id}` : `/tv/${item.id}`,
+    link: isMovie
+      ? `/movie/${slugify(item.title, item.id)}`
+      : `/tv/${slugify(item.name, item.id)}`,
   };
 }

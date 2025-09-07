@@ -9,6 +9,7 @@ import type {
   MovieMovieDB,
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
+import { slugify } from "@/utils/slugify";
 
 interface MovieCardProps {
   item: MovieMovieDB | TvShowMovieDB;
@@ -45,7 +46,10 @@ export const MovieCard = ({
     xl: "w780",
   };
 
-  const linkTo = mediaType === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`;
+  const linkTo =
+    mediaType === "movie"
+      ? `/movie/${slugify(title, item.id)}`
+      : `/tv/${slugify(title, item.id)}`;
 
   return (
     <Card className="group relative overflow-hidden bg-gradient-card border-border/50 hover:border-primary/30 transition-all duration-300 shadow-none hover:shadow-glow hover:-translate-y-1 mt-1">

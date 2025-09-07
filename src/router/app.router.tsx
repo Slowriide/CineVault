@@ -21,9 +21,9 @@ export const appRouter = createBrowserRouter([
         element: <MoviesLayout />,
         children: [
           { index: true, element: <HomePage /> },
-          { path: ":type/:id", element: <MovieDetailsPage /> },
+          { path: ":type/:slug", element: <MovieDetailsPage /> },
           { path: "favorites-page", element: <FavoritesPage /> },
-          { path: "person/:id", element: <ActorPage /> },
+          { path: "person/:slug", element: <ActorPage /> },
           { path: "search/", element: <SearchPage /> },
         ],
       },

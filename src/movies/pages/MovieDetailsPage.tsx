@@ -15,8 +15,10 @@ import { MovieDetailsHeader } from "../components/MovieDetailsHeader";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 
 export default function MovieDetailsPage() {
-  const { type, id } = useParams();
+  const { type, slug } = useParams();
   const { isFavorite, toggleFavorite } = useFavorites();
+
+  const id = slug ? parseInt(slug.split("-").pop()!).toString() : null;
 
   if (!id) {
     return (

@@ -23,7 +23,12 @@ import {
 } from "@/components/ui/select";
 
 export default function ActorPage() {
-  const { id } = useParams<{ id: string }>();
+  // const { id } = useParams<{ id: string }>();
+
+  const { slug } = useParams();
+
+  const id = slug ? parseInt(slug.split("-").pop()!).toString() : null;
+
   const [isBiographyOpen, setIsBiographyOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(21);
   const [searchParams, setSearchParams] = useSearchParams();
