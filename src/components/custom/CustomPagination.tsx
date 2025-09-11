@@ -20,6 +20,15 @@ export const CustomPagination = ({ totalPages }: Props) => {
     setSearchParams(searchParams);
   };
 
+  const maxVisible = 10;
+  const startPage = Math.max(1, page - Math.floor(maxVisible / 2));
+  const endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+  const pages = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
   return (
     <div className="flex items-center justify-center space-x-2">
       <Button
@@ -32,7 +41,7 @@ export const CustomPagination = ({ totalPages }: Props) => {
         Anterior
       </Button>
 
-      {Array.from({ length: totalPages }).map((_, index) => (
+      {pages.map((_, index) => (
         <Button
           key={index}
           variant={page === index + 1 ? "default" : "outline"}

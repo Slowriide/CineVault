@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Film, Search, Heart, Home } from "lucide-react";
+import { Film, Search, Heart, Home, Popcorn } from "lucide-react";
 
 export const CustomHeader = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -72,6 +72,20 @@ export const CustomHeader = () => {
             <Link to="/">
               <Home className="h-4 w-4 mr-2" />
               Home
+            </Link>
+          </Button>
+
+          <Button
+            asChild
+            variant={isActive("/discover") ? "default" : "ghost"}
+            size="sm"
+            className={
+              isActive("/discover") ? "bg-primary text-primary-foreground" : ""
+            }
+          >
+            <Link to="/discover">
+              <Popcorn className="h-4 w-4 mr-2" />
+              Discover
             </Link>
           </Button>
 

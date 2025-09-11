@@ -30,8 +30,6 @@ export const useMultipleSearchs = (
       ).sort((a, b) => b.popularity - a.popularity)
     : [];
 
-  console.log(normalizedResults);
-
   return {
     ...result,
     normalizedData: normalizedResults,

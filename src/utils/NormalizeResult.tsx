@@ -3,13 +3,13 @@ import type {
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
 import type {
+  MultiPersonSearch,
+  MultiSearchResult,
   NormalizedSearchResult,
-  PersonSearch,
-  SearchResult,
 } from "@/interfaces/SearchResponse";
 
 export function normalizeSearchResults(
-  item: SearchResult
+  item: MultiSearchResult
 ): NormalizedSearchResult | null {
   switch (item.media_type) {
     case "movie":
@@ -61,7 +61,7 @@ export function normalizeSearchResults(
         known_for_department: item.known_for_department ?? "",
         profile_path: item.profile_path ?? "",
         media_type: "person",
-      } as PersonSearch;
+      } as MultiPersonSearch;
 
     default:
       return null;

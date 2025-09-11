@@ -3,6 +3,7 @@ import { LoginPage } from "@/auth/pages/LoginPage";
 import { RegisterPage } from "@/auth/pages/RegisterPage";
 import { MoviesLayout } from "@/movies/layouts/MoviesLayout";
 import ActorPage from "@/movies/pages/ActorPage";
+import DiscoverPage from "@/movies/pages/DiscoverPage";
 import { FavoritesPage } from "@/movies/pages/FavoritesPage";
 import { HomePage } from "@/movies/pages/HomePage";
 import MovieDetailsPage from "@/movies/pages/MovieDetailsPage";
@@ -24,7 +25,8 @@ export const appRouter = createBrowserRouter([
           { path: ":type/:slug", element: <MovieDetailsPage /> },
           { path: "favorites-page", element: <FavoritesPage /> },
           { path: "person/:slug", element: <ActorPage /> },
-          { path: "search/", element: <SearchPage /> },
+          { path: "discover", element: <DiscoverPage /> },
+          { path: "search", element: <SearchPage /> },
         ],
       },
 

@@ -1,13 +1,13 @@
 import type { MovieMovieDB, TvShowMovieDB } from "./MovieDB.response";
 
-export interface SearchResponse {
+export interface MultiSearchResponse {
   page: number;
-  results: SearchResult[];
+  results: MultiSearchResult[];
   total_pages: number;
   total_results: number;
 }
 
-export interface SearchResult {
+export interface MultiSearchResult {
   adult: boolean;
   backdrop_path?: null | string;
   id: number;
@@ -51,7 +51,7 @@ export interface KnownFor {
   vote_count: number;
 }
 
-export interface PersonSearch {
+export interface MultiPersonSearch {
   adult: boolean;
   id: number;
   name: string;
@@ -68,4 +68,4 @@ export type MediaType = "movie" | "person" | "tv";
 export type NormalizedSearchResult =
   | MovieMovieDB
   | TvShowMovieDB
-  | PersonSearch;
+  | MultiPersonSearch;
