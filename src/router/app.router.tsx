@@ -1,6 +1,9 @@
 import AuthLayout from "@/auth/layout/AuthLayout";
-import { LoginPage } from "@/auth/pages/LoginPage";
-import { RegisterPage } from "@/auth/pages/RegisterPage";
+import AuthPage from "@/auth/pages/AuthPage";
+import {
+  AuthenticatedRoute,
+  NotAuthenticatedRoute,
+} from "@/components/routes/ProtectedRoutes";
 import { MoviesLayout } from "@/movies/layouts/MoviesLayout";
 import ActorPage from "@/movies/pages/ActorPage";
 import DiscoverPage from "@/movies/pages/DiscoverPage";
@@ -11,15 +14,17 @@ import { SearchPage } from "@/movies/pages/SearchPage";
 
 import { ScrollToTopLayout } from "@/utils/ScrollToTopLayout";
 
-import { createBrowserRouter, Navigate } from "react-router";
+import { createBrowserRouter } from "react-router";
 
 export const appRouter = createBrowserRouter([
   {
     element: <ScrollToTopLayout />,
+
     children: [
       {
         path: "/",
         element: <MoviesLayout />,
+
         children: [
           { index: true, element: <HomePage /> },
           { path: ":type/:slug", element: <MovieDetailsPage /> },
@@ -33,12 +38,12 @@ export const appRouter = createBrowserRouter([
       // Auth Routes
       {
         path: "/auth",
-        element: <AuthLayout />,
-        children: [
-          { index: true, element: <Navigate to="auth/login" /> },
-          { path: "login", element: <LoginPage /> },
-          { path: "register", element: <RegisterPage /> },
-        ],
+        element: (
+          <NotAuthenticatedRoute>
+            <AuthLayout />,
+          </NotAuthenticatedRoute>
+        ),
+        children: [{ index: true, element: <AuthPage /> }],
       },
     ],
   },

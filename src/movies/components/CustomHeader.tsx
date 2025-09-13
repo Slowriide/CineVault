@@ -2,11 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Film, Search, Heart, Home, Popcorn } from "lucide-react";
+import {
+  Film,
+  Search,
+  Heart,
+  Home,
+  Popcorn,
+  LogInIcon,
+  LogOutIcon,
+} from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export const CustomHeader = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { session, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+  };
 
   //! TODO:  mirar cosas
   const [scrolled, setScrolled] = useState(false);
@@ -102,6 +116,37 @@ export const CustomHeader = () => {
               Favorites
             </Link>
           </Button>
+
+          {session ? (
+            <Button
+              asChild
+              variant={isActive("/auth") ? "default" : "ghost"}
+              size="sm"
+              className={
+                isActive("/auth") ? "bg-primary text-primary-foreground" : ""
+              }
+              onClick={handleLogout}
+            >
+              <Link to="/auth">
+                <LogOutIcon className="h-4 w-4 mr-2" />
+                Log Out
+              </Link>
+            </Button>
+          ) : (
+            <Button
+              asChild
+              variant={isActive("/auth") ? "default" : "ghost"}
+              size="sm"
+              className={
+                isActive("/auth") ? "bg-primary text-primary-foreground" : ""
+              }
+            >
+              <Link to="/auth">
+                <LogInIcon className="h-4 w-4 mr-2" />
+                Log In
+              </Link>
+            </Button>
+          )}
         </nav>
       </div>
     </header>
