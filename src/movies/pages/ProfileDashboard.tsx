@@ -13,9 +13,20 @@ import { ProfileSidebar } from "../components/PerfilSidebar";
 import { MovieCard } from "../components/MovieCard";
 import { PopularReviews } from "../components/PopularReviews";
 import { useMovies } from "../hooks/usePopularMovies";
+import { useAuth } from "@/context/AuthContext";
+import { useFavs } from "../hooks/favorites/useFavs";
+import { FavoriteToMovieMapper } from "@/utils/FavoriteToMovieMapper";
 
 export default function ProfileDashboard() {
   const [activeTab, setActiveTab] = useState("favorites");
+
+  const { session } = useAuth();
+  const userId = session?.user.id;
+
+  const { data: favorites, isLoading, isError } = useFavs(userId);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError || !favorites) return <p>Error loading favorites</p>;
 
   const { data: popularData } = useMovies("popular");
 
@@ -63,9 +74,9 @@ export default function ProfileDashboard() {
                     >
                       <Heart className="h-4 w-4 " />
                       <span className="hidden sm:inline">Favorites</span>
-                      {movies.length > 0 && (
+                      {favorites.length > 0 && (
                         <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                          {movies.length}
+                          {favorites.length}
                         </span>
                       )}
                     </TabsTrigger>
@@ -115,16 +126,21 @@ export default function ProfileDashboard() {
 
                   {/* Favorites Tab */}
                   <TabsContent value="favorites" className="space-y-6">
-                    {movies.length > 0 ? (
+                    {favorites.length > 0 ? (
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                        {movies.map((item) => (
-                          <MovieCard
-                            key={`favorite-${item.media_type}-${item.id}`}
-                            item={item}
-                            mediaType={item.media_type}
-                            size="xl"
-                          />
-                        ))}
+                        {favorites.map((fav) => {
+                          // Asegurarse que metadata tenga el tipo correcto
+                          const item = FavoriteToMovieMapper(fav);
+
+                          return (
+                            <MovieCard
+                              key={`favorite-${fav.media_type}-${fav.movie_id}`}
+                              item={item}
+                              mediaType={item.media_type}
+                              size="xl"
+                            />
+                          );
+                        })}
                       </div>
                     ) : (
                       <div className="text-center py-12">

@@ -2,7 +2,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getImageUrl } from "@/mocks/tmdb";
 import { Heart, Star, Calendar } from "lucide-react";
-import { useFavorites } from "../hooks/useFavorite";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router";
 import type {
@@ -10,6 +9,10 @@ import type {
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
 import { slugify } from "@/utils/slugify";
+import { useAuth } from "@/context/AuthContext";
+import { useFavs } from "../hooks/favorites/useFavs";
+import { useToggleFavorite } from "../hooks/favorites/useToggleFavorite";
+import { toast } from "sonner";
 
 interface MovieCardProps {
   item: MovieMovieDB | TvShowMovieDB;
@@ -24,7 +27,13 @@ export const MovieCard = ({
   size = "md",
   showFavorite = true,
 }: MovieCardProps) => {
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const { session } = useAuth();
+  const userId = session?.user.id;
+  const { data: favorites } = useFavs(userId);
+  const { addFavorite, removeFavorite } = useToggleFavorite(userId);
+
+  const favoriteIds = new Set(favorites?.map((f) => f.movie_id));
+  const isFav = favoriteIds.has(String(item.id));
 
   const title = "title" in item ? item.title : item.name;
   const releaseDate =
@@ -50,6 +59,21 @@ export const MovieCard = ({
     mediaType === "movie"
       ? `/movie/${slugify(title, item.id)}`
       : `/tv/${slugify(title, item.id)}`;
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!userId) {
+      toast.error("you must be logged in to add favorites");
+      return;
+    }
+
+    if (isFav) {
+      await removeFavorite.mutateAsync(String(item.id));
+      toast.success("removed from favorites");
+    } else {
+      await addFavorite.mutateAsync(item);
+    }
+  };
 
   return (
     <Card className="group relative overflow-hidden bg-gradient-card border-border/50 hover:border-primary/30 transition-all duration-300 shadow-none hover:shadow-glow hover:-translate-y-1 mt-1">
@@ -78,28 +102,11 @@ export const MovieCard = ({
                 size="sm"
                 variant="ghost"
                 className="absolute top-2 right-2 h-8 w-8 p-0 bg-background/20 hover:bg-background/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                onClick={(e) => {
-                  e.preventDefault();
-                  toggleFavorite({
-                    id: item.id,
-                    media_type: mediaType,
-                    adult: item.adult,
-                    backdrop_path: item.backdrop_path,
-                    genre_ids: item.genre_ids,
-                    original_language: item.original_language,
-                    overview: item.overview,
-                    popularity: item.popularity,
-                    poster_path: item.poster_path,
-                    vote_average: item.vote_average,
-                    vote_count: item.vote_count,
-                  } as MovieMovieDB | TvShowMovieDB);
-                }}
+                onClick={handleFavoriteClick}
               >
                 <Heart
                   className={`w-4 h-4 ${
-                    isFavorite(item.id)
-                      ? "fill-red-500 text-red-500"
-                      : "text-white"
+                    isFav ? "fill-red-500 text-red-500" : "text-white"
                   }`}
                 />
               </Button>

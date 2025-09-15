@@ -29,7 +29,7 @@ export interface TvShowMovieDB {
   backdrop_path: string;
   genre_ids: number[];
   id: number;
-  origin_country: string[];
+  origin_country?: string[];
   original_language: string;
   original_name: string;
   overview: string;

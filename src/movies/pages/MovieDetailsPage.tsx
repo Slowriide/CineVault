@@ -1,10 +1,8 @@
 import { useParams } from "react-router";
 import { Card } from "@/components/ui/card";
 import { getBackdropUrl, getImageUrl } from "@/mocks/tmdb";
-import { useFavorites } from "../hooks/useFavorite";
 import { useMovieDetails } from "../hooks/useMovieDetails";
 import { useTVShowDetails } from "../hooks/useTVShowDetails";
-import type { MovieDetails } from "@/interfaces/MovieDetails";
 import { useCredits } from "../hooks/useCredits";
 import type { Type } from "@/interfaces/MovieCategory";
 import { useSimilar } from "../hooks/useSimilar";
@@ -16,7 +14,6 @@ import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDet
 
 export default function MovieDetailsPage() {
   const { type, slug } = useParams();
-  const { isFavorite, toggleFavorite } = useFavorites();
 
   const id = slug ? parseInt(slug.split("-").pop()!).toString() : null;
 
@@ -58,13 +55,6 @@ export default function MovieDetailsPage() {
     );
   }
 
-  const favoriteData = {
-    id: (data as MovieDetails).id,
-    title: (data as MovieDetails).title,
-    poster_path: (data as MovieDetails).poster_path,
-    media_type: "movie" as const,
-  };
-
   return (
     <div className="min-h-screen bg-gradient-hero">
       {/* Backdrop */}
@@ -96,12 +86,7 @@ export default function MovieDetailsPage() {
             </div>
 
             {/* Details */}
-            <MovieDetailsHeader
-              data={data as NormalizedMovieDetailsData}
-              isFavorite={isFavorite}
-              toggleFavorite={toggleFavorite}
-              favoriteData={favoriteData}
-            />
+            <MovieDetailsHeader data={data as NormalizedMovieDetailsData} />
           </div>
 
           {/* Tabs for Additional Content */}

@@ -3,32 +3,48 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Clock, ExternalLink, Heart, Star } from "lucide-react";
 import { PopularReviews } from "./PopularReviews";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
+import { useAuth } from "@/context/AuthContext";
+import { useFavs } from "../hooks/favorites/useFavs";
+import { useToggleFavorite } from "../hooks/favorites/useToggleFavorite";
+import { toast } from "sonner";
+import { mapMovieDetailsToMovieDB } from "@/utils/NormalizedToMovieMapper";
+import { useParams } from "react-router";
 
 interface MovieDetailsProps {
   data: NormalizedMovieDetailsData;
-
-  isFavorite: (id: number) => boolean;
-  toggleFavorite: (data: {
-    id: number;
-    title: string;
-    poster_path: string;
-    media_type: "movie";
-  }) => void;
-
-  favoriteData: {
-    id: number;
-    title: string;
-    poster_path: string;
-    media_type: "movie";
-  };
 }
 
-export const MovieDetailsHeader = ({
-  data,
-  isFavorite,
-  favoriteData,
-  toggleFavorite,
-}: MovieDetailsProps) => {
+export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
+  const { type } = useParams();
+  const { session } = useAuth();
+  const userId = session?.user.id;
+  const { data: favorites } = useFavs(userId);
+  const { addFavorite, removeFavorite } = useToggleFavorite(userId);
+
+  if (!type) {
+    return;
+  }
+
+  const favoriteIds = new Set(favorites?.map((f) => f.movie_id));
+  const isFav = favoriteIds.has(String(data.id));
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!userId) {
+      toast.error("you must be logged in to add favorites");
+      return;
+    }
+
+    if (isFav) {
+      await removeFavorite.mutateAsync(String(data.id));
+      toast.success("removed from favorites");
+    } else {
+      await addFavorite.mutateAsync(
+        mapMovieDetailsToMovieDB(data, type as "movie" | "tv")
+      );
+    }
+  };
+
   return (
     <div className="md:col-span-2 space-y-6">
       <div>
@@ -86,16 +102,12 @@ export const MovieDetailsHeader = ({
         {/* Action Buttons */}
         <div className="flex items-center space-x-4">
           <Button
-            onClick={() => toggleFavorite(favoriteData)}
-            variant={isFavorite(data.id) ? "default" : "outline"}
-            className={isFavorite(data.id) ? "bg-red-600 hover:bg-red-700" : ""}
+            onClick={handleFavoriteClick}
+            variant={isFav ? "default" : "outline"}
+            className={isFav ? "bg-red-600 hover:bg-red-700" : ""}
           >
-            <Heart
-              className={`w-4 h-4 mr-2 ${
-                isFavorite(data.id) ? "fill-current" : ""
-              }`}
-            />
-            {isFavorite(data.id) ? "Remove from Favorites" : "Add to Favorites"}
+            <Heart className={`w-4 h-4 mr-2 ${isFav ? "fill-current" : ""}`} />
+            {isFav ? "Remove from Favorites" : "Add to Favorites"}
           </Button>
 
           {data.homepage && (
