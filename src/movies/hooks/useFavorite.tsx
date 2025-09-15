@@ -1,16 +1,15 @@
+import type {
+  MovieMovieDB,
+  TvShowMovieDB,
+} from "@/interfaces/MovieDB.response";
 import { useState, useEffect } from "react";
 
-export type FavoriteItem = {
-  id: number;
-  title?: string; // movies
-  name?: string; // tv shows
-  poster_path?: string;
-  media_type: "movie" | "tv";
-};
 const FAVORITES_KEY = "movieapp_favorites";
 
 export const useFavorites = () => {
-  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
+  const [favorites, setFavorites] = useState<(MovieMovieDB | TvShowMovieDB)[]>(
+    []
+  );
 
   useEffect(() => {
     const stored = localStorage.getItem(FAVORITES_KEY);
@@ -23,12 +22,12 @@ export const useFavorites = () => {
     }
   }, []);
 
-  const saveFavorites = (newFavorites: FavoriteItem[]) => {
+  const saveFavorites = (newFavorites: (MovieMovieDB | TvShowMovieDB)[]) => {
     setFavorites(newFavorites);
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
   };
 
-  const addFavorite = (item: FavoriteItem) => {
+  const addFavorite = (item: MovieMovieDB | TvShowMovieDB) => {
     setFavorites((prev) => {
       const newFavs = [...prev, item];
       localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavs));
@@ -45,7 +44,7 @@ export const useFavorites = () => {
     return favorites.some((item) => item.id === id);
   };
 
-  const toggleFavorite = (item: FavoriteItem) => {
+  const toggleFavorite = (item: MovieMovieDB | TvShowMovieDB) => {
     if (favorites.some((fav) => fav.id === item.id)) {
       setFavorites((prev) => {
         const newFavs = prev.filter((fav) => fav.id !== item.id);

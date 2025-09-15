@@ -80,7 +80,19 @@ export const MovieCard = ({
                 className="absolute top-2 right-2 h-8 w-8 p-0 bg-background/20 hover:bg-background/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 onClick={(e) => {
                   e.preventDefault();
-                  toggleFavorite({ id: item.id, media_type: mediaType });
+                  toggleFavorite({
+                    id: item.id,
+                    media_type: mediaType,
+                    adult: item.adult,
+                    backdrop_path: item.backdrop_path,
+                    genre_ids: item.genre_ids,
+                    original_language: item.original_language,
+                    overview: item.overview,
+                    popularity: item.popularity,
+                    poster_path: item.poster_path,
+                    vote_average: item.vote_average,
+                    vote_count: item.vote_count,
+                  } as MovieMovieDB | TvShowMovieDB);
                 }}
               >
                 <Heart

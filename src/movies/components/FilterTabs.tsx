@@ -5,7 +5,6 @@ import type {
   NormalizedSearchResult,
 } from "@/interfaces/SearchResponse";
 
-//TODO revisar
 interface FilterTabsProps {
   filter: string;
   normalicedData: NormalizedSearchResult[];
@@ -33,6 +32,7 @@ export const FilterTabs = ({
             {normalicedData.filter((r) => r.media_type).length}
           </Badge>
         </Button>
+
         <Button
           variant={filter === "movie" ? "default" : "ghost"}
           size="sm"

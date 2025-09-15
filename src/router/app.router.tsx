@@ -7,7 +7,7 @@ import {
 import { MoviesLayout } from "@/movies/layouts/MoviesLayout";
 import ActorPage from "@/movies/pages/ActorPage";
 import DiscoverPage from "@/movies/pages/DiscoverPage";
-import { FavoritesPage } from "@/movies/pages/FavoritesPage";
+import ProfileDashboard from "@/movies/pages/ProfileDashboard";
 import { HomePage } from "@/movies/pages/HomePage";
 import MovieDetailsPage from "@/movies/pages/MovieDetailsPage";
 import { SearchPage } from "@/movies/pages/SearchPage";
@@ -28,7 +28,14 @@ export const appRouter = createBrowserRouter([
         children: [
           { index: true, element: <HomePage /> },
           { path: ":type/:slug", element: <MovieDetailsPage /> },
-          { path: "favorites-page", element: <FavoritesPage /> },
+          {
+            path: "profile",
+            element: (
+              <AuthenticatedRoute>
+                <ProfileDashboard />
+              </AuthenticatedRoute>
+            ),
+          },
           { path: "person/:slug", element: <ActorPage /> },
           { path: "discover", element: <DiscoverPage /> },
           { path: "search", element: <SearchPage /> },

@@ -5,11 +5,11 @@ import { Input } from "@/components/ui/input";
 import {
   Film,
   Search,
-  Heart,
   Home,
   Popcorn,
   LogInIcon,
   LogOutIcon,
+  User,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -27,6 +27,7 @@ export const CustomHeader = () => {
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 0);
@@ -41,6 +42,7 @@ export const CustomHeader = () => {
     if (!query) return;
     navigate(`/search?query=${encodeURIComponent(query)}`);
   };
+
   return (
     <header
       className={`sticky top-0 z-50 w-full border-b transition-colors duration-300 ${
@@ -105,15 +107,15 @@ export const CustomHeader = () => {
 
           <Button
             asChild
-            variant={isActive("/favorites") ? "default" : "ghost"}
+            variant={isActive("/profile") ? "default" : "ghost"}
             size="sm"
             className={
-              isActive("/favorites") ? "bg-primary text-primary-foreground" : ""
+              isActive("/profile") ? "bg-primary text-primary-foreground" : ""
             }
           >
-            <Link to="/favorites">
-              <Heart className="h-4 w-4 mr-2" />
-              Favorites
+            <Link to="/profile">
+              <User className="h-4 w-4 mr-2" />
+              Profile
             </Link>
           </Button>
 
