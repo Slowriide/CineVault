@@ -1,14 +1,23 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, ExternalLink, Heart, Star } from "lucide-react";
+import {
+  Calendar,
+  Clapperboard,
+  Clock,
+  ExternalLink,
+  EyeIcon,
+  Heart,
+  Star,
+} from "lucide-react";
 import { PopularReviews } from "./PopularReviews";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 import { useAuth } from "@/context/AuthContext";
-import { useFavs } from "../hooks/favorites/useFavs";
 import { useToggleFavorite } from "../hooks/favorites/useToggleFavorite";
 import { toast } from "sonner";
 import { mapMovieDetailsToMovieDB } from "@/utils/NormalizedToMovieMapper";
 import { useParams } from "react-router";
+import { useToggleWatched } from "../hooks/watched/useToggleWatched";
+import { useToggleWatclist } from "../hooks/watchlist/useToggleWatchlist";
 
 interface MovieDetailsProps {
   data: NormalizedMovieDetailsData;
@@ -18,15 +27,24 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
   const { type } = useParams();
   const { session } = useAuth();
   const userId = session?.user.id;
-  const { data: favorites } = useFavs(userId);
-  const { addFavorite, removeFavorite } = useToggleFavorite(userId);
+
+  const { addFavorite, removeFavorite, favoriteIds } =
+    useToggleFavorite(userId);
+
+  const { addWatched, removeWatched, watchedsIds } = useToggleWatched(userId);
+
+  const { addWatchlist, removeWatchlist, watchListIds } =
+    useToggleWatclist(userId);
 
   if (!type) {
     return;
   }
 
-  const favoriteIds = new Set(favorites?.map((f) => f.movie_id));
   const isFav = favoriteIds.has(String(data.id));
+
+  const isWatched = watchedsIds.has(String(data.id));
+
+  const isInWatchList = watchListIds.has(String(data.id));
 
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -40,6 +58,39 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
       toast.success("removed from favorites");
     } else {
       await addFavorite.mutateAsync(
+        mapMovieDetailsToMovieDB(data, type as "movie" | "tv")
+      );
+    }
+  };
+
+  const handleWatchedClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!userId) {
+      toast.error("you must be logged in to add watcheds");
+      return;
+    }
+
+    if (isWatched) {
+      await removeWatched.mutateAsync(String(data.id));
+      toast.success("removed from watched");
+    } else {
+      await addWatched.mutateAsync(
+        mapMovieDetailsToMovieDB(data, type as "movie" | "tv")
+      );
+    }
+  };
+
+  const handleWatchListClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!userId) {
+      toast.error("you must be logged in to add watcheds");
+      return;
+    }
+    if (isInWatchList) {
+      await removeWatchlist.mutateAsync(String(data.id));
+      toast.success("removed from watched");
+    } else {
+      await addWatchlist.mutateAsync(
         mapMovieDetailsToMovieDB(data, type as "movie" | "tv")
       );
     }
@@ -108,6 +159,28 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
           >
             <Heart className={`w-4 h-4 mr-2 ${isFav ? "fill-current" : ""}`} />
             {isFav ? "Remove from Favorites" : "Add to Favorites"}
+          </Button>
+
+          <Button
+            onClick={handleWatchedClick}
+            variant={isWatched ? "default" : "outline"}
+            className={isWatched ? "bg-red-600 hover:bg-red-700" : ""}
+          >
+            <EyeIcon
+              className={`w-4 h-4 mr-2 ${isWatched ? "fill-current" : ""}`}
+            />
+            {isWatched ? "Remove from Watched" : "Add to Watched"}
+          </Button>
+
+          <Button
+            onClick={handleWatchListClick}
+            variant={isInWatchList ? "default" : "outline"}
+            className={isInWatchList ? "bg-red-600 hover:bg-red-700" : ""}
+          >
+            <Clapperboard
+              className={`w-4 h-4 mr-2 ${isInWatchList ? "fill-current" : ""}`}
+            />
+            {isInWatchList ? "Remove from Watchlist" : "Add to WatchList"}
           </Button>
 
           {data.homepage && (

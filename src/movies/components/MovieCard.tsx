@@ -10,7 +10,6 @@ import type {
 } from "@/interfaces/MovieDB.response";
 import { slugify } from "@/utils/slugify";
 import { useAuth } from "@/context/AuthContext";
-import { useFavs } from "../hooks/favorites/useFavs";
 import { useToggleFavorite } from "../hooks/favorites/useToggleFavorite";
 import { toast } from "sonner";
 
@@ -29,10 +28,9 @@ export const MovieCard = ({
 }: MovieCardProps) => {
   const { session } = useAuth();
   const userId = session?.user.id;
-  const { data: favorites } = useFavs(userId);
-  const { addFavorite, removeFavorite } = useToggleFavorite(userId);
+  const { addFavorite, removeFavorite, favoriteIds } =
+    useToggleFavorite(userId);
 
-  const favoriteIds = new Set(favorites?.map((f) => f.movie_id));
   const isFav = favoriteIds.has(String(item.id));
 
   const title = "title" in item ? item.title : item.name;

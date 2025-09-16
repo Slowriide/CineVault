@@ -69,6 +69,60 @@ export type Database = {
         }
         Relationships: []
       }
+      watched: {
+        Row: {
+          created_at: string | null
+          id: string
+          media_type: string | null
+          metadata: Json
+          movie_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          media_type?: string | null
+          metadata: Json
+          movie_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          media_type?: string | null
+          metadata?: Json
+          movie_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      watchlist: {
+        Row: {
+          created_at: string | null
+          id: string
+          media_type: string | null
+          metadata: Json
+          movie_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          media_type?: string | null
+          metadata: Json
+          movie_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          media_type?: string | null
+          metadata?: Json
+          movie_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

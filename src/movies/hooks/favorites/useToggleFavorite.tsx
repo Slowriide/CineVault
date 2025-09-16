@@ -5,6 +5,7 @@ import type {
 } from "@/interfaces/MovieDB.response";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useFavs } from "./useFavs";
 
 export const useToggleFavorite = (userId?: string) => {
   const queryClient = useQueryClient();
@@ -69,5 +70,9 @@ export const useToggleFavorite = (userId?: string) => {
       queryClient.invalidateQueries({ queryKey: ["favorites", userId] });
     },
   });
-  return { addFavorite, removeFavorite };
+
+  const { data: favorites } = useFavs(userId);
+  const favoriteIds = new Set(favorites?.map((f) => f.movie_id));
+
+  return { addFavorite, removeFavorite, favoriteIds };
 };

@@ -3,7 +3,7 @@ import type {
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
 
-export function FavoriteToMovieMapper(fav: any): MovieMovieDB | TvShowMovieDB {
+export function SupabaseToMovieMapper(fav: any): MovieMovieDB | TvShowMovieDB {
   const meta = fav.metadata;
 
   const item = {

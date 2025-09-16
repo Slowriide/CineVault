@@ -15,7 +15,9 @@ import { PopularReviews } from "../components/PopularReviews";
 import { useMovies } from "../hooks/usePopularMovies";
 import { useAuth } from "@/context/AuthContext";
 import { useFavs } from "../hooks/favorites/useFavs";
-import { FavoriteToMovieMapper } from "@/utils/FavoriteToMovieMapper";
+import { SupabaseToMovieMapper } from "@/utils/FavoriteToMovieMapper";
+import { useWatched } from "../hooks/watched/useWatched";
+import { useWatchlist } from "../hooks/watchlist/useWatchlist";
 
 export default function ProfileDashboard() {
   const [activeTab, setActiveTab] = useState("favorites");
@@ -24,9 +26,22 @@ export default function ProfileDashboard() {
   const userId = session?.user.id;
 
   const { data: favorites, isLoading, isError } = useFavs(userId);
+  const {
+    data: watcheds,
+    isLoading: watchedsLoading,
+    isError: watchedsError,
+  } = useWatched(userId);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError || !favorites) return <p>Error loading favorites</p>;
+  const {
+    data: watchList,
+    isLoading: watchListLoading,
+    isError: watchListError,
+  } = useWatchlist(userId);
+
+  if (isLoading || watchedsLoading || watchListLoading)
+    return <p>Loading...</p>;
+  if (isError || !favorites || !watcheds || !watchList)
+    return <p>Error loading favorites</p>;
 
   const { data: popularData } = useMovies("popular");
 
@@ -37,7 +52,6 @@ export default function ProfileDashboard() {
   }
 
   const movies = popularData.results;
-  const movies2 = topRatedData.results;
 
   return (
     <div className="min-h-screen bg-gradient-hero pt-10">
@@ -88,9 +102,9 @@ export default function ProfileDashboard() {
                       <Clock className="h-4 w-4" />
                       <span className="hidden sm:inline">Watchlist</span>
 
-                      {movies2.length > 0 && (
+                      {watchList.length > 0 && (
                         <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                          {movies2.length}
+                          {watchList.length}
                         </span>
                       )}
                     </TabsTrigger>
@@ -102,9 +116,9 @@ export default function ProfileDashboard() {
                       <CheckCircle className="h-4 w-4" />
                       <span className="hidden sm:inline">Watched</span>
 
-                      {movies.length > 0 && (
+                      {watcheds.length > 0 && (
                         <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                          {movies.length}
+                          {watcheds.length}
                         </span>
                       )}
                     </TabsTrigger>
@@ -126,11 +140,11 @@ export default function ProfileDashboard() {
 
                   {/* Favorites Tab */}
                   <TabsContent value="favorites" className="space-y-6">
-                    {favorites.length > 0 ? (
+                    {favorites.length > 0 && !isError ? (
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                         {favorites.map((fav) => {
                           // Asegurarse que metadata tenga el tipo correcto
-                          const item = FavoriteToMovieMapper(fav);
+                          const item = SupabaseToMovieMapper(fav);
 
                           return (
                             <MovieCard
@@ -161,16 +175,20 @@ export default function ProfileDashboard() {
 
                   {/* Watchlist Tab */}
                   <TabsContent value="watchlist" className="space-y-6">
-                    {movies2.length > 0 ? (
+                    {watchList.length > 0 && !watchListError ? (
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                        {movies2.map((item) => (
-                          <MovieCard
-                            key={`watchlist-${item.media_type}-${item.id}`}
-                            item={item}
-                            mediaType={item.media_type}
-                            size="sm"
-                          />
-                        ))}
+                        {watchList.map((watchList) => {
+                          const item = SupabaseToMovieMapper(watchList);
+
+                          return (
+                            <MovieCard
+                              key={`watchlist-${item.media_type}-${item.id}`}
+                              item={item}
+                              mediaType={item.media_type}
+                              size="xl"
+                            />
+                          );
+                        })}
                       </div>
                     ) : (
                       <div className="text-center py-12">
@@ -190,16 +208,20 @@ export default function ProfileDashboard() {
 
                   {/* Watched Tab */}
                   <TabsContent value="watched" className="space-y-6">
-                    {movies.length > 0 ? (
+                    {watcheds.length > 0 && !watchedsError ? (
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                        {movies.map((item) => (
-                          <MovieCard
-                            key={`watched-${item.media_type}-${item.id}`}
-                            item={item}
-                            mediaType={item.media_type}
-                            size="sm"
-                          />
-                        ))}
+                        {watcheds.map((watched) => {
+                          const item = SupabaseToMovieMapper(watched);
+
+                          return (
+                            <MovieCard
+                              key={`watched-${item.media_type}-${item.id}`}
+                              item={item}
+                              mediaType={item.media_type}
+                              size="xl"
+                            />
+                          );
+                        })}
                       </div>
                     ) : (
                       <div className="text-center py-12">
