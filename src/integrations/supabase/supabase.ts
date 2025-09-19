@@ -46,7 +46,6 @@ export type Database = {
           media_type: string
           metadata: Json | null
           movie_id: string
-          title: string | null
           user_id: string
         }
         Insert: {
@@ -55,7 +54,6 @@ export type Database = {
           media_type: string
           metadata?: Json | null
           movie_id: string
-          title?: string | null
           user_id: string
         }
         Update: {
@@ -64,8 +62,37 @@ export type Database = {
           media_type?: string
           metadata?: Json | null
           movie_id?: string
-          title?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          media_type: string
+          movie_id: string
+          rating: number | null
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          media_type: string
+          movie_id: string
+          rating?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          media_type?: string
+          movie_id?: string
+          rating?: number | null
+          user_id?: string | null
         }
         Relationships: []
       }

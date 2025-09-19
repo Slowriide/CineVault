@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -11,16 +10,19 @@ import {
 import { Heart, Clock, CheckCircle, MessageSquare } from "lucide-react";
 import { ProfileSidebar } from "../components/PerfilSidebar";
 import { MovieCard } from "../components/MovieCard";
-import { PopularReviews } from "../components/PopularReviews";
-import { useMovies } from "../hooks/usePopularMovies";
 import { useAuth } from "@/context/AuthContext";
 import { useFavs } from "../hooks/favorites/useFavs";
 import { SupabaseToMovieMapper } from "@/utils/FavoriteToMovieMapper";
 import { useWatched } from "../hooks/watched/useWatched";
 import { useWatchlist } from "../hooks/watchlist/useWatchlist";
+import { useMyReviews } from "../hooks/reviews/useMyReviews";
+import { MyReviewItem } from "../components/MyReviewItem";
+import { useSearchParams } from "react-router";
 
 export default function ProfileDashboard() {
-  const [activeTab, setActiveTab] = useState("favorites");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const tab = searchParams.get("tab") || "favorites";
 
   const { session } = useAuth();
   const userId = session?.user.id;
@@ -38,20 +40,17 @@ export default function ProfileDashboard() {
     isError: watchListError,
   } = useWatchlist(userId);
 
+  const { data: myReviews } = useMyReviews(userId);
+
   if (isLoading || watchedsLoading || watchListLoading)
     return <p>Loading...</p>;
-  if (isError || !favorites || !watcheds || !watchList)
+  if (isError || !favorites || !watcheds || !watchList || !myReviews)
     return <p>Error loading favorites</p>;
 
-  const { data: popularData } = useMovies("popular");
-
-  const { data: topRatedData } = useMovies("top_rated");
-
-  if (!popularData || !topRatedData) {
-    return;
-  }
-
-  const movies = popularData.results;
+  const handleTabChange = (tab: string) => {
+    searchParams.set("tab", tab);
+    setSearchParams(searchParams);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-hero pt-10">
@@ -77,8 +76,8 @@ export default function ProfileDashboard() {
 
               <CardContent>
                 <Tabs
-                  value={activeTab}
-                  onValueChange={setActiveTab}
+                  value={tab}
+                  onValueChange={handleTabChange}
                   className="w-full"
                 >
                   <TabsList className="flex w-full justify-between items-center mb-6 h-10">
@@ -130,9 +129,9 @@ export default function ProfileDashboard() {
                       <MessageSquare className="h-4 w-4" />
                       <span className="hidden sm:inline">Reviews</span>
 
-                      {movies.length > 0 && (
+                      {myReviews.length > 0 && (
                         <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                          {movies.length}
+                          {myReviews.length}
                         </span>
                       )}
                     </TabsTrigger>
@@ -241,9 +240,11 @@ export default function ProfileDashboard() {
 
                   {/* Reviews Tab */}
                   <TabsContent value="reviews" className="space-y-6">
-                    {movies.length > 0 ? (
-                      <div className="space-y-4">
-                        <PopularReviews />
+                    {myReviews.length > 0 ? (
+                      <div className=" space-y-4 ">
+                        {myReviews.map((review) => (
+                          <MyReviewItem key={review.id} review={review} />
+                        ))}
                       </div>
                     ) : (
                       <div className="text-center py-12">

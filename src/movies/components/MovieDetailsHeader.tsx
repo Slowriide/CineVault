@@ -155,7 +155,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
           <Button
             onClick={handleFavoriteClick}
             variant={isFav ? "default" : "outline"}
-            className={isFav ? "bg-red-600 hover:bg-red-700" : ""}
+            className={isFav ? "bg-primary hover:bg-chart-5" : ""}
           >
             <Heart className={`w-4 h-4 mr-2 ${isFav ? "fill-current" : ""}`} />
             {isFav ? "Remove from Favorites" : "Add to Favorites"}
@@ -164,7 +164,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
           <Button
             onClick={handleWatchedClick}
             variant={isWatched ? "default" : "outline"}
-            className={isWatched ? "bg-red-600 hover:bg-red-700" : ""}
+            className={isWatched ? "bg-primary hover:bg-chart-5" : ""}
           >
             <EyeIcon
               className={`w-4 h-4 mr-2 ${isWatched ? "fill-current" : ""}`}
@@ -175,7 +175,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
           <Button
             onClick={handleWatchListClick}
             variant={isInWatchList ? "default" : "outline"}
-            className={isInWatchList ? "bg-red-600 hover:bg-red-700" : ""}
+            className={isInWatchList ? "bg-primary hover:bg-chart-5" : ""}
           >
             <Clapperboard
               className={`w-4 h-4 mr-2 ${isInWatchList ? "fill-current" : ""}`}

@@ -9,6 +9,7 @@ interface ReviewProps {
   review: string;
   rating: number;
   likes: number;
+  line?: boolean;
 }
 
 export const Reviews = ({
@@ -17,6 +18,7 @@ export const Reviews = ({
   name,
   rating,
   review,
+  line = true,
 }: ReviewProps) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -49,7 +51,7 @@ export const Reviews = ({
 
   return (
     <div>
-      <div className="flex items-start mt-5">
+      <div className="flex items-start mt-5 ">
         <img
           src={image}
           alt="user"
@@ -80,7 +82,7 @@ export const Reviews = ({
           </div>
         </div>
       </div>
-      <Separator className="mt-5" />
+      {line && <Separator className="mt-5" />}
     </div>
   );
 };

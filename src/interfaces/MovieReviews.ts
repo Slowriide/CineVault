@@ -22,3 +22,13 @@ export interface AuthorDetails {
   avatar_path: null | string;
   rating: number;
 }
+
+export interface supabaseReview {
+  id?: string | null;
+  user_id?: string | null;
+  movie_id?: string | null;
+  media_type?: string | null;
+  rating?: number | null;
+  content?: string | null;
+  created_at?: string | null;
+}

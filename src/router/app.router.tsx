@@ -15,6 +15,7 @@ import { SearchPage } from "@/movies/pages/SearchPage";
 import { ScrollToTopLayout } from "@/utils/ScrollToTopLayout";
 
 import { createBrowserRouter } from "react-router";
+import { MovieReviews } from "@/movies/pages/ReviewsPage";
 
 export const appRouter = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ export const appRouter = createBrowserRouter([
         children: [
           { index: true, element: <HomePage /> },
           { path: ":type/:slug", element: <MovieDetailsPage /> },
+          { path: ":type/:slug/reviews", element: <MovieReviews /> },
           {
             path: "profile",
             element: (

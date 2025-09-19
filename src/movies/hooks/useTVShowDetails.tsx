@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTvShowDetails } from "../api/get-tvShow-details.action";
-import type { NormalizedData } from "@/interfaces/NormalizedMovieDetailsData";
+import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 
 export const useTVShowDetails = (id: string, language: string = "us-US") => {
   const query = useQuery({
@@ -9,7 +9,7 @@ export const useTVShowDetails = (id: string, language: string = "us-US") => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const normalizedData: NormalizedData | null = query.data
+  const normalizedData: NormalizedMovieDetailsData | null = query.data
     ? {
         id: query.data.id,
         title: query.data.name,

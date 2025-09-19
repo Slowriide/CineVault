@@ -15,6 +15,7 @@ export const useReviews = (page: number = 1, language: string = "us-US") => {
       error: null,
       isError: false,
       isLoading: false,
+      popularReviews: [],
     };
   }
   const type = query as Type;
@@ -26,10 +27,11 @@ export const useReviews = (page: number = 1, language: string = "us-US") => {
     retry: false,
   });
 
-  const reviews: Reviews[] = results.data?.results.slice(0, 2) ?? [];
+  const popularReviews: Reviews[] = results.data?.results.slice(0, 2) ?? [];
 
   return {
     ...results,
-    reviews: reviews,
+    reviews: results.data?.results,
+    popularReviews: popularReviews,
   };
 };

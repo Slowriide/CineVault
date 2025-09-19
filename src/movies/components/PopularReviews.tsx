@@ -2,17 +2,28 @@ import { Separator } from "@/components/ui/separator";
 import { Reviews } from "./Review";
 import { useReviews } from "../hooks/useReviews";
 import { getImageUrl } from "@/mocks/tmdb";
+import { Link, useParams } from "react-router";
 
 export const PopularReviews = () => {
-  const { reviews } = useReviews();
+  const { popularReviews: reviews, reviews: allReviews } = useReviews();
+  const { slug, type } = useParams();
 
-  const areReviews = reviews.length > 0;
+  const id = slug ? parseInt(slug.split("-").pop()!) : null;
+
+  const areReviews = reviews && reviews.length > 0;
 
   return (
-    <div className="space-x-1 pt-10 lg:pt-18 ">
-      <div className="flex justify-between mb-1">
+    <div className="space-x-1 pt-10 lg:pt-16 ">
+      <div className="flex justify-between mb-1 ">
         <span>Popular Reviews</span>
-        <span className="hover:text-blue-500 cursor-pointer">MORE</span>
+        <div className="space-x-4">
+          <span className="hover:text-blue-500 cursor-pointer">Create</span>
+          <Link to={`/${type}/${id}/reviews`}>
+            <span className="hover:text-blue-500 cursor-pointer">
+              {`All reviews (${allReviews?.length ?? ""})`}
+            </span>
+          </Link>
+        </div>
       </div>
       <Separator className="mt-1 mb-5" />
 
@@ -22,7 +33,7 @@ export const PopularReviews = () => {
         </span>
       )}
 
-      {reviews.map((review) => (
+      {reviews!.map((review) => (
         <Reviews
           image={getImageUrl(review.author_details.avatar_path ?? "")}
           name={review.author}

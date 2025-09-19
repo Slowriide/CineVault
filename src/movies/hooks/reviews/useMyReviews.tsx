@@ -1,22 +1,20 @@
 import { supabase } from "@/integrations/supabase/supabaseClient";
-import type { supabaseMovie } from "@/integrations/supabase/supabaseMovie";
-
+import type { supabaseReview } from "@/interfaces/MovieReviews";
 import { useQuery } from "@tanstack/react-query";
 
-export const useFavs = (userId?: string) => {
-  return useQuery<supabaseMovie[]>({
-    queryKey: ["favorites", userId],
+export const useMyReviews = (userId?: string) => {
+  return useQuery<supabaseReview[]>({
+    queryKey: ["myreviews", userId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("favorites")
+        .from("reviews")
         .select("*")
-        .eq("user_id", userId!);
+        .eq("user_id", userId!)
+        .order("created_at", { ascending: false });
 
       if (error) throw new Error(error.message);
-
       return data;
     },
     enabled: !!userId,
-    initialData: [],
   });
 };
