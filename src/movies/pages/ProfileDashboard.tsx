@@ -145,6 +145,8 @@ export default function ProfileDashboard() {
                           // Asegurarse que metadata tenga el tipo correcto
                           const item = SupabaseToMovieMapper(fav);
 
+                          console.log(fav.metadata);
+
                           return (
                             <MovieCard
                               key={`favorite-${fav.media_type}-${fav.movie_id}`}

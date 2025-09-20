@@ -16,8 +16,6 @@ export const getMovieByFiltersAction = async (
 ): Promise<MovieDBResponse> => {
   const { genre, year, language, sortBy, type, cast, page } = options;
 
-  console.log(options);
-
   const params: Record<string, string | number> = {};
 
   if (language) params.language = language;

@@ -1,10 +1,9 @@
 import { supabase } from "@/integrations/supabase/supabaseClient";
-import type { supabaseMovie } from "@/integrations/supabase/supabaseMovie";
 
 import { useQuery } from "@tanstack/react-query";
 
 export const useFavs = (userId?: string) => {
-  return useQuery<supabaseMovie[]>({
+  return useQuery({
     queryKey: ["favorites", userId],
     queryFn: async () => {
       const { data, error } = await supabase

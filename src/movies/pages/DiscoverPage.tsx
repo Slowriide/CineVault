@@ -24,8 +24,6 @@ export default function DiscoverPage() {
   const { data } = useMoviesByFilter();
   const type = searcParams.get("type") || "movie";
 
-  console.log(data?.results);
-
   const [filters, setFilters] = useState<DiscoverFilters>({
     sort_by: "popularity.desc",
     page: 1,

@@ -12,6 +12,7 @@ import { slugify } from "@/utils/slugify";
 import { useAuth } from "@/context/AuthContext";
 import { useToggleFavorite } from "../hooks/favorites/useToggleFavorite";
 import { toast } from "sonner";
+import { getYearFromReleaseDate } from "@/utils/getYear";
 
 interface MovieCardProps {
   item: MovieMovieDB | TvShowMovieDB;
@@ -19,7 +20,7 @@ interface MovieCardProps {
   size?: "sm" | "md" | "lg" | "xl";
   showFavorite?: boolean;
 }
-
+//TODO AÑOS
 export const MovieCard = ({
   item,
   mediaType,
@@ -34,9 +35,14 @@ export const MovieCard = ({
   const isFav = favoriteIds.has(String(item.id));
 
   const title = "title" in item ? item.title : item.name;
+
   const releaseDate =
     "release_date" in item ? item.release_date : item.first_air_date;
-  const year = releaseDate ? new Date(releaseDate).getFullYear() : "N/A";
+
+  const year = getYearFromReleaseDate(releaseDate);
+
+  console.log(year);
+
   const rating = item.vote_average;
 
   const sizeClasses = {
@@ -122,7 +128,7 @@ export const MovieCard = ({
 
           <div className="flex items-center text-xs text-muted-foreground space-x-2">
             <Calendar className="w-3 h-3" />
-            <span>{year}</span>
+            <span>{year ?? ""}</span>
             {mediaType && (
               <>
                 <span>•</span>

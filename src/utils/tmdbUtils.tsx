@@ -18,8 +18,6 @@ export async function getGenres(type: Type, language = "us-US") {
   const response = await getMovieGenresAction({ type, language });
   const data = await response.genres;
 
-  console.log(data);
-
   localStorage.setItem(
     cacheKey,
     JSON.stringify({ genres: data, lastUpdated: new Date().toISOString() })
