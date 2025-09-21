@@ -93,9 +93,9 @@ export const SearchBar = () => {
                       onClick={clearInput}
                       className="flex items-center gap-3 p-2 hover:bg-muted transition-colors"
                     >
-                      <Card className="w-10 h-14 overflow-hidden border-none shadow-none">
+                      <Card className="w-10 h-14 overflow-hidden border-none shadow-none rounded">
                         <img
-                          src={getImageUrl(item.profile_path, "w92")}
+                          src={getImageUrl(item.profile_path, "w82")}
                           alt={item.name}
                           className="w-full h-full object-cover"
                         />
@@ -119,7 +119,7 @@ export const SearchBar = () => {
                     className="flex items-center gap-3 p-2 hover:bg-muted transition-colors"
                     onClick={clearInput}
                   >
-                    <Card className="w-10 h-14 overflow-hidden border-none shadow-none ">
+                    <Card className="w-10 h-14 overflow-hidden border-none shadow-none rounded">
                       <img
                         src={getImageUrl(item.poster_path, "w92")}
                         alt={title}

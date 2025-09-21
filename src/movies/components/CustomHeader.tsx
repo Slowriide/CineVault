@@ -65,7 +65,7 @@ export const CustomHeader = () => {
           >
             <Link to="/">
               <Home className="h-4 w-4 mr-2" />
-              Home
+              <span className="hidden md:flex">Home</span>
             </Link>
           </Button>
 
@@ -79,7 +79,7 @@ export const CustomHeader = () => {
           >
             <Link to="/discover">
               <Popcorn className="h-4 w-4 mr-2" />
-              Discover
+              <span className="hidden md:flex">Discover</span>
             </Link>
           </Button>
 
@@ -88,12 +88,12 @@ export const CustomHeader = () => {
             variant={isActive("/profile") ? "default" : "ghost"}
             size="sm"
             className={
-              isActive("/profile") ? "bg-primary text-primary-foreground" : ""
+              isActive("/profile") ? "bg-primary text-primary-foreground " : ""
             }
           >
             <Link to="/profile">
-              <User className="h-4 w-4 mr-2" />
-              Profile
+              <User className="h-4 w-4 mr-2 " />
+              <span className="hidden md:flex">Profile</span>
             </Link>
           </Button>
 
@@ -103,13 +103,13 @@ export const CustomHeader = () => {
               variant={isActive("/auth") ? "default" : "ghost"}
               size="sm"
               className={
-                isActive("/auth") ? "bg-primary text-primary-foreground" : ""
+                isActive("/auth") ? "bg-primary text-primary-foreground " : ""
               }
               onClick={handleLogout}
             >
               <Link to="/auth">
                 <LogOutIcon className="h-4 w-4 mr-2" />
-                Log Out
+                <span className="hidden md:flex">Log out</span>
               </Link>
             </Button>
           ) : (
