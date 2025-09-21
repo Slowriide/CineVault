@@ -3,8 +3,14 @@ import { Reviews } from "./Review";
 import { useReviews } from "../hooks/useReviews";
 import { getImageUrl } from "@/mocks/tmdb";
 import { Link, useParams } from "react-router";
+import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
+import { ReviewDialog } from "./ReviewDialog";
 
-export const PopularReviews = () => {
+interface Props {
+  movie: NormalizedMovieDetailsData;
+}
+
+export const PopularReviews = ({ movie }: Props) => {
   const { popularReviews: reviews, reviews: allReviews } = useReviews();
   const { slug, type } = useParams();
 
@@ -16,8 +22,13 @@ export const PopularReviews = () => {
     <div className="space-x-1 pt-10 lg:pt-16 ">
       <div className="flex justify-between mb-1 ">
         <span>Popular Reviews</span>
+
+        {/* Buttons */}
         <div className="space-x-4">
-          <span className="hover:text-blue-500 cursor-pointer">Create</span>
+          {/* Dialog */}
+          <ReviewDialog movie={movie} />
+
+          {/* All reviews */}
           <Link to={`/${type}/${id}/reviews`}>
             <span className="hover:text-blue-500 cursor-pointer">
               {`All reviews (${allReviews?.length ?? ""})`}
@@ -27,11 +38,15 @@ export const PopularReviews = () => {
       </div>
       <Separator className="mt-1 mb-5" />
 
+      {/* No reviews */}
+
       {!areReviews && (
         <span className="flex justify-center mt-10">
           Be the first to review!!!
         </span>
       )}
+
+      {/* Reviews */}
 
       {reviews!.map((review) => (
         <Reviews

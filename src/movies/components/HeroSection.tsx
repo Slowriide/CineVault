@@ -47,8 +47,8 @@ export const HeroSection = ({ featuredMovie }: HeroSectionProps) => {
   const title = isMovie ? featuredMovie.title : featuredMovie.name;
 
   const year = isMovie
-    ? new Date(featuredMovie.release_date).getFullYear()
-    : new Date(featuredMovie.first_air_date).getFullYear();
+    ? new Date(featuredMovie.release_date!).getFullYear()
+    : new Date(featuredMovie.first_air_date!).getFullYear();
 
   const mediaType = isMovie ? "Movie" : "TV Show";
 

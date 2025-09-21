@@ -193,7 +193,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
           )}
         </div>
         {/* Reviews */}
-        <PopularReviews />
+        <PopularReviews movie={data} />
       </div>
     </div>
   );
