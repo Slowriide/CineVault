@@ -1,30 +1,23 @@
-import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Film,
-  Search,
-  Home,
-  Popcorn,
-  LogInIcon,
-  LogOutIcon,
-  User,
-} from "lucide-react";
+
+import { Film, Home, Popcorn, LogInIcon, LogOutIcon, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { SearchBar } from "./SearchBar";
 
 export const CustomHeader = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
   const { session, signOut } = useAuth();
+
+  const [scrolled, setScrolled] = useState(false);
+
+  const location = useLocation();
 
   const handleLogout = async () => {
     await signOut();
   };
 
   //! TODO:  mirar cosas
-  const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -35,13 +28,6 @@ export const CustomHeader = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // evita que el form recargue la página
-    const query = inputRef.current?.value.trim();
-    if (!query) return;
-    navigate(`/search?query=${encodeURIComponent(query)}`);
-  };
 
   return (
     <header
@@ -64,16 +50,8 @@ export const CustomHeader = () => {
         </Link>
 
         {/* Search Bar */}
-        <form onSubmit={handleSubmit} className="flex-1 max-w-xl mx-8">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              ref={inputRef}
-              placeholder="Search movies, TV shows, actors..."
-              className="pl-10 bg-muted/50 border-border/50 focus:border-primary/50"
-            />
-          </div>
-        </form>
+
+        <SearchBar />
 
         {/* Navigation Links */}
         <nav className="flex items-center space-x-2">

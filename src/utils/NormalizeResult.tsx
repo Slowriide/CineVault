@@ -43,7 +43,7 @@ export function normalizeSearchResults(
         overview: item.overview ?? "",
         popularity: item.popularity ?? 0,
         poster_path: item.poster_path ?? "",
-        first_air_date: item.first_air_date ?? Date,
+        first_air_date: item.first_air_date ?? "",
         name: item.name ?? "",
         vote_average: item.vote_average ?? 0,
         vote_count: item.vote_count ?? 0,

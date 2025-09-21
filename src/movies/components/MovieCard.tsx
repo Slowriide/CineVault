@@ -41,8 +41,6 @@ export const MovieCard = ({
 
   const year = getYearFromReleaseDate(releaseDate);
 
-  console.log(year);
-
   const rating = item.vote_average;
 
   const sizeClasses = {

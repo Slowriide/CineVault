@@ -5,12 +5,13 @@ import { normalizeSearchResults } from "@/utils/NormalizeResult";
 import { useSearchParams } from "react-router";
 
 export const useMultipleSearchs = (
+  query: string,
   include_adult?: boolean,
   language: string = "us-US"
 ) => {
   const [searcParams] = useSearchParams();
 
-  const query = searcParams.get("query") || "";
+  // const query = searcParams.get("query") || "";
   const pageQuery = searcParams.get("page") || 1;
   const page = Number(pageQuery);
 
@@ -18,6 +19,7 @@ export const useMultipleSearchs = (
     queryKey: ["multipleSearch", query, include_adult, language, page],
     queryFn: () =>
       getMultipleSearchsAction({ query, include_adult, page, language }),
+    enabled: !!query,
     staleTime: 1000 * 60 * 5,
     retry: false,
   });
@@ -29,6 +31,9 @@ export const useMultipleSearchs = (
           .filter(Boolean) as NormalizedSearchResult[]
       ).sort((a, b) => b.popularity - a.popularity)
     : [];
+
+  const a = result.data?.results.filter((m) => m.media_type === "movie");
+  console.log(a);
 
   return {
     ...result,

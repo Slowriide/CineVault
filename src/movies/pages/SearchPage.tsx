@@ -7,20 +7,25 @@ import { useMultipleSearchs } from "../hooks/useMultipleSearchs";
 import { ActorCard } from "../components/ActorCard";
 import type { MediaType } from "@/interfaces/SearchResponse";
 import { FilterTabs } from "../components/FilterTabs";
+import { CustomError } from "@/components/custom/CustomError";
 
 export const SearchPage = () => {
   const [searcParams, setSearchParams] = useSearchParams();
 
+  const query = searcParams.get("query") || "";
+
   const {
     data,
+    error,
     normalizedData: normalicedData,
     isLoading,
-  } = useMultipleSearchs();
-  const query = searcParams.get("query") || "";
+  } = useMultipleSearchs(query);
+
   const filter = searcParams.get("filter") || "all";
 
   const handleFilterChanged = (filter: MediaType | "all") => {
     searcParams.set("filter", filter);
+    searcParams.set("page", "1");
     setSearchParams(searcParams);
   };
 
@@ -28,6 +33,10 @@ export const SearchPage = () => {
     if (filter === "all") return result.media_type;
     return result.media_type === filter;
   });
+
+  if (!data && error) {
+    return <CustomError title={error?.name} message={error?.message} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -56,6 +65,7 @@ export const SearchPage = () => {
             filter={filter}
             normalicedData={normalicedData}
             handleFilterChanged={handleFilterChanged}
+            data={data!}
           />
         )}
 

@@ -2,12 +2,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type {
   MediaType,
+  MultiSearchResponse,
   NormalizedSearchResult,
 } from "@/interfaces/SearchResponse";
 
 interface FilterTabsProps {
   filter: string;
   normalicedData: NormalizedSearchResult[];
+  data: MultiSearchResponse;
   handleFilterChanged: (newFilter: MediaType | "all") => void;
 }
 
