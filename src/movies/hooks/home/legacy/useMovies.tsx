@@ -1,6 +1,6 @@
+import type { MovieCategory } from "@/interfaces/MovieCategory";
+import { getPopularMoviesAction } from "@/movies/api/get-popular-movies.action";
 import { useQuery } from "@tanstack/react-query";
-import { getPopularMoviesAction } from "../api/get-popular-movies.action";
-import type { MovieCategory } from "../../interfaces/MovieCategory";
 
 export const useMovies = (
   movieCategory: MovieCategory = "popular",

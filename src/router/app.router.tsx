@@ -1,4 +1,3 @@
-import AuthLayout from "@/auth/layout/AuthLayout";
 import AuthPage from "@/auth/pages/AuthPage";
 import {
   AuthenticatedRoute,
@@ -7,7 +6,7 @@ import {
 import { MoviesLayout } from "@/movies/layouts/MoviesLayout";
 import ActorPage from "@/movies/pages/ActorPage";
 import DiscoverPage from "@/movies/pages/DiscoverPage";
-import ProfileDashboard from "@/movies/pages/ProfileDashboard";
+
 import { HomePage } from "@/movies/pages/HomePage";
 import MovieDetailsPage from "@/movies/pages/MovieDetailsPage";
 import { SearchPage } from "@/movies/pages/SearchPage";
@@ -16,6 +15,10 @@ import { ScrollToTopLayout } from "@/utils/ScrollToTopLayout";
 
 import { createBrowserRouter } from "react-router";
 import { MovieReviews } from "@/movies/pages/ReviewsPage";
+import { lazy } from "react";
+
+const AuthLayout = lazy(() => import("@/auth/layout/AuthLayout"));
+const ProfileDashboard = lazy(() => import("@/movies/pages/ProfileDashboard"));
 
 export const appRouter = createBrowserRouter([
   {

@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getTrendingAction } from "../api/get-trending-movies.action";
+
 import type { TrendingCategory } from "@/interfaces/MovieCategory";
 import type { TimeWindow } from "@/interfaces/TimeWindow";
+import { getTrendingAction } from "@/movies/api/get-trending-movies.action";
 
 export const useTrending = (
   trendingCategory: TrendingCategory,

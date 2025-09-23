@@ -6,7 +6,7 @@ export interface NormalizedMovieDetailsData {
   overview: string;
   poster_path: string;
   backdrop_path: string;
-  release_date: Date;
+  release_date: Date | null;
   runtime: number;
   vote_average: number;
   vote_count: number;

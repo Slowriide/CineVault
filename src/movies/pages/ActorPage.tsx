@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 import { ExternalLink, MapPin } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getImageUrl } from "@/mocks/tmdb";
 import { MovieCard } from "../components/MovieCard";
 import { usePerson } from "../hooks/usePerson";
@@ -27,7 +27,7 @@ export default function ActorPage() {
 
   const { slug } = useParams();
 
-  const id = slug ? parseInt(slug.split("-").pop()!).toString() : null;
+  const id = slug ? slug?.split("-").pop() : null;
 
   const [isBiographyOpen, setIsBiographyOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(21);
@@ -35,22 +35,12 @@ export default function ActorPage() {
 
   const orderByParam = searchParams.get("orderBy") || "all";
 
-  const orderBy: "all" | "score" | "popular" =
-    orderByParam === "score"
-      ? "score"
-      : orderByParam === "popular"
-      ? "popular"
-      : "all";
+  const validOrders = ["all", "score", "popular"] as const;
 
-  if (!id) {
-    return (
-      <CustomError
-        title="Person Not Found"
-        message="No person ID provided"
-        action={{ to: "/", label: "Back to home" }}
-      />
-    );
-  }
+  const orderBy = validOrders.includes(orderByParam as any)
+    ? (orderByParam as (typeof validOrders)[number])
+    : "all";
+
   const {
     data: person,
     isLoading,
@@ -61,7 +51,27 @@ export default function ActorPage() {
     deathYear,
     filteredCredits,
     totalMovies,
-  } = usePerson(id, "movie_credits,tv_credits", visibleCount, orderBy);
+  } = usePerson(id ?? "1", "movie_credits,tv_credits", visibleCount, orderBy);
+
+  const topRatedDetails = useMemo(
+    () => getMovieDetails(topRatedMovie),
+    [topRatedMovie]
+  );
+
+  const worstRatedDetails = useMemo(
+    () => getMovieDetails(worstRatedMovie),
+    [worstRatedMovie]
+  );
+
+  if (!id) {
+    return (
+      <CustomError
+        title="Person Not Found"
+        message="No person ID provided"
+        action={{ to: "/", label: "Back to home" }}
+      />
+    );
+  }
 
   if (isLoading) {
     return <CustomLoading />;
@@ -77,8 +87,9 @@ export default function ActorPage() {
     );
   }
 
-  const topRatedDetails = getMovieDetails(topRatedMovie);
-  const worstRatedDetails = getMovieDetails(worstRatedMovie);
+  const hasLongBio = person.biography
+    ? person.biography.split(/\s+/).length > 200
+    : false;
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -94,6 +105,7 @@ export default function ActorPage() {
                     src={getImageUrl(person.profile_path, "w500")}
                     alt={person.name}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
               </div>
@@ -193,17 +205,16 @@ export default function ActorPage() {
                   </p>
 
                   {/* Botón */}
-                  {person.biography &&
-                    person.biography.split(" ").length > 150 && ( //si tiene mas de 50 palabras
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="px-0 text-primary hover:text-primary/80"
-                        onClick={() => setIsBiographyOpen(!isBiographyOpen)}
-                      >
-                        {isBiographyOpen ? "Ver menos" : "Ver más"}
-                      </Button>
-                    )}
+                  {hasLongBio && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="px-0 text-primary hover:text-primary/80"
+                      onClick={() => setIsBiographyOpen(!isBiographyOpen)}
+                    >
+                      {isBiographyOpen ? "Ver menos" : "Ver más"}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

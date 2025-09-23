@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
 import { HeroSection } from "../components/HeroSection";
-import { useMovies } from "../hooks/usePopularMovies";
-import { usePopularTvShows } from "../hooks/usePopularTvShows";
-import { useTrending } from "../hooks/useTrending";
 import type {
   MovieMovieDB,
   TvShowMovieDB,
@@ -18,58 +15,26 @@ import { useSearchParams } from "react-router";
 import { getTimeWindow } from "@/interfaces/TimeWindow";
 import { CustomLoading } from "@/components/custom/CustomLoading";
 import { SectionCarrusel } from "../components/SectionCarrusel";
+import { useHomeHooks } from "../hooks/home/useHomeHooks";
 
 export const HomePage = () => {
-  const [searchParams, setSearchParams] = useSearchParams() || "";
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const timeWindowM = getTimeWindow(searchParams.get("timeWindowMovie"));
   const timeWindowT = getTimeWindow(searchParams.get("timeWindowTV"));
 
   const {
-    data: popularData,
-    isLoading: loadingPopular,
-    error: errorPopular,
-  } = useMovies("popular");
-  const {
-    data: nowPlayingData,
-    isLoading: loadingNow,
-    error: errorNow,
-  } = useMovies("now_playing");
-  const {
-    data: topRatedData,
-    isLoading: loadingTop,
-    error: errorTop,
-  } = useMovies("top_rated");
-  const {
-    data: upcomingMoviesData,
-    isLoading: loadingUpcoming,
-    error: errorUpcoming,
-  } = useMovies("upcoming");
-  const {
-    data: popularTvShowsData,
-    isLoading: loadingPpopularTvShows,
-    error: errorPopularTvShows,
-  } = usePopularTvShows();
-  const {
-    data: trendingMoviesData,
-    isLoading: loadingTrendingMovies,
-    error: errorTrendingMovies,
-  } = useTrending("movie", timeWindowM);
-  const { data: featuredMovieData } = useTrending("movie", "week");
-  const {
-    data: trendingTVShowData,
-    isLoading: loadingTrendingTVShow,
-    error: errorTrendingTVShow,
-  } = useTrending("tv", timeWindowT);
-
-  const popularMovies = popularData?.results;
-  const nowPlayingMovies = nowPlayingData?.results;
-  const topRatedMovies = topRatedData?.results;
-  const upcomingMovies = upcomingMoviesData?.results;
-  const popularTVShows = popularTvShowsData?.results;
-  const trendingMovies = trendingMoviesData?.results;
-  const featuredMovies = featuredMovieData?.results;
-  const trendingTVShow = trendingTVShowData?.results;
+    popularMovies,
+    nowPlayingMovies,
+    topRatedMovies,
+    upcomingMovies,
+    popularTVShows,
+    trendingMovies,
+    trendingTVShows,
+    featuredMovies,
+    isLoading,
+    isError,
+  } = useHomeHooks();
 
   const [featuredMovie, setFeaturedMovie] = useState<
     MovieMovieDB | TvShowMovieDB
@@ -84,14 +49,7 @@ export const HomePage = () => {
     }
   }, [featuredMovies]);
 
-  if (
-    loadingPopular ||
-    loadingNow ||
-    loadingTop ||
-    loadingUpcoming ||
-    loadingPpopularTvShows ||
-    loadingTrendingTVShow
-  ) {
+  if (isLoading) {
     return <CustomLoading />;
   }
 
@@ -129,9 +87,9 @@ export const HomePage = () => {
           }
           items={trendingMovies ?? []}
           mediaType="movie"
-          loading={loadingTrendingMovies}
+          loading={isLoading}
           title={""}
-          error={errorTrendingMovies}
+          error={isError}
         />
 
         {/* Trending TV shows */}
@@ -160,26 +118,20 @@ export const HomePage = () => {
             </div>
           }
           title=""
-          items={trendingTVShow ?? []}
+          items={trendingTVShows ?? []}
           mediaType="tv"
-          loading={loadingTrendingTVShow}
-          error={errorTrendingTVShow}
         />
         {/* Popular Movies */}
         <SectionCarrusel
           title={"Popular Movies"}
           items={popularMovies ?? []}
-          loading={loadingPopular}
           mediaType={"movie"}
-          error={errorPopular}
         />
 
         <SectionCarrusel
           title={"Now Playing"}
           items={nowPlayingMovies ?? []}
-          loading={loadingNow}
           mediaType={"movie"}
-          error={errorNow}
         />
 
         {/* Popular TV Shows */}
@@ -187,8 +139,6 @@ export const HomePage = () => {
           title={"Top TV Shows"}
           items={popularTVShows ?? []}
           mediaType={"tv"}
-          loading={loadingPpopularTvShows}
-          error={errorPopularTvShows}
         />
 
         {/* Top Rated Movies */}
@@ -196,8 +146,6 @@ export const HomePage = () => {
           title={"Top Rated Movies"}
           items={topRatedMovies ?? []}
           mediaType={"movie"}
-          loading={loadingTop}
-          error={errorTop}
         />
 
         {/* Upcoming Movies */}
@@ -205,8 +153,6 @@ export const HomePage = () => {
           title={"Upcoming Movies"}
           items={upcomingMovies ?? []}
           mediaType={"movie"}
-          loading={loadingUpcoming}
-          error={errorUpcoming}
         />
       </div>
     </div>

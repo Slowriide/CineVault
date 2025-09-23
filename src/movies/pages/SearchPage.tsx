@@ -1,6 +1,4 @@
-import { Link, useSearchParams } from "react-router";
-import { Button } from "@/components/ui/button";
-import { Search as SearchIcon } from "lucide-react";
+import { useSearchParams } from "react-router";
 import { MovieCard } from "../components/MovieCard";
 import { CustomPagination } from "@/components/custom/CustomPagination";
 import { useMultipleSearchs } from "../hooks/useMultipleSearchs";
@@ -8,11 +6,15 @@ import { ActorCard } from "../components/ActorCard";
 import type { MediaType } from "@/interfaces/SearchResponse";
 import { FilterTabs } from "../components/FilterTabs";
 import { CustomError } from "@/components/custom/CustomError";
+import { useCallback, useMemo } from "react";
+import { SkeletonGrid } from "../components/SkeletonGrid";
+import { InitialState } from "../components/InitialState";
+import { EmptyState } from "../components/EmptyState";
 
 export const SearchPage = () => {
-  const [searcParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const query = searcParams.get("query") || "";
+  const query = searchParams.get("query") || "";
 
   const {
     data,
@@ -21,18 +23,25 @@ export const SearchPage = () => {
     isLoading,
   } = useMultipleSearchs(query);
 
-  const filter = searcParams.get("filter") || "all";
+  const filter = searchParams.get("filter") || "all";
 
-  const handleFilterChanged = (filter: MediaType | "all") => {
-    searcParams.set("filter", filter);
-    searcParams.set("page", "1");
-    setSearchParams(searcParams);
-  };
+  const handleFilterChanged = useCallback(
+    (filter: MediaType | "all") => {
+      searchParams.set("filter", filter);
+      searchParams.set("page", "1");
+      setSearchParams(searchParams);
+    },
+    [searchParams, setSearchParams]
+  );
 
-  const filteredResults = normalicedData.filter((result) => {
-    if (filter === "all") return result.media_type;
-    return result.media_type === filter;
-  });
+  const filteredResults = useMemo(
+    () =>
+      normalicedData.filter((result) => {
+        if (filter === "all") return result.media_type;
+        return result.media_type === filter;
+      }),
+    [filter, normalicedData]
+  );
 
   if (!data && error) {
     return <CustomError title={error?.name} message={error?.message} />;
@@ -70,17 +79,7 @@ export const SearchPage = () => {
         )}
 
         {/* Loading State */}
-        {isLoading && (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-4 mb-6">
-            {[...Array(20)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="aspect-[2/3] bg-muted rounded-lg mb-3" />
-                <div className="h-4 bg-muted rounded mb-2" />
-                <div className="h-3 w-16 bg-muted rounded" />
-              </div>
-            ))}
-          </div>
-        )}
+        {isLoading && <SkeletonGrid count={20} />}
 
         {/* Results Grid */}
         {!isLoading && filteredResults.length > 0 && (
@@ -89,6 +88,7 @@ export const SearchPage = () => {
               if (result.media_type === "person") {
                 return (
                   <ActorCard
+                    key={`person-${result.id}`}
                     adult={result.adult}
                     gender={result.gender}
                     id={result.id}
@@ -115,32 +115,12 @@ export const SearchPage = () => {
         )}
 
         {/* Empty State */}
-        {!isLoading && query && filteredResults.length === 0 && (
-          <div className="text-center py-12">
-            <SearchIcon className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No results found</h3>
-            <p className="text-muted-foreground mb-6">
-              Try adjusting your search terms or browse popular content instead.
-            </p>
-            <Button asChild variant="outline">
-              <Link to="/">Browse Popular Movies</Link>
-            </Button>
-          </div>
-        )}
+        {!isLoading && query && filteredResults.length === 0 && <EmptyState />}
 
         {/* Initial State */}
-        {!query && (
-          <div className="text-center py-12">
-            <SearchIcon className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
-            <h3 className="text-xl font-semibold mb-2">
-              Discover Movies & TV Shows
-            </h3>
-            <p className="text-muted-foreground">
-              Search for your favorite movies, TV shows, and actors.
-            </p>
-          </div>
-        )}
-        {query && !isLoading && (
+        {!query && <InitialState />}
+
+        {query && !isLoading && filteredResults.length > 0 && (
           <CustomPagination totalPages={data?.total_pages ?? 1} />
         )}
       </div>

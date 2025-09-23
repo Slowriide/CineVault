@@ -20,7 +20,7 @@ export const Carousel = ({
   items,
   header,
   mediaType,
-  loading = false,
+  loading,
 }: CarouselProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -96,7 +96,7 @@ export const Carousel = ({
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {items.map((item) => (
-          <div key={item.id} className="flex-shrink-0">
+          <div key={`${item.id}-${title}`} className="flex-shrink-0">
             <MovieCard item={item} mediaType={mediaType} size="md" />
           </div>
         ))}

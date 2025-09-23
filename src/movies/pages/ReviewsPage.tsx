@@ -4,36 +4,38 @@ import { getImageUrl } from "@/mocks/tmdb";
 import { Button } from "@/components/ui/button";
 import { NotepadText } from "lucide-react";
 import { useMovieDetails } from "../hooks/useMovieDetails";
-import { useParams, useSearchParams } from "react-router";
+import { Link, useParams, useSearchParams } from "react-router";
 import { useTVShowDetails } from "../hooks/useTVShowDetails";
 import { CustomPagination } from "@/components/custom/CustomPagination";
 import { Card } from "@/components/ui/card";
+import { slugify } from "@/utils/slugify";
 
 export const MovieReviews = () => {
-  const [searcParams] = useSearchParams();
-  const pageQuery = searcParams.get("page") || 1;
-  const page = +pageQuery;
+  const [searchParams] = useSearchParams();
+  const page = Number(searchParams.get("page")) || 1;
 
-  const { reviews, isError, data } = useReviews(page);
   const { slug, type } = useParams();
   const id = slug ? slug.split("-").pop()! : null;
+
+  const { reviews, isError, data } = useReviews(page);
 
   const { data: movie } =
     type === "movie" ? useMovieDetails(id!) : useTVShowDetails(id!);
 
   if (!reviews || isError || reviews.length === 0 || !movie) {
     return (
-      <div className="container mx-auto py-12 text-center bg-gradient-hero">
-        <NotepadText className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-        <h3 className="text-lg font-semibold mb-2">
-          There are no reviews for this movie yet
-        </h3>
-        <p className="text-muted-foreground mb-6">
-          Mark movies as watched to track your viewing history
-        </p>
-        <Button>
-          <a href="/">Be te first to add a review</a>
-        </Button>
+      <div className="min-h-screen bg-gradient-hero">
+        <div className="container mx-auto py-12 text-center ">
+          <NotepadText className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
+          <h3 className="text-lg font-semibold mb-2">
+            There are no reviews for this movie yet
+          </h3>
+          <Button>
+            <Link to={`/${type}/${slugify(movie!.title, +id!)}`}>
+              Be te first to add a review
+            </Link>
+          </Button>
+        </div>
       </div>
     );
   }
@@ -47,6 +49,8 @@ export const MovieReviews = () => {
         <p className="text-muted-foreground mb-4">
           {reviews.length} review{reviews.length === 1 ? "" : "s"}
         </p>
+
+        {/* Poster */}
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           <div className="md:col-span-1">
             <Card className="overflow-hidden bg-gradient-card border-border/50 shadow-elegant">
@@ -61,7 +65,7 @@ export const MovieReviews = () => {
           <div className=" gap-6 mb-6 col-span-2">
             {reviews.map((review) => (
               <Reviews
-                key={review.id}
+                key={`${review.id}-${review.author}`}
                 image={getImageUrl(review.author_details.avatar_path ?? "")}
                 name={review.author}
                 review={review.content}

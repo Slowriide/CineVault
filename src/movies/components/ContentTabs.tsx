@@ -35,7 +35,9 @@ export const ContentTabs: React.FC<ContentTabsProps> = ({
           {isErrorCredits ? (
             <p className="text-red-500">Error loading movies</p>
           ) : (
-            credits?.cast.map((actor) => <ActorCard {...actor} />)
+            credits?.cast.map((actor) => (
+              <ActorCard key={actor.id} {...actor} />
+            ))
           )}
         </div>
       </TabsContent>

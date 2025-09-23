@@ -50,6 +50,7 @@ export const PopularReviews = ({ movie }: Props) => {
 
       {reviews!.map((review) => (
         <Reviews
+          key={`${review.id}-${review.author}`}
           image={getImageUrl(review.author_details.avatar_path ?? "")}
           name={review.author}
           review={review.content}

@@ -32,9 +32,6 @@ export const useMultipleSearchs = (
       ).sort((a, b) => b.popularity - a.popularity)
     : [];
 
-  const a = result.data?.results.filter((m) => m.media_type === "movie");
-  console.log(a);
-
   return {
     ...result,
     normalizedData: normalizedResults,

@@ -44,8 +44,11 @@ export const CustomHeader = () => {
           className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
         >
           <Film className="h-6 w-6 text-primary" />
-          <span className="font-bold text-lg text-gradient-accent">
+          <span className="font-bold text-lg text-gradient-accent hidden md:flex ">
             CinemaVault
+          </span>
+          <span className="font-bold text-lg text-gradient-accent  md:hidden ">
+            CV
           </span>
         </Link>
 

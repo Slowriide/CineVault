@@ -19,7 +19,7 @@ import { useMyReviews } from "../hooks/reviews/useMyReviews";
 import { MyReviewItem } from "../components/MyReviewItem";
 import { useSearchParams } from "react-router";
 
-export default function ProfileDashboard() {
+export function ProfileDashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const tab = searchParams.get("tab") || "favorites";
@@ -272,3 +272,5 @@ export default function ProfileDashboard() {
     </div>
   );
 }
+
+export default ProfileDashboard;

@@ -17,6 +17,7 @@ export const usePerson = (
     queryKey: ["person", personId, append_to_response, language],
     queryFn: () => getPerson({ personId, append_to_response, language }),
     staleTime: 1000 * 60 * 5,
+    enabled: !!personId,
   });
 
   const personData = query.data;

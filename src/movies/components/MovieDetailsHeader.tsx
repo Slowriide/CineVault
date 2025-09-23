@@ -124,7 +124,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
 
           <div className="flex items-center space-x-1 text-muted-foreground">
             <Calendar className="w-4 h-4" />
-            <span>{data.release_date.toString()}</span>
+            <span>{data.release_date?.toString()}</span>
           </div>
 
           {data.runtime && (
@@ -139,7 +139,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
         {data.genres && data.genres.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
             {data.genres.map((genre) => (
-              <Badge key={genre.id} variant="secondary">
+              <Badge key={`${genre.id}-${genre.name}`} variant="secondary">
                 {genre.name}
               </Badge>
             ))}

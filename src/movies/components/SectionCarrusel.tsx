@@ -7,7 +7,7 @@ import { Carousel } from "./Carousel";
 type SectionProps = {
   title: string;
   items: (MovieMovieDB | TvShowMovieDB)[];
-  loading: boolean | undefined;
+  loading?: boolean | undefined;
   error?: unknown;
   mediaType: "movie" | "tv";
   header?: React.ReactNode;

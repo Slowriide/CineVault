@@ -18,16 +18,17 @@ export const useToggleFavorite = (userId?: string) => {
       }
 
       const title = "title" in item ? item.title : item.name;
+
       const releaseDate =
         "release_date" in item
           ? item.release_date
-          : item.first_air_date.toString();
+          : item.first_air_date?.toString();
       const year = releaseDate ? new Date(releaseDate).getFullYear() : "N/A";
 
       const { error } = await supabase.from("favorites").insert({
         user_id: userId,
         movie_id: String(item.id),
-        media_type: item?.media_type,
+        media_type: item.media_type,
         metadata: {
           title: title,
           poster_path: item.poster_path,

@@ -9,23 +9,23 @@ export interface MultiSearchResponse {
 
 export interface MultiSearchResult {
   adult: boolean;
-  backdrop_path?: null | string;
+  backdrop_path: null | string;
   id: number;
   name?: string;
   original_name?: string;
   overview?: string;
-  poster_path?: null | string;
+  poster_path: null | string;
   media_type: MediaType;
   original_language?: string;
   genre_ids?: number[];
   popularity: number;
-  first_air_date?: Date;
+  first_air_date?: string | null;
   vote_average?: number;
   vote_count?: number;
   origin_country?: string[];
   title?: string;
   original_title?: string;
-  release_date?: string;
+  release_date?: string | null;
   video?: boolean;
   gender?: number;
   known_for_department?: string;
@@ -45,7 +45,7 @@ export interface KnownFor {
   original_language: string;
   genre_ids: number[];
   popularity: number;
-  release_date: Date;
+  release_date: string | null;
   video: boolean;
   vote_average: number;
   vote_count: number;
@@ -66,6 +66,6 @@ export interface MultiPersonSearch {
 export type MediaType = "movie" | "person" | "tv";
 
 export type NormalizedSearchResult =
-  | MovieMovieDB
-  | TvShowMovieDB
-  | MultiPersonSearch;
+  | (MovieMovieDB & { media_type: "movie" })
+  | (TvShowMovieDB & { media_type: "tv" })
+  | (MultiPersonSearch & { media_type: "person" });

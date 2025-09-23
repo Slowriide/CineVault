@@ -1,5 +1,5 @@
+import { getPopularTvShowsAction } from "@/movies/api/get-popular-tvshow.action";
 import { useQuery } from "@tanstack/react-query";
-import { getPopularTvShowsAction } from "../api/get-popular-tvshow.action";
 
 export const usePopularTvShows = (
   page: number = 1,

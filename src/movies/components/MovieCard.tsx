@@ -13,6 +13,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useToggleFavorite } from "../hooks/favorites/useToggleFavorite";
 import { toast } from "sonner";
 import { getYearFromReleaseDate } from "@/utils/getYear";
+import { memo, useCallback, useMemo } from "react";
 
 interface MovieCardProps {
   item: MovieMovieDB | TvShowMovieDB;
@@ -20,130 +21,141 @@ interface MovieCardProps {
   size?: "sm" | "md" | "lg" | "xl";
   showFavorite?: boolean;
 }
-//TODO AÑOS
-export const MovieCard = ({
-  item,
-  mediaType,
-  size = "md",
-  showFavorite = true,
-}: MovieCardProps) => {
-  const { session } = useAuth();
-  const userId = session?.user.id;
-  const { addFavorite, removeFavorite, favoriteIds } =
-    useToggleFavorite(userId);
+const sizeClasses = {
+  sm: "w-32",
+  md: "w-40",
+  lg: "w-48",
+  xl: "w-full",
+};
 
-  const isFav = favoriteIds.has(String(item.id));
+const imageSize = {
+  sm: "w342",
+  md: "w500",
+  lg: "w780",
+  xl: "w780",
+};
 
-  const title = "title" in item ? item.title : item.name;
+export const MovieCard = memo(
+  ({ item, mediaType, size = "md", showFavorite = true }: MovieCardProps) => {
+    const { session } = useAuth();
+    const userId = session?.user.id;
+    const { addFavorite, removeFavorite, favoriteIds } =
+      useToggleFavorite(userId);
 
-  const releaseDate =
-    "release_date" in item ? item.release_date : item.first_air_date;
+    const isFav = favoriteIds.has(String(item.id));
 
-  const year = getYearFromReleaseDate(releaseDate);
+    const title = useMemo(
+      () => ("title" in item ? item.title : item.name),
+      [item]
+    );
+    const releaseDate = useMemo(
+      () => ("release_date" in item ? item.release_date : item.first_air_date),
+      [item]
+    );
+    const year = useMemo(
+      () => getYearFromReleaseDate(releaseDate),
+      [releaseDate]
+    );
+    const rating = useMemo(() => item.vote_average, [item.vote_average]);
 
-  const rating = item.vote_average;
+    const linkTo =
+      mediaType === "movie"
+        ? `/movie/${slugify(title, item.id)}`
+        : `/tv/${slugify(title, item.id)}`;
 
-  const sizeClasses = {
-    sm: "w-32",
-    md: "w-40",
-    lg: "w-48",
-    xl: "w-full",
-  };
+    const handleFavoriteClick = useCallback(
+      async (e: React.MouseEvent) => {
+        e.preventDefault();
 
-  const imageSize = {
-    sm: "w342",
-    md: "w500",
-    lg: "w780",
-    xl: "w780",
-  };
+        if (!userId) {
+          toast.error("you must be logged in to add favorites");
+          return;
+        }
+        if (isFav) {
+          await removeFavorite.mutateAsync(String(item.id));
+          toast.success("removed from favorites");
+        } else {
+          await addFavorite.mutateAsync(
+            mediaType === "movie"
+              ? ({ ...item, media_type: "movie" } as MovieMovieDB)
+              : ({ ...item, media_type: "tv" } as TvShowMovieDB)
+          );
+        }
+      },
+      [userId, isFav, removeFavorite, addFavorite, item]
+    );
 
-  const linkTo =
-    mediaType === "movie"
-      ? `/movie/${slugify(title, item.id)}`
-      : `/tv/${slugify(title, item.id)}`;
-
-  const handleFavoriteClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!userId) {
-      toast.error("you must be logged in to add favorites");
-      return;
-    }
-
-    if (isFav) {
-      await removeFavorite.mutateAsync(String(item.id));
-      toast.success("removed from favorites");
-    } else {
-      await addFavorite.mutateAsync(item);
-    }
-  };
-
-  return (
-    <Card className="group relative overflow-hidden bg-gradient-card border-border/50 hover:border-primary/30 transition-all duration-300 shadow-none hover:shadow-glow hover:-translate-y-1 mt-1">
-      <div className={`${sizeClasses[size]} relative`}>
-        <Link to={linkTo}>
-          <div className="aspect-[2/3] relative overflow-hidden rounded-t-lg">
-            <img
-              src={getImageUrl(item.poster_path, imageSize[size])}
-              alt={title}
-              className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-            {/* Rating Badge */}
-            {rating > 0 && (
-              <Badge className="absolute top-2 left-2 bg-background/90 text-primary border-primary/20">
-                <Star className="w-3 h-3 mr-1 fill-primary text-primary" />
-                {rating.toFixed(1)}
-              </Badge>
-            )}
-
-            {/* Favorite Button */}
-            {showFavorite && (
-              <Button
-                size="sm"
-                variant="ghost"
-                className="absolute top-2 right-2 h-8 w-8 p-0 bg-background/20 hover:bg-background/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                onClick={handleFavoriteClick}
-              >
-                <Heart
-                  className={`w-4 h-4 ${
-                    isFav ? "fill-red-500 text-red-500" : "text-white"
-                  }`}
-                />
-              </Button>
-            )}
-          </div>
-        </Link>
-
-        {/* Card Content */}
-        <div className="p-3 space-y-2">
+    return (
+      <Card className="group relative overflow-hidden bg-gradient-card border-border/50 hover:border-primary/30 transition-all duration-300 shadow-none hover:shadow-glow hover:-translate-y-1 mt-1">
+        <div className={`${sizeClasses[size]} relative`}>
           <Link to={linkTo}>
-            <h3 className="font-medium text-sm leading-tight line-clamp-1 min- group-hover:text-primary transition-colors duration-200">
-              {title}
-            </h3>
+            <div className="aspect-[2/3] relative overflow-hidden rounded-t-lg">
+              <img
+                src={getImageUrl(item.poster_path, imageSize[size])}
+                alt={title}
+                className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              {/* Rating Badge */}
+              {rating > 0 && (
+                <Badge className="absolute top-2 left-2 bg-background/90 text-primary border-primary/20">
+                  <Star className="w-3 h-3 mr-1 fill-primary text-primary" />
+                  {rating.toFixed(1)}
+                </Badge>
+              )}
+
+              {/* Favorite Button */}
+              {showFavorite && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="absolute top-2 right-2 h-8 w-8 p-0 bg-background/20 hover:bg-background/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  onClick={handleFavoriteClick}
+                  aria-label={
+                    isFav ? "Remove from favorites" : "Add to favorites"
+                  }
+                >
+                  <Heart
+                    className={`w-4 h-4 ${
+                      isFav ? "fill-red-500 text-red-500" : "text-white"
+                    }`}
+                  />
+                </Button>
+              )}
+            </div>
           </Link>
 
-          <div className="flex items-center text-xs text-muted-foreground space-x-2">
-            <Calendar className="w-3 h-3" />
-            <span>{year ?? ""}</span>
-            {mediaType && (
-              <>
-                <span>•</span>
-                <Badge variant="outline" className="text-xs py-0 px-1 h-5">
-                  {mediaType === "movie" ? "Movie" : "TV"}
-                </Badge>
-              </>
+          {/* Card Content */}
+          <div className="p-3 space-y-2">
+            <Link to={linkTo}>
+              <h3 className="font-medium text-sm leading-tight line-clamp-1 min- group-hover:text-primary transition-colors duration-200">
+                {title}
+              </h3>
+            </Link>
+
+            <div className="flex items-center text-xs text-muted-foreground space-x-2">
+              <Calendar className="w-3 h-3" />
+              <span>{year ?? ""}</span>
+              {mediaType && (
+                <>
+                  <span>•</span>
+                  <Badge variant="outline" className="text-xs py-0 px-1 h-5">
+                    {mediaType === "movie" ? "Movie" : "TV"}
+                  </Badge>
+                </>
+              )}
+            </div>
+
+            {item.overview && size !== "sm" && (
+              <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                {item.overview}
+              </p>
             )}
           </div>
-
-          {item.overview && size !== "sm" && (
-            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-              {item.overview}
-            </p>
-          )}
         </div>
-      </div>
-    </Card>
-  );
-};
+      </Card>
+    );
+  }
+);

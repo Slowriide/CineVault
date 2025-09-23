@@ -75,7 +75,7 @@ export const HeroSection = ({ featuredMovie }: HeroSectionProps) => {
           {/* Movie Poster Thumbnail */}
           <div className="flex items-start space-x-6">
             <img
-              src={getBackdropUrl(featuredMovie.backdrop_path, "original")}
+              src={getBackdropUrl(featuredMovie.poster_path, "original")}
               alt={title}
               className="w-24 h-36 object-cover rounded-lg shadow-elegant"
             />
