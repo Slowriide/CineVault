@@ -18,13 +18,14 @@ export const MovieStat = ({
   details,
   emptyMessage,
 }: MovieStatProps) => {
+  const rating = movie?.vote_average.toFixed(1);
   return (
     <div className="flex flex-wrap items-center space-x-2 mb-6">
       <span className="font-bold text-lg">{label}</span>
       {movie && details ? (
         <div className="flex items-center space-x-1 text-primary">
           <Star className="w-5 h-5 fill-current" />
-          <span>{movie.vote_average.toFixed(1)}</span>
+          <span>{rating}</span>
           <Link to={details.link}>
             <span className="text-blue-400">
               {details.title} ({details.year})

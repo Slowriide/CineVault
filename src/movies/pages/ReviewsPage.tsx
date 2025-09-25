@@ -1,5 +1,5 @@
 import { useReviews } from "../hooks/useReviews";
-import { Reviews } from "../components/Review";
+import { Reviews } from "../components/Reviews";
 import { getImageUrl } from "@/mocks/tmdb";
 import { Button } from "@/components/ui/button";
 import { NotepadText } from "lucide-react";

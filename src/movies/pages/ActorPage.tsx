@@ -12,7 +12,7 @@ import { usePerson } from "../hooks/usePerson";
 import { getMovieDetails } from "@/utils/personUtils";
 import { CustomLoading } from "@/components/custom/CustomLoading";
 import { CustomError } from "@/components/custom/CustomError";
-import { MovieStat } from "../components/MovieStat";
+import { MovieStat } from "../components/actor/MovieStat";
 import { PersonDates } from "../components/PersonDates";
 import {
   Select,

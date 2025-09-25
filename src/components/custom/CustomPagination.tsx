@@ -41,14 +41,14 @@ export const CustomPagination = ({ totalPages }: Props) => {
         Anterior
       </Button>
 
-      {pages.map((_, index) => (
+      {pages.map((p) => (
         <Button
-          key={index}
-          variant={page === index + 1 ? "default" : "outline"}
+          key={p}
+          variant={page === p ? "default" : "outline"}
           size="sm"
-          onClick={() => handlePageChange(index + 1)}
+          onClick={() => handlePageChange(p)}
         >
-          {index + 1}
+          {p}
         </Button>
       ))}
 

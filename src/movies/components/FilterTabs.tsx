@@ -5,6 +5,7 @@ import type {
   MultiSearchResponse,
   NormalizedSearchResult,
 } from "@/interfaces/SearchResponse";
+import { useMemo } from "react";
 
 interface FilterTabsProps {
   filter: string;
@@ -12,68 +13,52 @@ interface FilterTabsProps {
   data: MultiSearchResponse;
   handleFilterChanged: (newFilter: MediaType | "all") => void;
 }
+const tabDefinitions: { label: string; value: MediaType | "all" }[] = [
+  { label: "All", value: "all" },
+  { label: "Movies", value: "movie" },
+  { label: "TV Shows", value: "tv" },
+  { label: "Persons", value: "person" },
+];
 
 export const FilterTabs = ({
   filter,
   normalicedData,
   handleFilterChanged,
 }: FilterTabsProps) => {
+  const counts = useMemo(() => {
+    const result: Record<string, number> = {}; //object with filter types keys
+
+    tabDefinitions.forEach(({ value }) => {
+      if (value === "all") {
+        result[value] = normalicedData.length;
+      } else {
+        result[value] = normalicedData.filter(
+          (r) => r.media_type === value
+        ).length;
+      }
+    });
+    return result;
+  }, [normalicedData]);
+
   return (
     <div className="flex justify-center mb-8">
       <div className="flex space-x-1 bg-muted/50 rounded-lg p-1">
-        <Button
-          variant={filter === "all" ? "default" : "ghost"}
-          size="sm"
-          onClick={() => handleFilterChanged("all")}
-          className={
-            filter === "all" ? "bg-primary text-primary-foreground" : ""
-          }
-        >
-          All
-          <Badge variant="secondary" className="ml-2 text-xs">
-            {normalicedData.filter((r) => r.media_type).length}
-          </Badge>
-        </Button>
-
-        <Button
-          variant={filter === "movie" ? "default" : "ghost"}
-          size="sm"
-          onClick={() => handleFilterChanged("movie")}
-          className={
-            filter === "movie" ? "bg-primary text-primary-foreground" : ""
-          }
-        >
-          Movies
-          <Badge variant="secondary" className="ml-2 text-xs">
-            {normalicedData.filter((r) => r.media_type === "movie").length}
-          </Badge>
-        </Button>
-        <Button
-          variant={filter === "tv" ? "default" : "ghost"}
-          size="sm"
-          onClick={() => handleFilterChanged("tv")}
-          className={
-            filter === "tv" ? "bg-primary text-primary-foreground" : ""
-          }
-        >
-          TV Shows
-          <Badge variant="secondary" className="ml-2 text-xs">
-            {normalicedData.filter((r) => r.media_type === "tv").length}
-          </Badge>
-        </Button>
-        <Button
-          variant={filter === "person" ? "default" : "ghost"}
-          size="sm"
-          onClick={() => handleFilterChanged("person")}
-          className={
-            filter === "person" ? "bg-primary text-primary-foreground" : ""
-          }
-        >
-          Persons
-          <Badge variant="secondary" className="ml-2 text-xs">
-            {normalicedData.filter((r) => r.media_type === "person").length}
-          </Badge>
-        </Button>
+        {tabDefinitions.map(({ label, value }) => (
+          <Button
+            key={value}
+            variant={filter === value ? "default" : "ghost"}
+            size="sm"
+            onClick={() => handleFilterChanged(value)}
+            className={
+              filter === value ? "bg-primary text-primary-foreground" : ""
+            }
+          >
+            {label}
+            <Badge variant="secondary" className="ml-2 text-xs">
+              {counts[value]}
+            </Badge>
+          </Button>
+        ))}
       </div>
     </div>
   );

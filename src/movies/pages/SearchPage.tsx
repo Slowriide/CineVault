@@ -7,7 +7,7 @@ import type { MediaType } from "@/interfaces/SearchResponse";
 import { FilterTabs } from "../components/FilterTabs";
 import { CustomError } from "@/components/custom/CustomError";
 import { useCallback, useMemo } from "react";
-import { SkeletonGrid } from "../components/SkeletonGrid";
+import { SkeletonGrid } from "../components/skeletons/SkeletonGrid";
 import { InitialState } from "../components/InitialState";
 import { EmptyState } from "../components/EmptyState";
 

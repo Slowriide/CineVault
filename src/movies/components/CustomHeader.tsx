@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
-import { Button } from "@/components/ui/button";
-
 import { Film, Home, Popcorn, LogInIcon, LogOutIcon, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { SearchBar } from "./SearchBar";
+import { NavButton } from "./NavButton";
 
 export const CustomHeader = () => {
   const { session, signOut } = useAuth();
@@ -16,8 +15,6 @@ export const CustomHeader = () => {
   const handleLogout = async () => {
     await signOut();
   };
-
-  //! TODO:  mirar cosas
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -58,77 +55,42 @@ export const CustomHeader = () => {
 
         {/* Navigation Links */}
         <nav className="flex items-center space-x-2">
-          <Button
-            asChild
-            variant={isActive("/") ? "default" : "ghost"}
-            size="sm"
-            className={
-              isActive("/") ? "bg-primary text-primary-foreground" : ""
-            }
-          >
-            <Link to="/">
-              <Home className="h-4 w-4 mr-2" />
-              <span className="hidden md:flex">Home</span>
-            </Link>
-          </Button>
+          <NavButton
+            to={"/"}
+            icon={<Home className="h-4 w-4 mr-2" />}
+            label={"Home"}
+            isActive={isActive("/")}
+          />
 
-          <Button
-            asChild
-            variant={isActive("/discover") ? "default" : "ghost"}
-            size="sm"
-            className={
-              isActive("/discover") ? "bg-primary text-primary-foreground" : ""
-            }
-          >
-            <Link to="/discover">
-              <Popcorn className="h-4 w-4 mr-2" />
-              <span className="hidden md:flex">Discover</span>
-            </Link>
-          </Button>
+          <NavButton
+            to={"/discover"}
+            icon={<Popcorn className="h-4 w-4 mr-2" />}
+            label={"Discover"}
+            isActive={isActive("/discover")}
+          />
 
-          <Button
-            asChild
-            variant={isActive("/profile") ? "default" : "ghost"}
-            size="sm"
-            className={
-              isActive("/profile") ? "bg-primary text-primary-foreground " : ""
-            }
-          >
-            <Link to="/profile">
-              <User className="h-4 w-4 mr-2 " />
-              <span className="hidden md:flex">Profile</span>
-            </Link>
-          </Button>
+          <NavButton
+            to={"/profile"}
+            icon={<User className="h-4 w-4 mr-2" />}
+            label={"Profile"}
+            isActive={isActive("/profile")}
+          />
 
           {session ? (
-            <Button
-              asChild
-              variant={isActive("/auth") ? "default" : "ghost"}
-              size="sm"
-              className={
-                isActive("/auth") ? "bg-primary text-primary-foreground " : ""
-              }
+            <NavButton
+              to={"/auth"}
+              icon={<LogOutIcon className="h-4 w-4 mr-2" />}
+              label={"Log Out"}
+              isActive={isActive("/auth")}
               onClick={handleLogout}
-            >
-              <Link to="/auth">
-                <LogOutIcon className="h-4 w-4 mr-2" />
-                <span className="hidden md:flex">Log out</span>
-              </Link>
-            </Button>
+            />
           ) : (
-            <Button
-              asChild
-              variant={isActive("/auth") ? "default" : "ghost"}
-              size="sm"
-              className={
-                isActive("/auth") ? "bg-primary text-primary-foreground" : ""
-              }
-            >
-              <Link to="/auth">
-                <LogInIcon className="h-4 w-4 mr-2" />
-                Log In
-              </Link>
-            </Button>
+            <NavButton
+              to={"/auth"}
+              icon={<LogInIcon className="h-4 w-4 mr-2" />}
+              label={"Log In"}
+              isActive={isActive("/auth")}
+            />
           )}
         </nav>
       </div>

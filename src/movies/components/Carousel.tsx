@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { MovieCard } from "./MovieCard";
@@ -6,6 +6,7 @@ import type {
   MovieMovieDB,
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
+import { SkeletonCarrusel } from "./skeletons/skeletonCarrusel";
 
 interface CarouselProps {
   title: string;
@@ -24,7 +25,7 @@ export const Carousel = ({
 }: CarouselProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const scroll = (direction: "left" | "right") => {
+  const scroll = useCallback((direction: "left" | "right") => {
     if (scrollRef.current) {
       const scrollAmount = 320; // Width of card plus gap
       const newScrollPosition =
@@ -37,25 +38,10 @@ export const Carousel = ({
         behavior: "smooth",
       });
     }
-  };
+  }, []);
 
   if (loading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="h-7 w-32 bg-muted animate-pulse rounded" />
-        </div>
-        <div className="flex space-x-4 overflow-hidden">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="w-40 flex-shrink-0">
-              <div className="aspect-[2/3] bg-muted animate-pulse rounded-lg mb-3" />
-              <div className="h-4 bg-muted animate-pulse rounded mb-2" />
-              <div className="h-3 w-16 bg-muted animate-pulse rounded" />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    <SkeletonCarrusel elements={9} />;
   }
 
   if (!items?.length) {
@@ -75,6 +61,7 @@ export const Carousel = ({
             variant="ghost"
             size="sm"
             onClick={() => scroll("left")}
+            aria-label="Scroll left"
             className="h-8 w-8 p-0 hover:bg-primary/10"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -82,6 +69,7 @@ export const Carousel = ({
           <Button
             variant="ghost"
             size="sm"
+            aria-label="Scroll right"
             onClick={() => scroll("right")}
             className="h-8 w-8 p-0 hover:bg-primary/10"
           >

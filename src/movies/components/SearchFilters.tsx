@@ -1,4 +1,4 @@
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +31,9 @@ import { deslugify } from "../../utils/deslugify";
 
 export const SearchFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+
   const [open, setOpen] = useState(false);
+  const [year, setYear] = useState(searchParams.get("year") ?? "");
 
   const { data: genres, isLoading } = useGenres("movie");
   const castParam = searchParams.get("cast") ?? "";
@@ -43,40 +45,10 @@ export const SearchFilters = () => {
     isLoading: loadingSearchPersons,
   } = useSearchPerson();
 
-  const handleLanguageChange = (language: string) => {
-    searchParams.set("language", language);
+  const handleParamChange = (key: string, value: string) => {
+    if (value) searchParams.set(key, value);
+    else searchParams.delete(key);
     setSearchParams(searchParams);
-  };
-  const handleSortChange = (sort: string) => {
-    searchParams.set("sort", sort);
-    setSearchParams(searchParams);
-  };
-
-  const handleGenresChange = (genre: string) => {
-    searchParams.set("genre", genre);
-    setSearchParams(searchParams);
-  };
-
-  const handleTypeChange = (type: string) => {
-    searchParams.set("type", type);
-    setSearchParams(searchParams);
-  };
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleYearSearch = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== "Enter") return;
-    const query = inputRef.current?.value;
-
-    const newSearchParams = new URLSearchParams(searchParams);
-
-    if (!query) {
-      newSearchParams.delete("year");
-    } else {
-      newSearchParams.set("year", inputRef.current!.value);
-    }
-
-    setSearchParams(newSearchParams);
   };
 
   const handleCastSearch = (actor: PersonSearch) => {
@@ -88,32 +60,11 @@ export const SearchFilters = () => {
   };
 
   const handleClearAllFilters = () => {
-    searchParams.delete("language");
-    searchParams.delete("sort");
-    searchParams.delete("genre");
-    searchParams.delete("type");
-    searchParams.delete("year");
-    searchParams.delete("cast");
+    ["language", "sort", "genre", "type", "year", "cast", "title"].forEach(
+      (key) => searchParams.delete(key)
+    );
     setSearchParams(searchParams);
   };
-
-  if (isLoading) {
-    return <CustomLoading />;
-  }
-  // const handleMovieSearch = (event: KeyboardEvent<HTMLInputElement>) => {
-  //   if (event.key !== "Enter") return;
-  //   const query = inputRef.current?.value;
-
-  //   const newSearchParams = new URLSearchParams(searchParams);
-
-  //   if (!query) {
-  //     newSearchParams.delete("query");
-  //   } else {
-  //     newSearchParams.set("query", inputRef.current!.value);
-  //   }
-
-  //   setSearchParams(newSearchParams);
-  // };
 
   if (isLoading) {
     return <CustomLoading />;
@@ -127,7 +78,7 @@ export const SearchFilters = () => {
           <div className="space-y-2">
             <Label htmlFor="genre">Genre</Label>
             <Select
-              onValueChange={handleGenresChange}
+              onValueChange={(value) => handleParamChange("genre", value)}
               value={searchParams.get("genre") ?? "all-genres"}
             >
               <SelectTrigger id="genre" className="w-[140px]">
@@ -155,11 +106,13 @@ export const SearchFilters = () => {
               type="number"
               placeholder="Any"
               className="w-[100px]"
-              defaultValue={searchParams.get("year") ?? ""}
-              ref={inputRef}
-              onKeyDown={handleYearSearch}
-              min="1900"
+              value={year}
+              min={1900}
               max={new Date().getFullYear()}
+              onChange={(e) => setYear(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && handleParamChange("year", year)
+              }
             />
           </div>
 
@@ -167,7 +120,7 @@ export const SearchFilters = () => {
           <div className="space-y-2">
             <Label htmlFor="language">Language</Label>
             <Select
-              onValueChange={handleLanguageChange}
+              onValueChange={(value) => handleParamChange("language", value)}
               value={searchParams.get("language") ?? "all"}
             >
               <SelectTrigger id="language" className="w-[120px]">
@@ -188,7 +141,7 @@ export const SearchFilters = () => {
           <div className="space-y-2">
             <Label htmlFor="sort">Sort by</Label>
             <Select
-              onValueChange={handleSortChange}
+              onValueChange={(value) => handleParamChange("sort", value)}
               value={searchParams.get("sort") ?? ""}
             >
               <SelectTrigger id="sort" className="w-[150px]">
@@ -208,7 +161,7 @@ export const SearchFilters = () => {
           <div className="space-y-2">
             <Label htmlFor="type">Type</Label>
             <Select
-              onValueChange={handleTypeChange}
+              onValueChange={(value) => handleParamChange("type", value)}
               value={searchParams.get("type") ?? ""}
             >
               <SelectTrigger id="type" className="w-[150px]">
@@ -256,13 +209,11 @@ export const SearchFilters = () => {
                     onValueChange={setQuery}
                   />
 
-                  {loadingSearchPersons ? (
-                    <CommandEmpty className="flex justify-center text-center my-6 text-sm">
-                      Searching persons
-                    </CommandEmpty>
-                  ) : (
-                    <CommandEmpty>No actor found.</CommandEmpty>
-                  )}
+                  <CommandEmpty className="flex justify-center text-center my-6 text-sm">
+                    {loadingSearchPersons
+                      ? "Searching persons"
+                      : "No actor found."}
+                  </CommandEmpty>
                   <CommandGroup>
                     {searchPersonResults.map((actor) => (
                       <CommandItem
@@ -288,19 +239,6 @@ export const SearchFilters = () => {
                 </Command>
               </PopoverContent>
             </Popover>
-          </div>
-
-          {/* Title Filter */}
-          <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              type="text"
-              placeholder="Movie / TV Show"
-              className="w-[200px]"
-              defaultValue={""}
-              onChange={() => {}}
-            />
           </div>
 
           {/* Clear Filters */}

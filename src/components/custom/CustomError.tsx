@@ -9,7 +9,7 @@ interface ErrorProps {
 
 export const CustomError = ({ action, message, title }: ErrorProps) => {
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center justify-items-center">
       <div className="text-center space-y-4">
         <h1 className="text-2xl font-bold text-foreground">{title}</h1>
         <p className="text-muted-foreground">{message}</p>

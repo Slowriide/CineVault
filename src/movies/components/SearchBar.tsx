@@ -5,10 +5,10 @@ import { Link, useNavigate } from "react-router";
 import { useMultipleSearchs } from "../hooks/useMultipleSearchs";
 import { Card } from "@/components/ui/card";
 import { getImageUrl } from "@/mocks/tmdb";
+import { useDebounce } from "../hooks/useDebounce";
 
 export const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedTerm, setDebouncedTerm] = useState("");
   const [open, setOpen] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -16,16 +16,12 @@ export const SearchBar = () => {
 
   const navigate = useNavigate();
 
+  const debouncedTerm = useDebounce(searchTerm, 500);
   const { normalizedData, isLoading } = useMultipleSearchs(debouncedTerm);
   const suggestions = normalizedData.slice(0, 5);
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedTerm(searchTerm);
-      setOpen(!!searchTerm);
-    }, 500); // .5 segs
-
-    return () => clearTimeout(handler);
+    setOpen(!!searchTerm);
   }, [searchTerm]);
 
   // Click afuera para cerrar
@@ -53,11 +49,7 @@ export const SearchBar = () => {
   };
 
   const clearInput = () => {
-    if (inputRef.current) {
-      inputRef.current.value = "";
-    }
     setSearchTerm("");
-    setDebouncedTerm("");
     setOpen(false);
     inputRef.current?.focus();
   };
@@ -65,17 +57,15 @@ export const SearchBar = () => {
   return (
     <div ref={containerRef} className="relative w-full max-w-xl mx-auto">
       <form onSubmit={handleSubmit}>
-        <div className="relative w-full max-w-xl mx-auto">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground " />
-          <Input
-            ref={inputRef}
-            placeholder="Search movies, TV shows, actors..."
-            className="pl-10 bg-muted/50 border-border/50 focus:border-primary/50 "
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => debouncedTerm && setOpen(true)}
-          />
-        </div>
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground " />
+        <Input
+          ref={inputRef}
+          placeholder="Search movies, TV shows, actors..."
+          className="pl-10 bg-muted/50 border-border/50 focus:border-primary/50 "
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onFocus={() => debouncedTerm && setOpen(true)}
+        />
 
         {open && debouncedTerm.length > 0 && (
           <div className="absolute mt-2 w-full bg-background border border-border rounded-lg shadow-lg z-50">
@@ -88,7 +78,7 @@ export const SearchBar = () => {
                 if (item.media_type === "person") {
                   return (
                     <Link
-                      key={`${item.media_type}-s${item.id}`}
+                      key={`${item.media_type}-${item.id}`}
                       to={`/${item.media_type}/${item.id}`}
                       onClick={clearInput}
                       className="flex items-center gap-3 p-2 hover:bg-muted transition-colors"

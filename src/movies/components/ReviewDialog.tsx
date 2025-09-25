@@ -12,7 +12,7 @@ import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDet
 import { getImageUrl } from "@/mocks/tmdb";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { StarRating } from "./StarRating";
+import { StarRating } from "./movie/StarRating";
 import { useReviewsActions } from "../hooks/reviews/useReviewsActions";
 import { useAuth } from "@/context/AuthContext";
 import { useParams } from "react-router";

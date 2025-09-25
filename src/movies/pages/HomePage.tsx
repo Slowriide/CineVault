@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { HeroSection } from "../components/HeroSection";
+import { HeroSection } from "../components/home/HeroSection";
 import type {
   MovieMovieDB,
   TvShowMovieDB,

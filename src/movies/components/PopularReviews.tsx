@@ -1,10 +1,11 @@
 import { Separator } from "@/components/ui/separator";
-import { Reviews } from "./Review";
+import { Reviews } from "./Reviews";
 import { useReviews } from "../hooks/useReviews";
 import { getImageUrl } from "@/mocks/tmdb";
 import { Link, useParams } from "react-router";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 import { ReviewDialog } from "./ReviewDialog";
+import { useMemo } from "react";
 
 interface Props {
   movie: NormalizedMovieDetailsData;
@@ -14,9 +15,11 @@ export const PopularReviews = ({ movie }: Props) => {
   const { popularReviews: reviews, reviews: allReviews } = useReviews();
   const { slug, type } = useParams();
 
-  const id = slug ? parseInt(slug.split("-").pop()!) : null;
+  const id = useMemo(() => {
+    return slug ? parseInt(slug.split("-").pop()!) : null;
+  }, [slug]);
 
-  const areReviews = reviews && reviews.length > 0;
+  const areReviews = useMemo(() => reviews && reviews.length > 0, [reviews]);
 
   return (
     <div className="space-x-1 pt-10 lg:pt-16 ">
@@ -48,7 +51,7 @@ export const PopularReviews = ({ movie }: Props) => {
 
       {/* Reviews */}
 
-      {reviews!.map((review) => (
+      {reviews.map((review) => (
         <Reviews
           key={`${review.id}-${review.author}`}
           image={getImageUrl(review.author_details.avatar_path ?? "")}

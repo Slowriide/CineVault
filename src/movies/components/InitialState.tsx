@@ -1,6 +1,7 @@
 import { SearchIcon } from "lucide-react";
+import { memo } from "react";
 
-export const InitialState = () => {
+export const InitialState = memo(() => {
   return (
     <div className="text-center py-12">
       <SearchIcon className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
@@ -10,4 +11,4 @@ export const InitialState = () => {
       </p>
     </div>
   );
-};
+});

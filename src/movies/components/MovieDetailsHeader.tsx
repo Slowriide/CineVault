@@ -18,6 +18,8 @@ import { mapMovieDetailsToMovieDB } from "@/utils/NormalizedToMovieMapper";
 import { useParams } from "react-router";
 import { useToggleWatched } from "../hooks/watched/useToggleWatched";
 import { useToggleWatclist } from "../hooks/watchlist/useToggleWatchlist";
+import { ToggleButton } from "./movie/ToggleButton";
+import { CustomError } from "@/components/custom/CustomError";
 
 interface MovieDetailsProps {
   data: NormalizedMovieDetailsData;
@@ -37,7 +39,9 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
     useToggleWatclist(userId);
 
   if (!type) {
-    return;
+    return (
+      <CustomError title={"No movie info"} message={"Error loading info"} />
+    );
   }
 
   const isFav = favoriteIds.has(String(data.id));
@@ -152,36 +156,43 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-4">
-          <Button
+          <ToggleButton
+            isActive={isFav}
+            icon={
+              <Heart
+                className={`w-4 h-4 mr-2 ${isFav ? "fill-current" : ""}`}
+              />
+            }
+            labelOn={"Remove from Favorites"}
+            labelOff={"Add to Favorites"}
             onClick={handleFavoriteClick}
-            variant={isFav ? "default" : "outline"}
-            className={isFav ? "bg-primary hover:bg-chart-5" : ""}
-          >
-            <Heart className={`w-4 h-4 mr-2 ${isFav ? "fill-current" : ""}`} />
-            {isFav ? "Remove from Favorites" : "Add to Favorites"}
-          </Button>
+          />
 
-          <Button
+          <ToggleButton
+            isActive={isWatched}
+            icon={
+              <EyeIcon
+                className={`w-4 h-4 mr-2 ${isWatched ? "fill-current" : ""}`}
+              />
+            }
+            labelOn={"Remove from Watched"}
+            labelOff={"Add to Watched"}
             onClick={handleWatchedClick}
-            variant={isWatched ? "default" : "outline"}
-            className={isWatched ? "bg-primary hover:bg-chart-5" : ""}
-          >
-            <EyeIcon
-              className={`w-4 h-4 mr-2 ${isWatched ? "fill-current" : ""}`}
-            />
-            {isWatched ? "Remove from Watched" : "Add to Watched"}
-          </Button>
+          />
 
-          <Button
+          <ToggleButton
+            isActive={isInWatchList}
+            icon={
+              <Clapperboard
+                className={`w-4 h-4 mr-2 ${
+                  isInWatchList ? "fill-current" : ""
+                }`}
+              />
+            }
+            labelOn={"Remove from Watchlist"}
+            labelOff={"Add to WatchList"}
             onClick={handleWatchListClick}
-            variant={isInWatchList ? "default" : "outline"}
-            className={isInWatchList ? "bg-primary hover:bg-chart-5" : ""}
-          >
-            <Clapperboard
-              className={`w-4 h-4 mr-2 ${isInWatchList ? "fill-current" : ""}`}
-            />
-            {isInWatchList ? "Remove from Watchlist" : "Add to WatchList"}
-          </Button>
+          />
 
           {data.homepage && (
             <Button asChild variant="outline">

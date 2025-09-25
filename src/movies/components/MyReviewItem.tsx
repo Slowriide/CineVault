@@ -1,5 +1,5 @@
 import type { supabaseReview } from "@/interfaces/MovieReviews";
-import { Reviews } from "./Review";
+import { Reviews } from "./Reviews";
 import { useMovieDetails } from "../hooks/useMovieDetails";
 import { Card } from "@/components/ui/card";
 import { getBackdropUrl } from "@/mocks/tmdb";
@@ -11,20 +11,24 @@ import { Trash } from "lucide-react";
 import { useReviewsActions } from "../hooks/reviews/useReviewsActions";
 import * as React from "react";
 import { useAuth } from "@/context/AuthContext";
+import { CustomError } from "@/components/custom/CustomError";
 
 export const MyReviewItem = ({ review }: { review: supabaseReview }) => {
   const { session } = useAuth();
   const userId = session?.user.id;
+  const movieId = review.movie_id ?? "";
 
-  const { data: movie, isError } =
+  const movieHook =
     review.media_type === "movie"
-      ? useMovieDetails(review.movie_id!)
-      : useTVShowDetails(review.movie_id!);
+      ? useMovieDetails(movieId)
+      : useTVShowDetails(movieId);
+
+  const { data: movie, isError } = movieHook;
 
   const { deleteReview } = useReviewsActions(userId);
 
   if (!movie || !review || isError) {
-    return <h1>Error fetching the review</h1>;
+    return <CustomError title={"Error"} message={"Error fetching reviews"} />;
   }
 
   const linkTo =
@@ -33,7 +37,7 @@ export const MyReviewItem = ({ review }: { review: supabaseReview }) => {
       : `/tv/${slugify(movie!.title, movie!.id)}`;
 
   const handleDeleteClick = async (e: React.MouseEvent) => {
-    e.preventDefault;
+    e.preventDefault();
     await deleteReview.mutateAsync(movie.id.toString());
   };
 

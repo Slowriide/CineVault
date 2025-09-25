@@ -13,7 +13,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useToggleFavorite } from "../hooks/favorites/useToggleFavorite";
 import { toast } from "sonner";
 import { getYearFromReleaseDate } from "@/utils/getYear";
-import { memo, useCallback, useMemo } from "react";
+import { memo } from "react";
 
 interface MovieCardProps {
   item: MovieMovieDB | TvShowMovieDB;
@@ -44,46 +44,37 @@ export const MovieCard = memo(
 
     const isFav = favoriteIds.has(String(item.id));
 
-    const title = useMemo(
-      () => ("title" in item ? item.title : item.name),
-      [item]
-    );
-    const releaseDate = useMemo(
-      () => ("release_date" in item ? item.release_date : item.first_air_date),
-      [item]
-    );
-    const year = useMemo(
-      () => getYearFromReleaseDate(releaseDate),
-      [releaseDate]
-    );
-    const rating = useMemo(() => item.vote_average, [item.vote_average]);
+    const title = "title" in item ? item.title : item.name;
+
+    const releaseDate =
+      "release_date" in item ? item.release_date : item.first_air_date;
+    const year = getYearFromReleaseDate(releaseDate);
+
+    const rating = item.vote_average;
 
     const linkTo =
       mediaType === "movie"
         ? `/movie/${slugify(title, item.id)}`
         : `/tv/${slugify(title, item.id)}`;
 
-    const handleFavoriteClick = useCallback(
-      async (e: React.MouseEvent) => {
-        e.preventDefault();
+    const handleFavoriteClick = async (e: React.MouseEvent) => {
+      e.preventDefault();
 
-        if (!userId) {
-          toast.error("you must be logged in to add favorites");
-          return;
-        }
-        if (isFav) {
-          await removeFavorite.mutateAsync(String(item.id));
-          toast.success("removed from favorites");
-        } else {
-          await addFavorite.mutateAsync(
-            mediaType === "movie"
-              ? ({ ...item, media_type: "movie" } as MovieMovieDB)
-              : ({ ...item, media_type: "tv" } as TvShowMovieDB)
-          );
-        }
-      },
-      [userId, isFav, removeFavorite, addFavorite, item]
-    );
+      if (!userId) {
+        toast.error("you must be logged in to add favorites");
+        return;
+      }
+      if (isFav) {
+        await removeFavorite.mutateAsync(String(item.id));
+        toast.success("removed from favorites");
+      } else {
+        await addFavorite.mutateAsync(
+          mediaType === "movie"
+            ? ({ ...item, media_type: "movie" } as MovieMovieDB)
+            : ({ ...item, media_type: "tv" } as TvShowMovieDB)
+        );
+      }
+    };
 
     return (
       <Card className="group relative overflow-hidden bg-gradient-card border-border/50 hover:border-primary/30 transition-all duration-300 shadow-none hover:shadow-glow hover:-translate-y-1 mt-1">

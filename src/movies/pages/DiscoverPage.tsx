@@ -9,7 +9,7 @@ import type {
   MovieMovieDB,
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
-import { SkeletonGrid } from "../components/SkeletonGrid";
+import { SkeletonGrid } from "../components/skeletons/SkeletonGrid";
 import { VideoOff } from "lucide-react";
 import { useCallback } from "react";
 
