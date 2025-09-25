@@ -20,12 +20,15 @@ import { useToggleWatched } from "../hooks/watched/useToggleWatched";
 import { useToggleWatclist } from "../hooks/watchlist/useToggleWatchlist";
 import { ToggleButton } from "./movie/ToggleButton";
 import { CustomError } from "@/components/custom/CustomError";
+import type { Trailer } from "@/interfaces/Trailers";
+import { TrailerPlayer } from "./movie/TrailerPlayer";
 
 interface MovieDetailsProps {
   data: NormalizedMovieDetailsData;
+  trailers: Trailer[];
 }
 
-export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
+export const MovieDetailsHeader = ({ data, trailers }: MovieDetailsProps) => {
   const { type } = useParams();
   const { session } = useAuth();
   const userId = session?.user.id;
@@ -155,7 +158,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
         </p>
 
         {/* Action Buttons */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 mb-8">
           <ToggleButton
             isActive={isFav}
             icon={
@@ -195,14 +198,15 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
           />
 
           {data.homepage && (
-            <Button asChild variant="outline">
+            <Button asChild variant="outline" size="lg">
               <a href={data.homepage} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-4 h-4 mr-2" />
+                <ExternalLink className="w-4 h-4 mr-2 " />
                 Visit Homepage
               </a>
             </Button>
           )}
         </div>
+        <TrailerPlayer trailers={trailers} />
         {/* Reviews */}
         <PopularReviews movie={data} />
       </div>

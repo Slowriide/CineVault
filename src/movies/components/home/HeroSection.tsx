@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Play, Info, Star, Calendar } from "lucide-react";
+import { Info, Star, Calendar } from "lucide-react";
 import { getBackdropUrl } from "@/mocks/tmdb";
 import { Link } from "react-router";
 import type {
@@ -9,14 +9,20 @@ import type {
 import { Badge } from "@/components/ui/badge";
 import { slugify } from "@/utils/slugify";
 import { FallbackHero } from "./FallbackHero";
+import { useTrailers } from "@/movies/hooks/useTrailers";
+import { TrailerPlayer } from "../movie/TrailerPlayer";
 
 interface HeroSectionProps {
   featuredMovie?: MovieMovieDB | TvShowMovieDB;
 }
 
 export const HeroSection = ({ featuredMovie }: HeroSectionProps) => {
+  const manualId = featuredMovie?.id.toString() ?? "";
+  const manualType = featuredMovie?.media_type ?? "movie";
+
+  const { trailers } = useTrailers(manualId, manualType);
+
   if (!featuredMovie) {
-    // Fallback hero without movie data
     return <FallbackHero />;
   }
 
@@ -101,15 +107,7 @@ export const HeroSection = ({ featuredMovie }: HeroSectionProps) => {
                   </Link>
                 </Button>
 
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="bg-background/10 border-white/30 text-white hover:bg-primary backdrop-blur-sm"
-                  aria-label="Watch Featured Movie Trailer"
-                >
-                  <Play className="w-5 h-5 mr-2" />
-                  Watch Trailer
-                </Button>
+                <TrailerPlayer trailers={trailers.slice(0, 1)} />
               </div>
             </div>
           </div>

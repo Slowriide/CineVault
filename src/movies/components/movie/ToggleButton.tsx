@@ -13,6 +13,7 @@ export const ToggleButton = (props: Props) => {
   return (
     <>
       <Button
+        size="lg"
         onClick={onClick}
         variant={isActive ? "default" : "outline"}
         className={isActive ? "bg-primary hover:bg-chart-5" : ""}

@@ -1,13 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { getMovieDetails } from "../api/get-movie-details.action";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
+import { useTrailers } from "./useTrailers";
 
 export const useMovieDetails = (id: string, language: string = "us-US") => {
   const query = useQuery({
     queryKey: ["movieDetails", id, language],
     queryFn: () => getMovieDetails({ id, language }),
     staleTime: 1000 * 60 * 5,
+    enabled: !!id,
   });
+
+  const { trailers } = useTrailers();
 
   const normalizedData: NormalizedMovieDetailsData | null = query.data
     ? {
@@ -25,9 +29,10 @@ export const useMovieDetails = (id: string, language: string = "us-US") => {
         tagline: query.data.tagline ?? "",
       }
     : null;
-
+  console.log(trailers);
   return {
     ...query,
     data: normalizedData,
+    trailers,
   };
 };

@@ -22,7 +22,7 @@ export const PopularReviews = ({ movie }: Props) => {
   const areReviews = useMemo(() => reviews && reviews.length > 0, [reviews]);
 
   return (
-    <div className="space-x-1 pt-10 lg:pt-16 ">
+    <div className="space-x-1 pt-4 lg:pt-10 ">
       <div className="flex justify-between mb-1 ">
         <span>Popular Reviews</span>
 

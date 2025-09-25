@@ -32,8 +32,10 @@ export default function MovieDetailsPage() {
     type! as Type
   );
 
-  const { data, isLoading } =
+  const { data, isLoading, trailers } =
     type === "movie" ? useMovieDetails(id!) : useTVShowDetails(id!);
+
+  console.log(trailers);
 
   const {
     data: similarMovies,
@@ -86,7 +88,10 @@ export default function MovieDetailsPage() {
             </div>
 
             {/* Details */}
-            <MovieDetailsHeader data={data as NormalizedMovieDetailsData} />
+            <MovieDetailsHeader
+              data={data as NormalizedMovieDetailsData}
+              trailers={trailers ?? []}
+            />
           </div>
 
           {/* Tabs for Additional Content */}
