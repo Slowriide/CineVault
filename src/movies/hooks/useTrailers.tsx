@@ -20,8 +20,6 @@ export const useTrailers = (
 
   const id = manualId ?? (slug ? slug.split("-").pop()! : null);
 
-  console.log(id);
-
   const response = useQuery({
     queryKey: ["trailer", id, type, language],
     queryFn: () => {

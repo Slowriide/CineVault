@@ -13,11 +13,13 @@ export const tmdbApi = axios.create({
 
 export const getImageUrl = (path: string, size: string = "w500") => {
   if (!path) return "/placeholder.svg";
+  if (path.startsWith("http")) return path;
   return `${TMDB_IMAGE_BASE}/${size}${path}`;
 };
 
 export const getBackdropUrl = (path: string, size: string = "w1280") => {
   if (!path) return "/placeholder.svg";
+  if (path.startsWith("http")) return path;
   return `${TMDB_IMAGE_BASE}/${size}${path}`;
 };
 

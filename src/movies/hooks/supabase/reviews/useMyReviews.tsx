@@ -18,3 +18,17 @@ export const useMyReviews = (userId?: string) => {
     enabled: !!userId,
   });
 };
+
+export const useMyReviewForMovie = (
+  userId?: string,
+  movieId?: string,
+  type?: "movie" | "tv"
+) => {
+  const { data: reviews, ...rest } = useMyReviews(userId);
+
+  const review = reviews?.find(
+    (r) => r.movie_id === movieId && r.media_type === type
+  );
+
+  return { review, ...rest };
+};

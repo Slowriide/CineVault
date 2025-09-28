@@ -6,31 +6,50 @@ import { Link, useParams } from "react-router";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 import { ReviewDialog } from "./ReviewDialog";
 import { useMemo } from "react";
+import { useMyReviewForMovie } from "../hooks/supabase/reviews/useMyReviews";
+import { useAuth } from "@/context/AuthContext";
+import { CustomLoading } from "@/components/custom/CustomLoading";
 
 interface Props {
   movie: NormalizedMovieDetailsData;
 }
 
 export const PopularReviews = ({ movie }: Props) => {
-  const { popularReviews: reviews, reviews: allReviews } = useReviews();
+  const {
+    popularReviews: reviews,
+    reviews: allReviews,
+    isLoading: loadingReviews,
+  } = useReviews();
   const { slug, type } = useParams();
+  const { session } = useAuth();
+  const userId = session?.user.id;
 
   const id = useMemo(() => {
     return slug ? parseInt(slug.split("-").pop()!) : null;
   }, [slug]);
 
+  const { review, isLoading } = useMyReviewForMovie(
+    userId,
+    id?.toString(),
+    type as "movie" | "tv"
+  );
+
   const areReviews = useMemo(() => reviews && reviews.length > 0, [reviews]);
+
+  if (isLoading || loadingReviews) {
+    return <CustomLoading />;
+  }
 
   return (
     <div className="space-x-1 pt-4 lg:pt-10 ">
-      <div className="flex justify-between mb-1 ">
+      <div className="flex justify-between mb-1 text-md">
         <span>Popular Reviews</span>
 
         {/* Buttons */}
-        <div className="space-x-4">
+        <div className="flex space-x-4">
           {/* Dialog */}
-          <ReviewDialog movie={movie} />
 
+          <ReviewDialog movie={movie} hover={true} existingReview={review} />
           {/* All reviews */}
           <Link to={`/${type}/${id}/reviews`}>
             <span className="hover:text-blue-500 cursor-pointer">

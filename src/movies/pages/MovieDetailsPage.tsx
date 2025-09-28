@@ -35,8 +35,6 @@ export default function MovieDetailsPage() {
   const { data, isLoading, trailers } =
     type === "movie" ? useMovieDetails(id!) : useTVShowDetails(id!);
 
-  console.log(trailers);
-
   const {
     data: similarMovies,
     error: isErrorSimilar,

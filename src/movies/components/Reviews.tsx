@@ -14,6 +14,8 @@ interface ReviewProps {
 
 export const Reviews = memo(
   ({ image, likes, name, rating, review, line = true }: ReviewProps) => {
+    console.log(image);
+
     const [expanded, setExpanded] = useState(false);
 
     const renderStars = (rating: number) => {

@@ -15,9 +15,11 @@ import { useFavs } from "../hooks/favorites/useFavs";
 import { SupabaseToMovieMapper } from "@/utils/FavoriteToMovieMapper";
 import { useWatched } from "../hooks/watched/useWatched";
 import { useWatchlist } from "../hooks/watchlist/useWatchlist";
-import { useMyReviews } from "../hooks/reviews/useMyReviews";
+import { useMyReviews } from "../hooks/supabase/reviews/useMyReviews";
 import { MyReviewItem } from "../components/MyReviewItem";
 import { useSearchParams } from "react-router";
+import { CustomLoading } from "@/components/custom/CustomLoading";
+import { CustomError } from "@/components/custom/CustomError";
 
 export function ProfileDashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -42,10 +44,21 @@ export function ProfileDashboard() {
 
   const { data: myReviews } = useMyReviews(userId);
 
-  if (isLoading || watchedsLoading || watchListLoading)
-    return <p>Loading...</p>;
-  if (isError || !favorites || !watcheds || !watchList || !myReviews)
-    return <p>Error loading favorites</p>;
+  if (
+    isLoading ||
+    watchedsLoading ||
+    watchListLoading ||
+    !favorites ||
+    !watcheds ||
+    !watchList ||
+    !myReviews
+  )
+    return <CustomLoading />;
+
+  if (isError)
+    return (
+      <CustomError title={"Error loaging profile"} message={"Try later"} />
+    );
 
   const handleTabChange = (tab: string) => {
     searchParams.set("tab", tab);
@@ -144,8 +157,6 @@ export function ProfileDashboard() {
                         {favorites.map((fav) => {
                           // Asegurarse que metadata tenga el tipo correcto
                           const item = SupabaseToMovieMapper(fav);
-
-                          console.log(fav.metadata);
 
                           return (
                             <MovieCard

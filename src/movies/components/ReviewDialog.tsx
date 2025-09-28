@@ -13,22 +13,27 @@ import { getImageUrl } from "@/mocks/tmdb";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { StarRating } from "./movie/StarRating";
-import { useReviewsActions } from "../hooks/reviews/useReviewsActions";
+import { useReviewsActions } from "../hooks/supabase/reviews/useReviewsActions";
 import { useAuth } from "@/context/AuthContext";
 import { useParams } from "react-router";
+import type { supabaseReview } from "@/interfaces/MovieReviews";
 
 interface Props {
   movie: NormalizedMovieDetailsData;
+  existingReview?: supabaseReview;
+  icon?: React.ReactNode;
+  hover?: boolean;
+  trigger?: React.ReactNode;
 }
 
 interface FormData {
   review: string;
 }
 
-export const ReviewDialog = ({ movie }: Props) => {
-  const [rating, setRating] = useState(0);
+export const ReviewDialog = ({ movie, existingReview, trigger }: Props) => {
+  const [rating, setRating] = useState(existingReview?.rating ?? 0);
+  const [open, setOpen] = useState(false);
   const { type } = useParams();
-
   const { session } = useAuth();
   const { addOrUpdateReview } = useReviewsActions(session?.user.id);
 
@@ -36,22 +41,34 @@ export const ReviewDialog = ({ movie }: Props) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: { review: existingReview?.content ?? "" },
+  });
 
   const onSubmit = async (data: FormData) => {
     await addOrUpdateReview.mutateAsync({
       movie_id: movie.id.toString(),
-      media_type: type as "movie" | "tv",
+      media_type:
+        (existingReview?.media_type as "movie" | "tv") ??
+        (type as "movie" | "tv"),
       rating: rating,
       content: data.review,
     });
+    setOpen(false);
   };
 
+  const isEditing = !!existingReview;
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <span className="hover:text-blue-500 cursor-pointer">Create</span>
+        {trigger ?? (
+          <span className="hover:text-blue-500 cursor-pointer">
+            {existingReview ? "Edit review" : "Create review"}
+          </span>
+        )}
       </DialogTrigger>
+
       <DialogContent className="max-w-[500px] max-h-[300px] md:max-w-[700px] md:max-h-[500px]">
         <div className="grid grid-cols-3 gap-4 mt-5 max-w-[400px] max-h-[200px] md:max-w-[700px] md:max-h-[500px]">
           <div className="grid col-span-1 gap-1">
@@ -92,7 +109,7 @@ export const ReviewDialog = ({ movie }: Props) => {
             </Button>
           </DialogClose>
           <Button type="submit" onClick={handleSubmit(onSubmit)}>
-            Save Review
+            {isEditing ? "Update Review" : "Save Review"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -29,7 +29,7 @@ export const useMovieDetails = (id: string, language: string = "us-US") => {
         tagline: query.data.tagline ?? "",
       }
     : null;
-  console.log(trailers);
+
   return {
     ...query,
     data: normalizedData,

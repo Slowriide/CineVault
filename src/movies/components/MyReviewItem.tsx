@@ -7,16 +7,20 @@ import { Link } from "react-router";
 import { slugify } from "@/utils/slugify";
 import { useTVShowDetails } from "../hooks/useTVShowDetails";
 import { Separator } from "@/components/ui/separator";
-import { Trash } from "lucide-react";
-import { useReviewsActions } from "../hooks/reviews/useReviewsActions";
+import { useReviewsActions } from "../hooks/supabase/reviews/useReviewsActions";
 import * as React from "react";
 import { useAuth } from "@/context/AuthContext";
 import { CustomError } from "@/components/custom/CustomError";
+import { useSupabaseProfile } from "../hooks/supabase/profile/useSupabaseProfile";
+import { EditOrDeleteDialog } from "./profile/EditOrDeleteDialog";
 
 export const MyReviewItem = ({ review }: { review: supabaseReview }) => {
   const { session } = useAuth();
   const userId = session?.user.id;
   const movieId = review.movie_id ?? "";
+
+  const { getProfile } = useSupabaseProfile(userId);
+  const profileData = getProfile.data;
 
   const movieHook =
     review.media_type === "movie"
@@ -58,20 +62,18 @@ export const MyReviewItem = ({ review }: { review: supabaseReview }) => {
 
         <div className="flex-1">
           <Reviews
-            image={
-              "https://cdn3.futbin.com/content/fifa26/img/players/240091.png?fm=png&ixlib=java-2.1.0&w=162&s=9689f5269788fb4d0581832858aa1aa7"
-            }
-            name={"Vicario"}
+            image={profileData?.avatar_url ?? "/profile_placeholder.png"}
+            name={profileData?.username ?? "User"}
             review={review.content ?? ""}
             rating={review.rating ?? 0}
             likes={7}
             line={false}
           />
         </div>
-
-        <Trash
-          className="text-primary cursor-pointer hover:text-chart-5"
-          onClick={handleDeleteClick}
+        <EditOrDeleteDialog
+          onDelete={handleDeleteClick}
+          movie={movie}
+          review={review}
         />
       </div>
       <Separator className="mt-6" />

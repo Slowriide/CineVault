@@ -9,6 +9,8 @@ import { useTVShowDetails } from "../hooks/useTVShowDetails";
 import { CustomPagination } from "@/components/custom/CustomPagination";
 import { Card } from "@/components/ui/card";
 import { slugify } from "@/utils/slugify";
+import { CustomLoading } from "@/components/custom/CustomLoading";
+import { CustomError } from "@/components/custom/CustomError";
 
 export const MovieReviews = () => {
   const [searchParams] = useSearchParams();
@@ -17,12 +19,19 @@ export const MovieReviews = () => {
   const { slug, type } = useParams();
   const id = slug ? slug.split("-").pop()! : null;
 
-  const { reviews, isError, data } = useReviews(page);
+  const { reviews, isError, data, isLoading } = useReviews(page);
 
   const { data: movie } =
     type === "movie" ? useMovieDetails(id!) : useTVShowDetails(id!);
 
-  if (!reviews || isError || reviews.length === 0 || !movie) {
+  if (isLoading) {
+    return <CustomLoading />;
+  }
+  if (isError || !movie) {
+    return <CustomError title={""} message={""} />;
+  }
+
+  if (!reviews || reviews.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-hero">
         <div className="container mx-auto py-12 text-center ">
@@ -31,7 +40,7 @@ export const MovieReviews = () => {
             There are no reviews for this movie yet
           </h3>
           <Button>
-            <Link to={`/${type}/${slugify(movie!.title, +id!)}`}>
+            <Link to={`/${type}/${slugify(movie.title, +id!)}`}>
               Be te first to add a review
             </Link>
           </Button>
