@@ -11,16 +11,22 @@ import { slugify } from "@/utils/slugify";
 import { FallbackHero } from "./FallbackHero";
 import { useTrailers } from "@/movies/hooks/useTrailers";
 import { TrailerPlayer } from "../movie/TrailerPlayer";
+import { HeroSkeleton } from "../skeletons/SkeletonHero";
 
 interface HeroSectionProps {
   featuredMovie?: MovieMovieDB | TvShowMovieDB;
+  isLoading?: boolean;
 }
 
-export const HeroSection = ({ featuredMovie }: HeroSectionProps) => {
+export const HeroSection = ({ featuredMovie, isLoading }: HeroSectionProps) => {
   const manualId = featuredMovie?.id.toString() ?? "";
   const manualType = featuredMovie?.media_type ?? "movie";
 
   const { trailers } = useTrailers(manualId, manualType);
+
+  if (isLoading) {
+    return <HeroSkeleton />;
+  }
 
   if (!featuredMovie) {
     return <FallbackHero />;

@@ -4,7 +4,9 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
+  DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +19,7 @@ import { useReviewsActions } from "../hooks/supabase/reviews/useReviewsActions";
 import { useAuth } from "@/context/AuthContext";
 import { useParams } from "react-router";
 import type { supabaseReview } from "@/interfaces/MovieReviews";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 interface Props {
   movie: NormalizedMovieDetailsData;
@@ -70,6 +73,12 @@ export const ReviewDialog = ({ movie, existingReview, trigger }: Props) => {
       </DialogTrigger>
 
       <DialogContent className="max-w-[500px] max-h-[300px] md:max-w-[700px] md:max-h-[500px]">
+        <DialogHeader>
+          <DialogTitle className="sr-only"> Create review</DialogTitle>
+          <DialogDescription className="sr-only">
+            Create your own review
+          </DialogDescription>
+        </DialogHeader>
         <div className="grid grid-cols-3 gap-4 mt-5 max-w-[400px] max-h-[200px] md:max-w-[700px] md:max-h-[500px]">
           <div className="grid col-span-1 gap-1">
             <Card className="overflow-hidden bg-gradient-card border-border/50 shadow-elegant">

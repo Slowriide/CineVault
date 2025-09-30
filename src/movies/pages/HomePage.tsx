@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/select";
 import { useSearchParams } from "react-router";
 import { getTimeWindow } from "@/interfaces/TimeWindow";
-import { CustomLoading } from "@/components/custom/CustomLoading";
 import { SectionCarrusel } from "../components/SectionCarrusel";
 import { useHomeHooks } from "../hooks/home/useHomeHooks";
 
@@ -49,14 +48,10 @@ export const HomePage = () => {
     }
   }, [featuredMovies]);
 
-  if (isLoading) {
-    return <CustomLoading />;
-  }
-
   return (
     <div className="min-h-screen bg-gradient-hero ">
       {/* Hero Section */}
-      <HeroSection featuredMovie={featuredMovie!} />
+      <HeroSection featuredMovie={featuredMovie!} isLoading={isLoading} />
 
       {/* Content Sections */}
       <div className="max-w-[1600px] mx-auto py-12 space-y-12">
@@ -120,18 +115,21 @@ export const HomePage = () => {
           title=""
           items={trendingTVShows ?? []}
           mediaType="tv"
+          loading={isLoading}
         />
         {/* Popular Movies */}
         <SectionCarrusel
           title={"Popular Movies"}
           items={popularMovies ?? []}
           mediaType={"movie"}
+          loading={isLoading}
         />
 
         <SectionCarrusel
           title={"Now Playing"}
           items={nowPlayingMovies ?? []}
           mediaType={"movie"}
+          loading={isLoading}
         />
 
         {/* Popular TV Shows */}
@@ -139,6 +137,7 @@ export const HomePage = () => {
           title={"Top TV Shows"}
           items={popularTVShows ?? []}
           mediaType={"tv"}
+          loading={isLoading}
         />
 
         {/* Top Rated Movies */}
@@ -146,6 +145,7 @@ export const HomePage = () => {
           title={"Top Rated Movies"}
           items={topRatedMovies ?? []}
           mediaType={"movie"}
+          loading={isLoading}
         />
 
         {/* Upcoming Movies */}
@@ -153,6 +153,7 @@ export const HomePage = () => {
           title={"Upcoming Movies"}
           items={upcomingMovies ?? []}
           mediaType={"movie"}
+          loading={isLoading}
         />
       </div>
     </div>

@@ -8,18 +8,13 @@ import { ReviewDialog } from "./ReviewDialog";
 import { useMemo } from "react";
 import { useMyReviewForMovie } from "../hooks/supabase/reviews/useMyReviews";
 import { useAuth } from "@/context/AuthContext";
-import { CustomLoading } from "@/components/custom/CustomLoading";
 
 interface Props {
   movie: NormalizedMovieDetailsData;
 }
 
 export const PopularReviews = ({ movie }: Props) => {
-  const {
-    popularReviews: reviews,
-    reviews: allReviews,
-    isLoading: loadingReviews,
-  } = useReviews();
+  const { popularReviews: reviews, reviews: allReviews } = useReviews();
   const { slug, type } = useParams();
   const { session } = useAuth();
   const userId = session?.user.id;
@@ -28,17 +23,13 @@ export const PopularReviews = ({ movie }: Props) => {
     return slug ? parseInt(slug.split("-").pop()!) : null;
   }, [slug]);
 
-  const { review, isLoading } = useMyReviewForMovie(
+  const { review } = useMyReviewForMovie(
     userId,
     id?.toString(),
     type as "movie" | "tv"
   );
 
   const areReviews = useMemo(() => reviews && reviews.length > 0, [reviews]);
-
-  if (isLoading || loadingReviews) {
-    return <CustomLoading />;
-  }
 
   return (
     <div className="space-x-1 pt-4 lg:pt-10 ">

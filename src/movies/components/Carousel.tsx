@@ -6,7 +6,7 @@ import type {
   MovieMovieDB,
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
-import { SkeletonCarrusel } from "./skeletons/skeletonCarrusel";
+import { SkeletonCarrusel } from "./skeletons/SkeletonCarrusel";
 
 interface CarouselProps {
   title: string;
@@ -41,7 +41,7 @@ export const Carousel = ({
   }, []);
 
   if (loading) {
-    <SkeletonCarrusel elements={9} />;
+    return <SkeletonCarrusel elements={9} />;
   }
 
   if (!items?.length) {

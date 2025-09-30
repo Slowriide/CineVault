@@ -1,16 +1,17 @@
 import { useParams } from "react-router";
 import { Card } from "@/components/ui/card";
-import { getBackdropUrl, getImageUrl } from "@/mocks/tmdb";
+import { getImageUrl } from "@/mocks/tmdb";
 import { useMovieDetails } from "../hooks/useMovieDetails";
 import { useTVShowDetails } from "../hooks/useTVShowDetails";
 import { useCredits } from "../hooks/useCredits";
 import type { Type } from "@/interfaces/MovieCategory";
 import { useSimilar } from "../hooks/useSimilar";
 import { CustomError } from "@/components/custom/CustomError";
-import { CustomLoading } from "@/components/custom/CustomLoading";
 import { ContentTabs } from "../components/ContentTabs";
 import { MovieDetailsHeader } from "../components/MovieDetailsHeader";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
+import { MovieBackdrop } from "../components/movie/MovieBackdrop";
+import { MovieDetailsPageSkeleton } from "./skeletons/MovieDetailsPageSkeleton";
 
 export default function MovieDetailsPage() {
   const { type, slug } = useParams();
@@ -32,7 +33,7 @@ export default function MovieDetailsPage() {
     type! as Type
   );
 
-  const { data, isLoading, trailers } =
+  const { data, isLoading, trailers, isError } =
     type === "movie" ? useMovieDetails(id!) : useTVShowDetails(id!);
 
   const {
@@ -42,10 +43,10 @@ export default function MovieDetailsPage() {
   } = useSimilar(id, type! as Type, 1);
 
   if (isLoading) {
-    return <CustomLoading />;
+    return <MovieDetailsPageSkeleton />;
   }
 
-  if (!data) {
+  if (!data || isError) {
     return (
       <CustomError
         title="Movie Not Found"
@@ -58,17 +59,7 @@ export default function MovieDetailsPage() {
   return (
     <div className="min-h-screen bg-gradient-hero">
       {/* Backdrop */}
-      {data.backdrop_path && (
-        <div
-          className="absolute top-0 left-0 right-0 h-[60vh] bg-cover bg-center opacity-20"
-          style={{
-            backgroundImage: `url(${getBackdropUrl(
-              data.backdrop_path,
-              "original"
-            )})`,
-          }}
-        />
-      )}
+      <MovieBackdrop backdropPath={data.backdrop_path} />
 
       <div className="max-w-[1600px] mx-auto py-auto space-y-12">
         <div className="relative container py-20">

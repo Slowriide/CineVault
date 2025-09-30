@@ -26,11 +26,6 @@ export const EditOrDeleteDialog = ({
         <EllipsisVertical className="text-primary cursor-pointer hover:text-chart-5" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-background w-30">
-        <DropdownMenuItem onClick={onDelete} className="cursor-pointer text-md">
-          <Trash className="text-primary m2 size-5" />
-          Delete
-        </DropdownMenuItem>
-
         <ReviewDialog
           movie={movie}
           existingReview={review}
@@ -38,12 +33,21 @@ export const EditOrDeleteDialog = ({
             <DropdownMenuItem
               className="cursor-pointer text-md"
               onSelect={(e) => e.preventDefault()}
+              aria-label="Add or edit review"
             >
               <Edit className="text-primary size-5" />
               Edit
             </DropdownMenuItem>
           }
         />
+        <DropdownMenuItem
+          onClick={onDelete}
+          className="cursor-pointer text-md"
+          aria-label="Delete review"
+        >
+          <Trash className="text-primary m2 size-5" />
+          Delete
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

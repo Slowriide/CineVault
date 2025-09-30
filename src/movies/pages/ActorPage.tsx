@@ -221,28 +221,6 @@ export default function ActorPage() {
           </CardContent>
         </Card>
 
-        {/* Known For Section
-        {knownFor.length > 0 && (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-foreground">Known For</h2>
-            <div className="flex gap-4 overflow-x-auto pb-4">
-              {knownFor.map((credit) => (
-                <div
-                  key={`${credit.id}-${"title" in credit ? "movie" : "tv"}`}
-                  className="flex-shrink-0"
-                >
-                  <MovieCard
-                    item={credit}
-                    mediaType={"title" in credit ? "movie" : "tv"}
-                    size="sm"
-                    showFavorite={false}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )} */}
-
         {/* Full Filmography */}
         {filteredCredits.length > 0 && (
           <div className="space-y-4">
