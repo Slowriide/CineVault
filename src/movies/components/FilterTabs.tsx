@@ -2,7 +2,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type {
   MediaType,
-  MultiSearchResponse,
   NormalizedSearchResult,
 } from "@/interfaces/SearchResponse";
 import { useMemo } from "react";
@@ -10,7 +9,7 @@ import { useMemo } from "react";
 interface FilterTabsProps {
   filter: string;
   normalicedData: NormalizedSearchResult[];
-  data: MultiSearchResponse;
+
   handleFilterChanged: (newFilter: MediaType | "all") => void;
 }
 const tabDefinitions: { label: string; value: MediaType | "all" }[] = [
@@ -42,16 +41,16 @@ export const FilterTabs = ({
 
   return (
     <div className="flex justify-center mb-8">
-      <div className="flex space-x-1 bg-muted/50 rounded-lg p-1">
+      <div className="flex overflow-x-auto flex-nowrap space-x-1 bg-muted/50 rounded-lg p-1">
         {tabDefinitions.map(({ label, value }) => (
           <Button
             key={value}
             variant={filter === value ? "default" : "ghost"}
             size="sm"
             onClick={() => handleFilterChanged(value)}
-            className={
+            className={`${
               filter === value ? "bg-primary text-primary-foreground" : ""
-            }
+            } text-xs sm:text-sm px-2 flex-shrink-0`}
           >
             {label}
             <Badge variant="secondary" className="ml-2 text-xs">

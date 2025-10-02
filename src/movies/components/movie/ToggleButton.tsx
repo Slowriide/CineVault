@@ -16,9 +16,9 @@ export const ToggleButton = (props: Props) => {
         size="lg"
         onClick={onClick}
         variant={isActive ? "default" : "outline"}
-        className={isActive ? "bg-primary hover:bg-chart-5" : ""}
+        className={isActive ? "bg-primary hover:bg-chart-5 col-span-1" : ""}
       >
-        {icon}
+        <span className="hidden xl:flex">{icon}</span>
         {isActive ? `${labelOn}` : `${labelOff}`}
       </Button>
     </>

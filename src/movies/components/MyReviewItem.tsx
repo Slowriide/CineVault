@@ -1,5 +1,4 @@
 import type { supabaseReview } from "@/interfaces/MovieReviews";
-import { Reviews } from "./Reviews";
 import { useMovieDetails } from "../hooks/useMovieDetails";
 import { Card } from "@/components/ui/card";
 import { getBackdropUrl } from "@/mocks/tmdb";
@@ -13,6 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 import { CustomError } from "@/components/custom/CustomError";
 import { useSupabaseProfile } from "../hooks/supabase/profile/useSupabaseProfile";
 import { EditOrDeleteDialog } from "./profile/EditOrDeleteDialog";
+import { MyReview } from "./profile/MyReview";
 
 export const MyReviewItem = ({ review }: { review: supabaseReview }) => {
   const { session } = useAuth();
@@ -47,8 +47,8 @@ export const MyReviewItem = ({ review }: { review: supabaseReview }) => {
 
   return (
     <div>
-      <div className="flex items-center justify-items-center gap-4">
-        <Link to={linkTo}>
+      <div className="flex items-center justify-items-center gap-4 overflow-hidden">
+        <Link to={linkTo} className="flex-shrink-0">
           <Card className="group relative grid-cols-1 overflow-hidden bg-gradient-card border-border/50 hover:border-primary/30 transition-all duration-300 shadow-none hover:shadow-glow hover:-translate-y-1 mt-1 w-26">
             <div className="aspect-[2/3] relative overflow-hidden rounded-t-lg ">
               <img
@@ -60,8 +60,8 @@ export const MyReviewItem = ({ review }: { review: supabaseReview }) => {
           </Card>
         </Link>
 
-        <div className="flex-1">
-          <Reviews
+        <div className="flex flex-1 min-w-0 ">
+          <MyReview
             image={profileData?.avatar_url ?? "/profile_placeholder.png"}
             name={profileData?.username ?? "User"}
             review={review.content ?? ""}

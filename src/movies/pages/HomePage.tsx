@@ -54,11 +54,11 @@ export const HomePage = () => {
       <HeroSection featuredMovie={featuredMovie!} isLoading={isLoading} />
 
       {/* Content Sections */}
-      <div className="max-w-[1600px] mx-auto py-12 space-y-12">
+      <div className="max-w-[1600px] mx-auto py-12 space-y-12 px-4">
         {/* Trending Movies */}
         <SectionCarrusel
           header={
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-bold">Trending Movies</h2>
               <Select
                 value={timeWindowM}

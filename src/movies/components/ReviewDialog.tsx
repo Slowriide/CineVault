@@ -72,14 +72,14 @@ export const ReviewDialog = ({ movie, existingReview, trigger }: Props) => {
         )}
       </DialogTrigger>
 
-      <DialogContent className="max-w-[500px] max-h-[300px] md:max-w-[700px] md:max-h-[500px]">
+      <DialogContent className="max-w-[350px] max-h-[350px] sm:max-w-[520px] sm:max-h-[400px] md:max-w-[700px] md:max-h-[500px]">
         <DialogHeader>
           <DialogTitle className="sr-only"> Create review</DialogTitle>
           <DialogDescription className="sr-only">
             Create your own review
           </DialogDescription>
         </DialogHeader>
-        <div className="grid grid-cols-3 gap-4 mt-5 max-w-[400px] max-h-[200px] md:max-w-[700px] md:max-h-[500px]">
+        <div className="grid grid-cols-3 gap-4 mt-5 max-w-[350px] max-h-[350px] sm:max-w-[520px] sm:max-h-[400px] md:max-w-[700px] md:max-h-[500px]">
           <div className="grid col-span-1 gap-1">
             <Card className="overflow-hidden bg-gradient-card border-border/50 shadow-elegant">
               <img
@@ -95,7 +95,9 @@ export const ReviewDialog = ({ movie, existingReview, trigger }: Props) => {
           <div className="col-span-2 flex flex-col gap-2 flex-1 ">
             <div className="flex space-x-2">
               <StarRating value={rating} onChange={setRating} />
-              <span className="text-lg text-foreground">Rating</span>
+              <span className="text-lg text-foreground hidden md:flex">
+                Rating
+              </span>
             </div>
             <Textarea
               id="review"
@@ -104,7 +106,7 @@ export const ReviewDialog = ({ movie, existingReview, trigger }: Props) => {
               })}
               rows={5}
               placeholder="Other users may interesten on your thoughts!!"
-              className="resize-none w-full md:h-82 h-40  overflow-y-auto"
+              className="resize-none w-full md:h-82 h-40  overflow-y-auto text-sm sm:text-md"
             />
             {errors.review && (
               <p className="text-sm text-destructive">Must be a review</p>
@@ -113,7 +115,7 @@ export const ReviewDialog = ({ movie, existingReview, trigger }: Props) => {
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant={"outline"} className="hidden md:flex">
+            <Button variant={"outline"} className="hidden sm:flex">
               Close
             </Button>
           </DialogClose>

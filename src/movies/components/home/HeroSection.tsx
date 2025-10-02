@@ -49,8 +49,9 @@ export const HeroSection = ({ featuredMovie, isLoading }: HeroSectionProps) => {
     : `/tv/${slugify(title, featuredMovie.id)}`;
 
   return (
+    // Backdrop
     <div
-      className="relative h-[70vh] flex items-center bg-cover bg-center -mt-16"
+      className="relative h-[60dvh] md:h-[70dvh] flex items-center bg-center  bg-cover -mt-16 "
       style={{
         backgroundImage: `url(${getBackdropUrl(
           featuredMovie.backdrop_path,
@@ -60,61 +61,75 @@ export const HeroSection = ({ featuredMovie, isLoading }: HeroSectionProps) => {
     >
       <div className="absolute mx-auto inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/30" />
 
-      <div className="relative z-10 max-w-[1600px] mx-auto container py-20">
-        <div className="max-w-2xl space-y-6">
+      {/* Content */}
+      <div className="relative z-10 max-w-[1600px] mx-auto container py-20 px-4">
+        <div className="grid md:grid-cols-6 max-w-2xl space-y-6">
           {/* Movie Poster Thumbnail */}
-          <div className="flex items-start space-x-6">
+          <div className="md:col-span-1 hidden md:flex">
             <img
               src={getBackdropUrl(featuredMovie.poster_path, "original")}
               alt={title}
               className="w-24 h-36 object-cover rounded-lg shadow-elegant"
             />
+          </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <Badge className="bg-background/20 border-primary/30 text-primary">
-                  Featured
-                </Badge>
-                {rating > 0 && (
-                  <div className="flex items-center space-x-1 text-primary">
-                    <Star className="w-4 h-4 fill-current" />
-                    <span className="font-medium">{rating.toFixed(1)}</span>
-                  </div>
-                )}
-              </div>
-
-              <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight">
-                {title}
-              </h1>
-
-              <div className="flex items-center space-x-4 text-muted-foreground">
-                <div className="flex items-center space-x-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>{year}</span>
+          {/* Info */}
+          <div className="md:col-span-5 space-y-4">
+            {/* Rating */}
+            <div className="hidden sm:flex items-center space-x-3 ">
+              <Badge className="bg-background/20 border-primary/30 text-primary">
+                Featured
+              </Badge>
+              {rating > 0 && (
+                <div className="flex items-center space-x-1 text-primary">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span className="font-medium">{rating.toFixed(1)}</span>
                 </div>
-                <span>•</span>
-                <span>{mediaType}</span>
+              )}
+            </div>
+
+            {/* Title */}
+            <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight line-clamp-2">
+              {title}
+            </h1>
+
+            {/* Date */}
+            <div className="flex items-center space-x-4 text-muted-foreground">
+              <div className="flex items-center space-x-1">
+                <Calendar className="w-4 h-4" />
+                <span>{year}</span>
               </div>
+              <span>•</span>
+              <span>{mediaType}</span>
+              <span className="sm:hidden">•</span>
+              {rating > 0 && (
+                <div className="flex items-center space-x-1 text-primary sm:hidden">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span className="font-medium">{rating.toFixed(1)}</span>
+                </div>
+              )}
+            </div>
 
-              <p className="text-lg text-gray-200 leading-relaxed line-clamp-3">
-                {featuredMovie.overview}
-              </p>
+            {/* Overview */}
+            <p className="text-lg text-gray-200 leading-relaxed line-clamp-2">
+              {featuredMovie.overview}
+            </p>
 
-              <div className="flex items-center space-x-4 pt-4">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-primary hover:bg-primary-glow text-primary-foreground shadow-glow"
-                  aria-label="Featured Movie Details"
-                >
-                  <Link to={detailLink}>
-                    <Info className="w-5 h-5 mr-2" />
-                    View Details
-                  </Link>
-                </Button>
+            {/* Details & Trailer */}
+            <div className="flex items-center space-x-4 pt-4 flex-wrap">
+              <Button
+                asChild
+                size="lg"
+                className="bg-primary hover:bg-primary-glow text-primary-foreground shadow-glow"
+                aria-label="Featured Movie Details"
+              >
+                <Link to={detailLink}>
+                  <Info className="w-5 h-5 mr-2" />
+                  View Details
+                </Link>
+              </Button>
 
-                <TrailerPlayer trailers={trailers.slice(0, 1)} />
-              </div>
+              <TrailerPlayer trailers={trailers.slice(0, 1)} />
             </div>
           </div>
         </div>

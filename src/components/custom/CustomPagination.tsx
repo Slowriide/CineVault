@@ -20,7 +20,7 @@ export const CustomPagination = ({ totalPages }: Props) => {
     setSearchParams(searchParams);
   };
 
-  const maxVisible = 10;
+  const maxVisible = window.innerWidth < 768 ? 5 : 10;
   const startPage = Math.max(1, page - Math.floor(maxVisible / 2));
   const endPage = Math.min(totalPages, startPage + maxVisible - 1);
 
@@ -30,7 +30,7 @@ export const CustomPagination = ({ totalPages }: Props) => {
   }
 
   return (
-    <div className="flex items-center justify-center space-x-2">
+    <div className="flex items-center justify-center space-x-2 mx-2 overflow-x-auto scrollbar-hide">
       <Button
         variant="outline"
         size="sm"
@@ -38,7 +38,7 @@ export const CustomPagination = ({ totalPages }: Props) => {
         onClick={() => handlePageChange(page - 1)}
       >
         <ChevronLeft className="h-4 w-4" />
-        Anterior
+        <span className="hidden sm:inline">Anterior</span>
       </Button>
 
       {pages.map((p) => (
@@ -62,7 +62,7 @@ export const CustomPagination = ({ totalPages }: Props) => {
         disabled={page === totalPages}
         onClick={() => handlePageChange(page + 1)}
       >
-        Siguiente
+        <span className="hidden sm:inline">Anterior</span>
         <ChevronRight className="h-4 w-4" />
       </Button>
     </div>

@@ -52,7 +52,7 @@ export const appRouter = createBrowserRouter([
         path: "/auth",
         element: (
           <NotAuthenticatedRoute>
-            <AuthLayout />,
+            <AuthLayout />
           </NotAuthenticatedRoute>
         ),
         children: [{ index: true, element: <AuthPage /> }],

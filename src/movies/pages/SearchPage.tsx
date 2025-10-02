@@ -49,7 +49,7 @@ export const SearchPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero">
-      <div className="container py-8 mx-auto">
+      <div className="container py-8 mx-auto p-4">
         {/* Search Header */}
         <div className="max-w-2xl mx-auto mb-8">
           {/* Results Summary */}
@@ -74,7 +74,6 @@ export const SearchPage = () => {
             filter={filter}
             normalicedData={normalicedData}
             handleFilterChanged={handleFilterChanged}
-            data={data!}
           />
         )}
 

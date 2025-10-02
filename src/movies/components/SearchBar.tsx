@@ -7,7 +7,12 @@ import { Card } from "@/components/ui/card";
 import { getImageUrl } from "@/mocks/tmdb";
 import { useDebounce } from "../hooks/useDebounce";
 
-export const SearchBar = () => {
+interface SearchBarProps {
+  onFocus?: () => void;
+  onBlur?: () => void;
+}
+
+export const SearchBar = ({ onBlur, onFocus }: SearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -55,7 +60,10 @@ export const SearchBar = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-xl mx-auto">
+    <div
+      ref={containerRef}
+      className="relative w-full items-center max-w-xl mx-auto mr-2 "
+    >
       <form onSubmit={handleSubmit}>
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground " />
         <Input
@@ -64,7 +72,13 @@ export const SearchBar = () => {
           className="pl-10 bg-muted/50 border-border/50 focus:border-primary/50 "
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => debouncedTerm && setOpen(true)}
+          onFocus={() => {
+            debouncedTerm && setOpen(true);
+            onFocus?.();
+          }}
+          onBlur={() => {
+            setTimeout(() => onBlur?.(), 150);
+          }}
         />
 
         {open && debouncedTerm.length > 0 && (

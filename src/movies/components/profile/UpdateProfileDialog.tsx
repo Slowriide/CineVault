@@ -124,7 +124,7 @@ export const UpdateProfileDialog = () => {
             <DialogClose asChild>
               <Button
                 variant={"outline"}
-                className="hidden md:flex"
+                className="hidden sm:flex"
                 aria-label="Close"
               >
                 Close

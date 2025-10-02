@@ -59,17 +59,17 @@ export const StarRating = ({ value, onChange, max = 10 }: StarRatingProps) => {
         return (
           <div
             key={index}
-            className="relative cursor-pointer w-6 h-6"
+            className="relative cursor-pointer w-4 h-4 sm:w-6 sm:h-6"
             onPointerMove={(e) => handlePointer(e, index, false)}
             onPointerLeave={() => setHoverRating(null)}
             onPointerUp={(e) => handlePointer(e, index, true)}
           >
             {isFull ? (
-              <Star className="text-yellow-400 w-6 h-6 fill-current" />
+              <Star className="text-yellow-400 w-4 h-4 sm:w-6 sm:h-6 fill-current" />
             ) : isHalf ? (
-              <StarHalf className="text-yellow-400 w-6 h-6 fill-current" />
+              <StarHalf className="text-yellow-400 w-4 h-4 sm:w-6 sm:h-6 fill-current" />
             ) : (
-              <Star className="text-yellow-400 w-6 h-6" />
+              <Star className="text-yellow-400 w-4 h-4 sm:w-6 sm:h-6" />
             )}
           </div>
         );

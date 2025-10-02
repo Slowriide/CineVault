@@ -27,10 +27,17 @@ export const MovieReviews = () => {
   if (isLoading) {
     return <CustomLoading />;
   }
-  if (isError || !movie) {
-    return <CustomError title={""} message={""} />;
+  if (isError || !movie || !data) {
+    return (
+      <CustomError
+        title={"Error loading reviews"}
+        message={"Try later"}
+        action={{ to: `/${type}/${id}`, label: "Movie page" }}
+      />
+    );
   }
 
+  // Fallback
   if (!reviews || reviews.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-hero">
@@ -51,7 +58,7 @@ export const MovieReviews = () => {
 
   return (
     <div className="bg-gradient-hero">
-      <div className="max-w-[1600px] mx-auto py-8">
+      <div className="max-w-[1600px] mx-auto py-auto pb-8 sm:py-8 px-4">
         <h1 className="text-3xl font-bold mb-2">
           {`All Reviews for ${movie?.title}`}{" "}
         </h1>
@@ -59,9 +66,9 @@ export const MovieReviews = () => {
           {reviews.length} review{reviews.length === 1 ? "" : "s"}
         </p>
 
-        {/* Poster */}
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          <div className="md:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 mb-8 md:space-x-4">
+          {/* Poster */}
+          <div className="col-span-1">
             <Card className="overflow-hidden bg-gradient-card border-border/50 shadow-elegant">
               <img
                 src={getImageUrl(movie.poster_path, "w780")}
@@ -71,7 +78,7 @@ export const MovieReviews = () => {
             </Card>
           </div>
 
-          <div className=" gap-6 mb-6 col-span-2">
+          <div className="col-span-2">
             {reviews.map((review) => (
               <Reviews
                 key={`${review.id}-${review.author}`}
@@ -84,7 +91,9 @@ export const MovieReviews = () => {
             ))}
           </div>
         </div>
-        <CustomPagination totalPages={data?.total_pages ?? 1} />
+        {data?.total_pages > page && (
+          <CustomPagination totalPages={data?.total_pages ?? 1} />
+        )}
       </div>
     </div>
   );

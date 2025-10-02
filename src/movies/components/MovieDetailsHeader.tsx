@@ -20,15 +20,12 @@ import { useToggleWatched } from "../hooks/watched/useToggleWatched";
 import { useToggleWatclist } from "../hooks/watchlist/useToggleWatchlist";
 import { ToggleButton } from "./movie/ToggleButton";
 import { CustomError } from "@/components/custom/CustomError";
-import type { Trailer } from "@/interfaces/Trailers";
-import { TrailerPlayer } from "./movie/TrailerPlayer";
 
 interface MovieDetailsProps {
   data: NormalizedMovieDetailsData;
-  trailers: Trailer[];
 }
 
-export const MovieDetailsHeader = ({ data, trailers }: MovieDetailsProps) => {
+export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
   const { type } = useParams();
   const { session } = useAuth();
   const userId = session?.user.id;
@@ -158,7 +155,7 @@ export const MovieDetailsHeader = ({ data, trailers }: MovieDetailsProps) => {
         </p>
 
         {/* Action Buttons */}
-        <div className="flex items-center space-x-4 mb-8">
+        <div className=" grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 items-center mb-4 gap-4">
           <ToggleButton
             isActive={isFav}
             icon={
@@ -206,7 +203,7 @@ export const MovieDetailsHeader = ({ data, trailers }: MovieDetailsProps) => {
             </Button>
           )}
         </div>
-        <TrailerPlayer trailers={trailers} />
+
         {/* Reviews */}
         <PopularReviews movie={data} />
       </div>

@@ -56,7 +56,7 @@ export const Carousel = ({
         ) : (
           <h2 className="text-xl font-semibold text-foreground">{title}</h2>
         )}
-        <div className="flex space-x-2 opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300">
+        <div className="hidden sm:flex space-x-2 opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300 ">
           <Button
             variant="ghost"
             size="sm"

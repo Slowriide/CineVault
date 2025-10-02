@@ -7,7 +7,7 @@ interface MovieBackdropProps {
 export const MovieBackdrop = ({ backdropPath }: MovieBackdropProps) => {
   return (
     <div
-      className="absolute top-0 left-0 right-0 h-[60vh] bg-cover bg-center opacity-20"
+      className="absolute top-0 left-0 right-0 h-[60vh] bg-cover bg-center opacity-20 "
       style={{
         backgroundImage: `url(${getBackdropUrl(backdropPath, "original")})`,
       }}

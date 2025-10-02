@@ -66,16 +66,16 @@ export function ProfileDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-hero pt-10">
+    <div className="min-h-screen bg-gradient-hero mx-4 my-4">
       <div className="max-w-[1600px] mx-auto container">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Left Sidebar - Profile Info */}
           <div className="lg:col-span-1">
             <ProfileSidebar />
           </div>
 
           {/* Right Main Area - Tabs */}
-          <div className="lg:col-span-3">
+          <div className="md:col-span-3">
             <Card className="bg-card border-border py-8">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">

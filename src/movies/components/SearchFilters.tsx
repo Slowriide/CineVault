@@ -73,7 +73,7 @@ export const SearchFilters = () => {
   return (
     <div className=" top-0 bg-gradient-hero/95 pt-4">
       <div className="container mx-auto px-4 py-4">
-        <div className="flex flex-wrap gap-4 items-end">
+        <div className="flex flex-wrap gap-4 items-end justify-center">
           {/* Genre Filter */}
           <div className="space-y-2">
             <Label htmlFor="genre">Genre</Label>

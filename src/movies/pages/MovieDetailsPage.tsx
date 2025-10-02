@@ -12,11 +12,14 @@ import { MovieDetailsHeader } from "../components/MovieDetailsHeader";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 import { MovieBackdrop } from "../components/movie/MovieBackdrop";
 import { MovieDetailsPageSkeleton } from "./skeletons/MovieDetailsPageSkeleton";
+import { TrailerPlayer } from "../components/movie/TrailerPlayer";
+import { useState } from "react";
 
 export default function MovieDetailsPage() {
   const { type, slug } = useParams();
 
   const id = slug ? parseInt(slug.split("-").pop()!).toString() : null;
+  const [visibleCount, setVisibleCount] = useState(21);
 
   if (!id) {
     return (
@@ -28,10 +31,11 @@ export default function MovieDetailsPage() {
     );
   }
 
-  const { data: credits, error: isErrorCredits } = useCredits(
-    id,
-    type! as Type
-  );
+  const {
+    visiblePersons: credits,
+    allPersons,
+    error: isErrorCredits,
+  } = useCredits(id, type! as Type, visibleCount);
 
   const { data, isLoading, trailers, isError } =
     type === "movie" ? useMovieDetails(id!) : useTVShowDetails(id!);
@@ -61,8 +65,8 @@ export default function MovieDetailsPage() {
       {/* Backdrop */}
       <MovieBackdrop backdropPath={data.backdrop_path} />
 
-      <div className="max-w-[1600px] mx-auto py-auto space-y-12">
-        <div className="relative container py-20">
+      <div className="max-w-[1600px] mx-auto py-auto  px-4">
+        <div className="relative container pt-20 pb-10">
           {/* Movie Header */}
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             {/* Poster */}
@@ -74,13 +78,15 @@ export default function MovieDetailsPage() {
                   className="w-full aspect-[2/3] object-cover"
                 />
               </Card>
+
+              <TrailerPlayer
+                trailers={trailers}
+                className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 items-center gap-4 mt-4"
+              />
             </div>
 
             {/* Details */}
-            <MovieDetailsHeader
-              data={data as NormalizedMovieDetailsData}
-              trailers={trailers ?? []}
-            />
+            <MovieDetailsHeader data={data as NormalizedMovieDetailsData} />
           </div>
 
           {/* Tabs for Additional Content */}
@@ -91,6 +97,9 @@ export default function MovieDetailsPage() {
             isErrorSimilar={isErrorSimilar}
             isLoadingSimilar={isLoadingSimilar}
             type={(type ?? "movie") as Type}
+            visibleCount={visibleCount}
+            allPersons={allPersons.length}
+            onClick={() => setVisibleCount((prev) => prev + 14)}
           />
         </div>
       </div>

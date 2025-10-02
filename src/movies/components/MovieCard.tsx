@@ -92,7 +92,7 @@ export const MovieCard = memo(
               {/* Rating Badge */}
               {rating > 0 && (
                 <Badge className="absolute top-2 left-2 bg-background/90 text-primary border-primary/20">
-                  <Star className="w-3 h-3 mr-1 fill-primary text-primary" />
+                  <Star className="w-3 h-3 mr-1 fill-primary text-primary hidden sm:flex" />
                   {rating.toFixed(1)}
                 </Badge>
               )}
@@ -102,7 +102,7 @@ export const MovieCard = memo(
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="absolute top-2 right-2 h-8 w-8 p-0 bg-background/20 hover:bg-background/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  className="absolute top-2 right-2 h-6 w-6 md:h-8 md:w-8 p-0 md:bg-background/20 bg-background/40 hover:bg-background/40 backdrop-blur-sm opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   onClick={handleFavoriteClick}
                   aria-label={
                     isFav ? "Remove from favorites" : "Add to favorites"
@@ -119,20 +119,20 @@ export const MovieCard = memo(
           </Link>
 
           {/* Card Content */}
-          <div className="p-3 space-y-2">
+          <div className="p-3 space-y-1 justify-between">
             <Link to={linkTo}>
-              <h3 className="font-medium text-sm leading-tight line-clamp-1 min- group-hover:text-primary transition-colors duration-200">
+              <h3 className="font-medium text-sm leading-tight line-clamp-1 min- group-hover:text-primary transition-colors duration-200 mb-1">
                 {title}
               </h3>
             </Link>
 
-            <div className="flex items-center text-xs text-muted-foreground space-x-2">
-              <Calendar className="w-3 h-3" />
+            <div className="flex items-center text-xs text-muted-foreground space-x-2 ">
+              <Calendar className="w-3 h-3 hidden sm:flex" />
               <span>{year ?? ""}</span>
               {mediaType && (
                 <>
-                  <span>•</span>
-                  <Badge variant="outline" className="text-xs py-0 px-1 h-5">
+                  <span className="hidden sm:flex">•</span>
+                  <Badge variant="outline" className="text-xs py-0 px-1 h-5 ">
                     {mediaType === "movie" ? "Movie" : "TV"}
                   </Badge>
                 </>

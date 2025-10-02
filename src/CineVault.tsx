@@ -12,7 +12,7 @@ export const CineVault = () => {
       <QueryClientProvider client={queryClient}>
         <Toaster richColors position="bottom-right" />
         <AuthProvider>
-          <RouterProvider router={appRouter} />;
+          <RouterProvider router={appRouter} />
         </AuthProvider>
       </QueryClientProvider>
     </>

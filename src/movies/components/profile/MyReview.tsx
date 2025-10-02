@@ -12,7 +12,7 @@ interface ReviewProps {
   line?: boolean;
 }
 
-export const Reviews = memo(
+export const MyReview = memo(
   ({ image, likes, name, rating, review, line = true }: ReviewProps) => {
     const [expanded, setExpanded] = useState(false);
 
@@ -49,12 +49,12 @@ export const Reviews = memo(
       !expanded && isLong ? review.slice(0, 600) + "..." : review;
 
     return (
-      <div>
-        <div className="flex items-start mt-5 ">
+      <div className="w-full">
+        <div className="flex items-start mt-5 overflow-hidden ">
           <img
             src={image}
             alt="user"
-            className="w-12 h-12 object-cover rounded-full mr-3"
+            className="hidden sm:flex w-12 h-12 object-cover rounded-full mr-3 flex-shrink-0"
           />
           <div className="flex-1  min-w-0">
             <div className="flex flex-wrap space-x-2 items-center mb-2 line-clamp-1">
@@ -69,7 +69,7 @@ export const Reviews = memo(
               <span className="text-primary">({rating}/10) </span>
             </div>
 
-            <p className=" mb-2 break-words whitespace-pre-wrap overflow-hidden">
+            <p className=" mb-2 break-words whitespace-pre-wrap overflow-hidden line-clamp-5 sm:line-clamp-none">
               {displayedReview}
             </p>
             {isLong && (
