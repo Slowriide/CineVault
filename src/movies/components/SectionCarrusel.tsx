@@ -3,6 +3,7 @@ import type {
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
 import { Carousel } from "./Carousel";
+import { CustomError } from "@/components/custom/CustomError";
 
 type SectionProps = {
   title: string;
@@ -21,7 +22,14 @@ export const SectionCarrusel = ({
   mediaType,
   header,
 }: SectionProps) => {
-  if (error) return <p className="text-red-500">Error loading {title}</p>;
+  if (error)
+    return (
+      <CustomError
+        title={"Error loading carrousel"}
+        message={"Please try again"}
+        height={40}
+      />
+    );
 
   return (
     <Carousel

@@ -77,10 +77,35 @@ export const useHomeHooks = () => {
   const trendingTVShows = queries[6].data?.results ?? [];
   const featuredMovies = queries[7].data?.results ?? [];
 
+  const loadingStates = {
+    popular: queries[0].isLoading,
+    nowPlaying: queries[1].isLoading,
+    topRated: queries[2].isLoading,
+    upcoming: queries[3].isLoading,
+    popularTV: queries[4].isLoading,
+    trendingMovies: queries[5].isLoading,
+    trendingTV: queries[6].isLoading,
+    featured: queries[7].isLoading,
+  };
+  const errorStates = {
+    popular: queries[0].isError,
+    nowPlaying: queries[1].isError,
+    topRated: queries[2].isLoading,
+    upcoming: queries[3].isError,
+    popularTV: queries[4].isError,
+    trendingMovies: queries[5].isError,
+    trendingTV: queries[6].isError,
+    featured: queries[7].isError,
+  };
+
+  // Error crítico: si TODAS las queries fallan
+  const allErrors = queries.every((q) => q.isError);
+  const hasError = queries.some((q) => q.isError);
+
   const isLoading = queries.some((q) => q.isLoading);
-  const isError = queries.find((q) => q.error)?.error ?? null;
 
   return {
+    //Movies
     popularMovies,
     nowPlayingMovies,
     topRatedMovies,
@@ -90,6 +115,13 @@ export const useHomeHooks = () => {
     trendingTVShows,
     featuredMovies,
     isLoading,
-    isError,
+
+    //Loading
+    loadingStates,
+
+    //Errors
+    isError: allErrors ? queries[0].error : null,
+    errorStates,
+    hasPartialError: hasError,
   };
 };

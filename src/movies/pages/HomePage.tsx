@@ -4,23 +4,29 @@ import type {
   MovieMovieDB,
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { useSearchParams } from "react-router";
 import { getTimeWindow } from "@/interfaces/TimeWindow";
 import { SectionCarrusel } from "../components/SectionCarrusel";
 import { useHomeHooks } from "../hooks/home/useHomeHooks";
+import { CustomError } from "@/components/custom/CustomError";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { TimeWindowSelect } from "../components/home/TimeWindowSelect";
 
 export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const timeWindowM = getTimeWindow(searchParams.get("timeWindowMovie"));
   const timeWindowT = getTimeWindow(searchParams.get("timeWindowTV"));
+
+  const updateTimeWindow = (key: string, value: string) => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set(key, value);
+      return newParams;
+    });
+  };
 
   const {
     popularMovies,
@@ -31,8 +37,10 @@ export const HomePage = () => {
     trendingMovies,
     trendingTVShows,
     featuredMovies,
-    isLoading,
+    loadingStates,
     isError,
+    hasPartialError,
+    errorStates,
   } = useHomeHooks();
 
   const [featuredMovie, setFeaturedMovie] = useState<
@@ -48,43 +56,53 @@ export const HomePage = () => {
     }
   }, [featuredMovies]);
 
+  if (isError) {
+    return (
+      <CustomError
+        title="Service Unavailable"
+        message="Unable to load content. Please try again later."
+        action={{ to: "/", label: "Refresh" }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-hero ">
       {/* Hero Section */}
-      <HeroSection featuredMovie={featuredMovie!} isLoading={isLoading} />
+      <HeroSection
+        featuredMovie={featuredMovie}
+        isLoading={loadingStates.featured}
+      />
 
       {/* Content Sections */}
       <div className="max-w-[1600px] mx-auto py-12 space-y-12 px-4">
+        {/* Banner de advertencia si hay errores parciales */}
+        {hasPartialError && (
+          <Alert variant="destructive" className="mb-8">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Some content couldn't be loaded. Showing available content.
+            </AlertDescription>
+          </Alert>
+        )}
         {/* Trending Movies */}
         <SectionCarrusel
           header={
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-bold">Trending Movies</h2>
-              <Select
+              <TimeWindowSelect
                 value={timeWindowM}
-                onValueChange={(value: "day" | "week") => {
-                  setSearchParams((prev) => {
-                    const newParams = new URLSearchParams(prev);
-                    newParams.set("timeWindowMovie", value);
-                    return newParams;
-                  });
-                }}
-              >
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="Time Window" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="day">Today</SelectItem>
-                  <SelectItem value="week">This Week</SelectItem>
-                </SelectContent>
-              </Select>
+                onValueChange={(value) =>
+                  updateTimeWindow("timeWindowMovie", value)
+                }
+              />
             </div>
           }
-          items={trendingMovies ?? []}
+          items={trendingMovies}
           mediaType="movie"
-          loading={isLoading}
+          loading={loadingStates.trendingMovies}
           title={""}
-          error={isError}
+          error={errorStates.trendingMovies}
         />
 
         {/* Trending TV shows */}
@@ -92,68 +110,62 @@ export const HomePage = () => {
           header={
             <div className="flex items-center gap-4">
               <h2 className="text-xl font-bold">Trending TV Shows</h2>
-              <Select
+              <TimeWindowSelect
                 value={timeWindowT}
-                onValueChange={(value: "day" | "week") => {
-                  setSearchParams((prev) => {
-                    const newParams = new URLSearchParams(prev);
-                    newParams.set("timeWindowTV", value);
-                    return newParams;
-                  });
-                }}
-              >
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="Time Window" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="day">Today</SelectItem>
-                  <SelectItem value="week">This Week</SelectItem>
-                </SelectContent>
-              </Select>
+                onValueChange={(value) =>
+                  updateTimeWindow("timeWindowTV", value)
+                }
+              />
             </div>
           }
           title=""
-          items={trendingTVShows ?? []}
+          items={trendingTVShows}
           mediaType="tv"
-          loading={isLoading}
+          loading={loadingStates.trendingTV}
+          error={errorStates.trendingTV}
         />
         {/* Popular Movies */}
         <SectionCarrusel
           title={"Popular Movies"}
-          items={popularMovies ?? []}
+          items={popularMovies}
           mediaType={"movie"}
-          loading={isLoading}
+          loading={loadingStates.popular}
+          error={errorStates.popular}
         />
 
         <SectionCarrusel
           title={"Now Playing"}
-          items={nowPlayingMovies ?? []}
+          items={nowPlayingMovies}
           mediaType={"movie"}
-          loading={isLoading}
+          loading={loadingStates.nowPlaying}
+          error={errorStates.nowPlaying}
         />
 
         {/* Popular TV Shows */}
         <SectionCarrusel
           title={"Top TV Shows"}
-          items={popularTVShows ?? []}
+          items={popularTVShows}
           mediaType={"tv"}
-          loading={isLoading}
+          loading={loadingStates.popularTV}
+          error={errorStates.popularTV}
         />
 
         {/* Top Rated Movies */}
         <SectionCarrusel
           title={"Top Rated Movies"}
-          items={topRatedMovies ?? []}
+          items={topRatedMovies}
           mediaType={"movie"}
-          loading={isLoading}
+          loading={loadingStates.topRated}
+          error={errorStates.topRated}
         />
 
         {/* Upcoming Movies */}
         <SectionCarrusel
           title={"Upcoming Movies"}
-          items={upcomingMovies ?? []}
+          items={upcomingMovies}
           mediaType={"movie"}
-          loading={isLoading}
+          loading={loadingStates.upcoming}
+          error={errorStates.upcoming}
         />
       </div>
     </div>
