@@ -6,14 +6,14 @@ interface ErrorProps {
   title: string;
   message: string;
   action?: { to: string; label: string };
-  height?: number;
+  height?: string;
 }
 
 export const CustomError = ({ action, message, title, height }: ErrorProps) => {
   return (
     <div
       className={cn(
-        "flex items-center justify-center justify-items-center",
+        "flex items-start justify-center justify-items-center",
         height ? height : "min-h-screen"
       )}
     >
