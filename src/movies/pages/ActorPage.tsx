@@ -1,16 +1,13 @@
 import { useParams, useSearchParams } from "react-router";
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
 import { ExternalLink, MapPin } from "lucide-react";
 import { useMemo, useState } from "react";
 import { getImageUrl } from "@/mocks/tmdb";
 import { MovieCard } from "../components/MovieCard";
 import { usePerson } from "../hooks/usePerson";
 import { getMovieDetails } from "@/utils/personUtils";
-import { CustomLoading } from "@/components/custom/CustomLoading";
 import { CustomError } from "@/components/custom/CustomError";
 import { MovieStat } from "../components/actor/MovieStat";
 import { PersonDates } from "../components/PersonDates";
@@ -21,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ActorPageSkeleton } from "./skeletons/ActorPageSkeleton";
 
 export default function ActorPage() {
   // const { id } = useParams<{ id: string }>();
@@ -74,7 +72,7 @@ export default function ActorPage() {
   }
 
   if (isLoading) {
-    return <CustomLoading />;
+    return <ActorPageSkeleton />;
   }
 
   if (error || !person) {
@@ -93,7 +91,7 @@ export default function ActorPage() {
 
   return (
     <div className="min-h-screen bg-gradient-hero">
-      <div className="container mx-auto px-4 py-8 space-y-8">
+      <div className="max-w-[1600px] container mx-auto px-4 py-8 space-y-8">
         {/* Actor Header */}
         <Card className="bg-gradient-card border-border/50">
           <CardContent className="p-8">
