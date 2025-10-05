@@ -1,15 +1,10 @@
 import { useSearchParams } from "react-router";
-import { MovieCard } from "../components/MovieCard";
-import { CustomPagination } from "@/components/custom/CustomPagination";
 import { useMultipleSearchs } from "../hooks/useMultipleSearchs";
-import { ActorCard } from "../components/ActorCard";
 import type { MediaType } from "@/interfaces/SearchResponse";
 import { FilterTabs } from "../components/search/FilterTabs";
 import { CustomError } from "@/components/custom/CustomError";
 import { useCallback, useMemo } from "react";
-import { SkeletonGrid } from "../components/skeletons/SkeletonGrid";
-import { InitialState } from "../components/search/InitialState";
-import { EmptyState } from "../components/search/EmptyState";
+import { SearchPageContent } from "../components/search/SearchPageContent";
 
 export const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -18,9 +13,10 @@ export const SearchPage = () => {
 
   const {
     data,
-    error,
+
     normalizedData: normalicedData,
     isLoading,
+    isError,
   } = useMultipleSearchs(query);
 
   const filter = searchParams.get("filter") || "all";
@@ -43,8 +39,8 @@ export const SearchPage = () => {
     [filter, normalicedData]
   );
 
-  if (!data && error) {
-    return <CustomError title={error?.name} message={error?.message} />;
+  if (!data && isError) {
+    return <CustomError title={""} message={""} />;
   }
 
   return (
@@ -67,7 +63,6 @@ export const SearchPage = () => {
             </div>
           )}
         </div>
-
         {/* Filter Tabs */}
         {normalicedData.length > 0 && (
           <FilterTabs
@@ -76,52 +71,13 @@ export const SearchPage = () => {
             handleFilterChanged={handleFilterChanged}
           />
         )}
-
-        {/* Loading State */}
-        {isLoading && <SkeletonGrid count={20} />}
-
-        {/* Results Grid */}
-        {!isLoading && filteredResults.length > 0 && (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-4 mb-6">
-            {filteredResults.map((result) => {
-              if (result.media_type === "person") {
-                return (
-                  <ActorCard
-                    key={`person-${result.id}`}
-                    adult={result.adult}
-                    gender={result.gender}
-                    id={result.id}
-                    known_for_department={result.known_for_department}
-                    name={result.name}
-                    original_name={result.original_name}
-                    popularity={result.popularity}
-                    profile_path={result.profile_path}
-                    credit_id={""}
-                  />
-                );
-              }
-
-              return (
-                <MovieCard
-                  key={`${result.media_type}-${result.id}`}
-                  item={result}
-                  mediaType={result.media_type}
-                  size="xl"
-                />
-              );
-            })}
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!isLoading && query && filteredResults.length === 0 && <EmptyState />}
-
-        {/* Initial State */}
-        {!query && <InitialState />}
-
-        {query && !isLoading && filteredResults.length > 0 && (
-          <CustomPagination totalPages={data?.total_pages ?? 1} />
-        )}
+        <SearchPageContent
+          isLoading={isLoading}
+          isError={isError}
+          filteredResults={filteredResults}
+          query={query}
+          totalPages={data?.total_pages ?? 1}
+        />
       </div>
     </div>
   );
