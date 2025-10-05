@@ -1,9 +1,10 @@
 import { supabase } from "@/integrations/supabase/supabaseClient";
+import type { SupabaseMovie } from "@/utils/FavoriteToMovieMapper";
 
 import { useQuery } from "@tanstack/react-query";
 
 export const useFavs = (userId?: string) => {
-  return useQuery({
+  return useQuery<SupabaseMovie[]>({
     queryKey: ["favorites", userId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -16,6 +17,5 @@ export const useFavs = (userId?: string) => {
       return data;
     },
     enabled: !!userId,
-    initialData: [],
   });
 };

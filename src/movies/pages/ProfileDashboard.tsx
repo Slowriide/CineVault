@@ -1,5 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
@@ -9,17 +8,14 @@ import {
 } from "@/components/ui/card";
 import { Heart, Clock, CheckCircle, MessageSquare } from "lucide-react";
 import { ProfileSidebar } from "../components/PerfilSidebar";
-import { MovieCard } from "../components/MovieCard";
 import { useAuth } from "@/context/AuthContext";
 import { useFavs } from "../hooks/favorites/useFavs";
-import { SupabaseToMovieMapper } from "@/utils/FavoriteToMovieMapper";
 import { useWatched } from "../hooks/watched/useWatched";
 import { useWatchlist } from "../hooks/watchlist/useWatchlist";
 import { useMyReviews } from "../hooks/supabase/reviews/useMyReviews";
-import { MyReviewItem } from "../components/MyReviewItem";
 import { useSearchParams } from "react-router";
-import { CustomLoading } from "@/components/custom/CustomLoading";
-import { CustomError } from "@/components/custom/CustomError";
+import { ProfileTabsContent } from "../components/profile/tabs/ProfileTabsContent";
+import { ReviewsTabContent } from "../components/profile/tabs/ReviewsTabContent";
 
 export function ProfileDashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -29,36 +25,29 @@ export function ProfileDashboard() {
   const { session } = useAuth();
   const userId = session?.user.id;
 
-  const { data: favorites, isLoading, isError } = useFavs(userId);
   const {
-    data: watcheds,
-    isLoading: watchedsLoading,
-    isError: watchedsError,
+    data: favorites = [],
+    isLoading: isFavsLoading,
+    isError: isFavsError,
+  } = useFavs(userId);
+
+  const {
+    data: watchList = [],
+    isLoading: isWatchListLoading,
+    isError: isWatchListError,
+  } = useWatchlist(userId);
+
+  const {
+    data: watcheds = [],
+    isLoading: iswWatchedsLoading,
+    isError: isWatchedsError,
   } = useWatched(userId);
 
   const {
-    data: watchList,
-    isLoading: watchListLoading,
-    isError: watchListError,
-  } = useWatchlist(userId);
-
-  const { data: myReviews } = useMyReviews(userId);
-
-  if (
-    isLoading ||
-    watchedsLoading ||
-    watchListLoading ||
-    !favorites ||
-    !watcheds ||
-    !watchList ||
-    !myReviews
-  )
-    return <CustomLoading />;
-
-  if (isError)
-    return (
-      <CustomError title={"Error loaging profile"} message={"Try later"} />
-    );
+    data: myReviews = [],
+    isLoading: isReviewsLoading,
+    isError: isReviewsError,
+  } = useMyReviews(userId);
 
   const handleTabChange = (tab: string) => {
     searchParams.set("tab", tab);
@@ -77,6 +66,7 @@ export function ProfileDashboard() {
           {/* Right Main Area - Tabs */}
           <div className="md:col-span-3">
             <Card className="bg-card border-border py-8">
+              {/* Header */}
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Heart className="h-6 w-6 text-primary" />
@@ -87,6 +77,7 @@ export function ProfileDashboard() {
                 </CardDescription>
               </CardHeader>
 
+              {/* Content */}
               <CardContent>
                 <Tabs
                   value={tab}
@@ -151,129 +142,43 @@ export function ProfileDashboard() {
                   </TabsList>
 
                   {/* Favorites Tab */}
-                  <TabsContent value="favorites" className="space-y-6">
-                    {favorites.length > 0 && !isError ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                        {favorites.map((fav) => {
-                          // Asegurarse que metadata tenga el tipo correcto
-                          const item = SupabaseToMovieMapper(fav);
-
-                          return (
-                            <MovieCard
-                              key={`favorite-${fav.media_type}-${fav.movie_id}`}
-                              item={item}
-                              mediaType={item.media_type}
-                              size="xl"
-                            />
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="text-center py-12">
-                        <Heart className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">
-                          No favorites yet
-                        </h3>
-                        <p className="text-muted-foreground mb-6">
-                          Start exploring movies and TV shows to build your
-                          collection
-                        </p>
-                        <Button asChild>
-                          <a href="/">Discover Movies</a>
-                        </Button>
-                      </div>
-                    )}
-                  </TabsContent>
+                  <ProfileTabsContent
+                    movies={favorites}
+                    isError={isFavsError}
+                    isLoading={isFavsLoading}
+                    value={"favorites"}
+                    title={"You don't have any favorites yet"}
+                    subtitle={"Add your favorite movies and shows"}
+                  />
 
                   {/* Watchlist Tab */}
-                  <TabsContent value="watchlist" className="space-y-6">
-                    {watchList.length > 0 && !watchListError ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                        {watchList.map((watchList) => {
-                          const item = SupabaseToMovieMapper(watchList);
-
-                          return (
-                            <MovieCard
-                              key={`watchlist-${item.media_type}-${item.id}`}
-                              item={item}
-                              mediaType={item.media_type}
-                              size="xl"
-                            />
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="text-center py-12">
-                        <Clock className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">
-                          Your watchlist is empty
-                        </h3>
-                        <p className="text-muted-foreground mb-6">
-                          Add movies and shows you want to watch later
-                        </p>
-                        <Button asChild>
-                          <a href="/">Browse Movies</a>
-                        </Button>
-                      </div>
-                    )}
-                  </TabsContent>
+                  <ProfileTabsContent
+                    movies={watchList}
+                    isError={isWatchListError}
+                    isLoading={isWatchListLoading}
+                    value={"watchlist"}
+                    title="Your watchlist is empty"
+                    subtitle="Add movies and shows you want to watch later"
+                  />
 
                   {/* Watched Tab */}
-                  <TabsContent value="watched" className="space-y-6">
-                    {watcheds.length > 0 && !watchedsError ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                        {watcheds.map((watched) => {
-                          const item = SupabaseToMovieMapper(watched);
-
-                          return (
-                            <MovieCard
-                              key={`watched-${item.media_type}-${item.id}`}
-                              item={item}
-                              mediaType={item.media_type}
-                              size="xl"
-                            />
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="text-center py-12">
-                        <CheckCircle className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">
-                          No watched movies yet
-                        </h3>
-                        <p className="text-muted-foreground mb-6">
-                          Mark movies as watched to track your viewing history
-                        </p>
-                        <Button asChild>
-                          <a href="/">Start Watching</a>
-                        </Button>
-                      </div>
-                    )}
-                  </TabsContent>
+                  <ProfileTabsContent
+                    movies={watcheds}
+                    isError={isWatchedsError}
+                    isLoading={iswWatchedsLoading}
+                    value={"watched"}
+                    title={"No watched movies yet"}
+                    subtitle={
+                      "Mark movies as watched to track your viewing history"
+                    }
+                  />
 
                   {/* Reviews Tab */}
-                  <TabsContent value="reviews" className="space-y-6">
-                    {myReviews.length > 0 ? (
-                      <div className=" space-y-4 ">
-                        {myReviews.map((review) => (
-                          <MyReviewItem key={review.id} review={review} />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-12">
-                        <MessageSquare className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">
-                          No reviews yet
-                        </h3>
-                        <p className="text-muted-foreground mb-6">
-                          Share your thoughts about the movies you've watched
-                        </p>
-                        <Button asChild>
-                          <a href="/">Find Movies to Review</a>
-                        </Button>
-                      </div>
-                    )}
-                  </TabsContent>
+                  <ReviewsTabContent
+                    myReviews={myReviews}
+                    isError={isReviewsError}
+                    isLoading={isReviewsLoading}
+                  />
                 </Tabs>
               </CardContent>
             </Card>

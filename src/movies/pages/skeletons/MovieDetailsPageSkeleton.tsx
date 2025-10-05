@@ -6,11 +6,17 @@ export const MovieDetailsPageSkeleton = () => {
       {/* Backdrop */}
       <div className="absolute top-0 left-0 right-0 h-[60vh] bg-card" />
       {/* Content */}
-      <div className="relative z-10 max-w-[1600px] mx-auto container py-20 space-y-12">
+      <div className="relative z-10 max-w-[1600px] mx-auto container py-20 space-y-12 px-4">
         {/* Movie Header */}
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           {/* Poster */}
-          <Skeleton className="md:col-span-1 w-full aspect-[2/3] rounded-lg shadow-elegant" />
+          <div className="md:col-span-1 ">
+            <Skeleton className="md:col-span-1 w-full aspect-[2/3] rounded-lg shadow-elegant" />
+            <div className="grid grid-cols-2  gap-4 mt-4">
+              <Skeleton className="w-full h-10 rounded" /> {/* Button */}
+              <Skeleton className="w-full h-10 rounded" /> {/* Button */}
+            </div>
+          </div>
 
           {/* Details */}
           <div className="md:col-span-2 space-y-6">
@@ -20,10 +26,6 @@ export const MovieDetailsPageSkeleton = () => {
             <Skeleton className="w-full h-20 rounded" /> {/* Description */}
             <div className="flex gap-4">
               <Skeleton className="w-32 h-10 rounded" /> {/* Button */}
-              <Skeleton className="w-32 h-10 rounded" /> {/* Button */}
-              <Skeleton className="w-32 h-10 rounded" /> {/* Button */}
-            </div>
-            <div className="flex gap-4">
               <Skeleton className="w-32 h-10 rounded" /> {/* Button */}
               <Skeleton className="w-32 h-10 rounded" /> {/* Button */}
             </div>

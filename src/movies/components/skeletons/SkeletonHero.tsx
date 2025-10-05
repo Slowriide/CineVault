@@ -3,9 +3,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const HeroSkeleton = () => {
   return (
     <div className="relative h-[70vh] flex items-center bg-black/70 -mt-16">
-      <div className="absolute mx-auto inset-0 bg-card" />
+      <div className="absolute mx-auto inset-0 bg-card " />
 
-      <div className="relative z-10 max-w-[1600px] mx-auto container py-20">
+      <div className="relative z-10 max-w-[1600px] mx-auto container py-20 px-4">
         <div className="max-w-2xl space-y-6">
           {/* Poster + info */}
           <div className="flex items-start space-x-6">

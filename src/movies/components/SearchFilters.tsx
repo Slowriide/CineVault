@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/select";
 import { useSearchParams } from "react-router";
 import { useGenres } from "../hooks/useGenres";
-import { CustomLoading } from "@/components/custom/CustomLoading";
 import { FILTERTYPES, LANGUAGES, SORT_OPTIONS } from "@/utils/Filters";
 import { useSearchPerson } from "../hooks/useSearchPerson";
 import { type PersonSearch } from "@/interfaces/Searchs";
@@ -28,6 +27,8 @@ import { ChevronDown } from "lucide-react";
 import { slugify } from "@/utils/slugify";
 import { getImageUrl } from "@/mocks/tmdb";
 import { deslugify } from "../../utils/deslugify";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CustomError } from "@/components/custom/CustomError";
 
 export const SearchFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -35,7 +36,7 @@ export const SearchFilters = () => {
   const [open, setOpen] = useState(false);
   const [year, setYear] = useState(searchParams.get("year") ?? "");
 
-  const { data: genres, isLoading } = useGenres("movie");
+  const { data: genres, isLoading, isError } = useGenres("movie");
   const castParam = searchParams.get("cast") ?? "";
 
   const {
@@ -67,11 +68,33 @@ export const SearchFilters = () => {
   };
 
   if (isLoading) {
-    return <CustomLoading />;
+    return (
+      <div className="flex container mx-auto px-4 pt-12 pb-5 justify-between">
+        <div className="flex gap-4 ">
+          <Skeleton className="h-10 w-28 rounded-md" />
+          <Skeleton className="h-10 w-20 rounded-md" />
+          <Skeleton className="h-10 w-22 rounded-md" />
+          <Skeleton className="h-10 w-30 rounded-md" />
+          <Skeleton className="h-10 w-40 rounded-md" />
+          <Skeleton className="h-10 w-40 rounded-md" />
+        </div>
+        <Skeleton className="h-10 w-20 rounded-md" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <CustomError
+        title={"Error loading filters..."}
+        message={"Please reload"}
+        height="h-20 pt-2"
+      />
+    );
   }
 
   return (
-    <div className=" top-0 bg-gradient-hero/95 pt-4">
+    <div className="top-0 bg-gradient-hero/95 pt-4">
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-wrap gap-4 items-end justify-center">
           {/* Genre Filter */}

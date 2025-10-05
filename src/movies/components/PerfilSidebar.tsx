@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UpdateProfileDialog } from "./profile/UpdateProfileDialog";
 import { useSupabaseProfile } from "../hooks/supabase/profile/useSupabaseProfile";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const ProfileSidebar = () => {
   const { session, user, signOut } = useAuth();
@@ -12,11 +13,31 @@ export const ProfileSidebar = () => {
   const userId = session?.user.id;
 
   const { getProfile } = useSupabaseProfile(userId);
-  const profileData = getProfile.data;
+  const { data: profileData, isLoading } = getProfile;
 
   const handleSignOut = async () => {
     await signOut();
   };
+
+  if (isLoading) {
+    return (
+      <Card className="bg-card border-border">
+        <CardContent className="px-6 py-8">
+          <div className="flex flex-col items-center space-y-4">
+            <Skeleton className="h-20 w-20 rounded-full" />
+            <div className="text-center space-y-2 w-full">
+              <Skeleton className="h-5 w-32 mx-auto" />
+              <Skeleton className="h-4 w-40 mx-auto" />
+            </div>
+            <div className="w-full space-y-2">
+              <Skeleton className="h-9 w-full" />
+              <Skeleton className="h-9 w-full" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-card border-border">

@@ -169,18 +169,6 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
           />
 
           <ToggleButton
-            isActive={isWatched}
-            icon={
-              <EyeIcon
-                className={`w-4 h-4 mr-2 ${isWatched ? "fill-current" : ""}`}
-              />
-            }
-            labelOn={"Remove from Watched"}
-            labelOff={"Add to Watched"}
-            onClick={handleWatchedClick}
-          />
-
-          <ToggleButton
             isActive={isInWatchList}
             icon={
               <Clapperboard
@@ -192,6 +180,18 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
             labelOn={"Remove from Watchlist"}
             labelOff={"Add to WatchList"}
             onClick={handleWatchListClick}
+          />
+
+          <ToggleButton
+            isActive={isWatched}
+            icon={
+              <EyeIcon
+                className={`w-4 h-4 mr-2 ${isWatched ? "fill-current" : ""}`}
+              />
+            }
+            labelOn={"Remove from Watched"}
+            labelOff={"Add to Watched"}
+            onClick={handleWatchedClick}
           />
 
           {data.homepage && (
