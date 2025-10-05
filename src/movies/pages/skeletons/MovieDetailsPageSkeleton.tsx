@@ -23,17 +23,40 @@ export const MovieDetailsPageSkeleton = () => {
             <Skeleton className="w-3/4 h-10 rounded" /> {/* Title */}
             <Skeleton className="w-2/4 h-6 rounded" /> {/* Data */}
             <Skeleton className="w-1/4 h-6 rounded" /> {/* Rating */}
-            <Skeleton className="w-full h-20 rounded" /> {/* Description */}
+            <Skeleton className="h-4 w-full" />
+            {/* Description */}
+            <Skeleton className="h-4 w-full" />
+            {/* Description */}
+            <Skeleton className="h-4 w-full" /> {/* Description */}
             <div className="flex gap-4">
               <Skeleton className="w-32 h-10 rounded" /> {/* Button */}
               <Skeleton className="w-32 h-10 rounded" /> {/* Button */}
               <Skeleton className="w-32 h-10 rounded" /> {/* Button */}
             </div>
             {/* Reviews */}
-            <div className="flex flex-col gap-4 pt-4 lg:pt-10">
-              <Skeleton className="w-32 h-4 rounded" />
-              <Skeleton className="w-full h-32 rounded" />
-              <Skeleton className="w-full h-32 rounded" />
+            <div className="flex flex-col items-start overflow-hidden gap-2 w-full mt-2">
+              {/* Header (Review by + name + stars) */}
+              <div className="flex items-center space-x-2">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+            </div>
+            <div className="flex flex-col items-start overflow-hidden gap-2 w-full mt-2">
+              {/* Header (Review by + name + stars) */}
+              <div className="flex items-center space-x-2">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
             </div>
           </div>
         </div>

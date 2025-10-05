@@ -9,8 +9,8 @@ import { useTVShowDetails } from "../hooks/useTVShowDetails";
 import { CustomPagination } from "@/components/custom/CustomPagination";
 import { Card } from "@/components/ui/card";
 import { slugify } from "@/utils/slugify";
-import { CustomLoading } from "@/components/custom/CustomLoading";
 import { CustomError } from "@/components/custom/CustomError";
+import { MovieReviewsSkeleton } from "../components/reviews/SkeletonReviewPage";
 
 export const MovieReviews = () => {
   const [searchParams] = useSearchParams();
@@ -25,7 +25,7 @@ export const MovieReviews = () => {
     type === "movie" ? useMovieDetails(id!) : useTVShowDetails(id!);
 
   if (isLoading) {
-    return <CustomLoading />;
+    return <MovieReviewsSkeleton />;
   }
   if (isError || !movie || !data) {
     return (
@@ -78,6 +78,7 @@ export const MovieReviews = () => {
             </Card>
           </div>
 
+          {/* Reviews */}
           <div className="col-span-2">
             {reviews.map((review) => (
               <Reviews
@@ -91,6 +92,8 @@ export const MovieReviews = () => {
             ))}
           </div>
         </div>
+
+        {/* Pagination */}
         {data?.total_pages > page && (
           <CustomPagination totalPages={data?.total_pages ?? 1} />
         )}

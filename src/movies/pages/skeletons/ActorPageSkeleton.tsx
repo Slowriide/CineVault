@@ -20,7 +20,13 @@ export const ActorPageSkeleton = () => {
                 <Skeleton className="w-2/4 h-10 rounded" /> {/* Worst Movie */}
                 <Skeleton className="w-3/4 h-10 rounded" /> {/* Dates */}
                 <Skeleton className="w-1/6 h-10 rounded" /> {/* Page */}
-                <Skeleton className="w-full h-98 rounded" /> {/* Bio */}
+                <div>
+                  {Array.from({ length: 20 }).map((_, i) => (
+                    <div className="flex flex-col w-full mt-1" key={i}>
+                      <Skeleton className="w-full h-4 rounded" />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </CardContent>

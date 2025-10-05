@@ -51,6 +51,8 @@ export default function ActorPage() {
     totalMovies,
   } = usePerson(id ?? "1", "movie_credits,tv_credits", visibleCount, orderBy);
 
+  // const isLoading = true;
+
   const topRatedDetails = useMemo(
     () => getMovieDetails(topRatedMovie),
     [topRatedMovie]
