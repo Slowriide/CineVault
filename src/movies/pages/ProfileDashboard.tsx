@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Heart, Clock, CheckCircle, MessageSquare } from "lucide-react";
-import { ProfileSidebar } from "../components/PerfilSidebar";
 import { useAuth } from "@/context/AuthContext";
 import { useFavs } from "../hooks/favorites/useFavs";
 import { useWatched } from "../hooks/watched/useWatched";
@@ -16,6 +15,7 @@ import { useMyReviews } from "../hooks/supabase/reviews/useMyReviews";
 import { useSearchParams } from "react-router";
 import { ProfileTabsContent } from "../components/profile/tabs/ProfileTabsContent";
 import { ReviewsTabContent } from "../components/profile/tabs/ReviewsTabContent";
+import { ProfileSidebar } from "../components/profile/PerfilSidebar";
 
 export function ProfileDashboard() {
   const [searchParams, setSearchParams] = useSearchParams();

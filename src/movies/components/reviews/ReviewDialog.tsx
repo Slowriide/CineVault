@@ -14,12 +14,13 @@ import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDet
 import { getImageUrl } from "@/mocks/tmdb";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { StarRating } from "./movie/StarRating";
-import { useReviewsActions } from "../hooks/supabase/reviews/useReviewsActions";
+
 import { useAuth } from "@/context/AuthContext";
 import { useParams } from "react-router";
 import type { supabaseReview } from "@/interfaces/MovieReviews";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import { useReviewsActions } from "@/movies/hooks/supabase/reviews/useReviewsActions";
+import { StarRating } from "../movie/StarRating";
 
 interface Props {
   movie: NormalizedMovieDetailsData;

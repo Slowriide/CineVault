@@ -5,9 +5,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Edit, EllipsisVertical, Trash } from "lucide-react";
-import { ReviewDialog } from "../ReviewDialog";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 import type { supabaseReview } from "@/interfaces/MovieReviews";
+import { ReviewDialog } from "../reviews/ReviewDialog";
 
 interface DeleteDialogProps {
   onDelete: (e: React.MouseEvent<Element, MouseEvent>) => Promise<void>;

@@ -10,9 +10,9 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useSearchParams } from "react-router";
-import { useGenres } from "../hooks/useGenres";
+
 import { FILTERTYPES, LANGUAGES, SORT_OPTIONS } from "@/utils/Filters";
-import { useSearchPerson } from "../hooks/useSearchPerson";
+
 import { type PersonSearch } from "@/interfaces/Searchs";
 import {
   Command,
@@ -26,9 +26,12 @@ import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import { ChevronDown } from "lucide-react";
 import { slugify } from "@/utils/slugify";
 import { getImageUrl } from "@/mocks/tmdb";
-import { deslugify } from "../../utils/deslugify";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomError } from "@/components/custom/CustomError";
+import { useGenres } from "@/movies/hooks/useGenres";
+import { useSearchPerson } from "@/movies/hooks/useSearchPerson";
+import { deslugify } from "@/utils/deslugify";
 
 export const SearchFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();

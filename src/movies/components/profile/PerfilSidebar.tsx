@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UpdateProfileDialog } from "./profile/UpdateProfileDialog";
-import { useSupabaseProfile } from "../hooks/supabase/profile/useSupabaseProfile";
+
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSupabaseProfile } from "@/movies/hooks/supabase/profile/useSupabaseProfile";
+import { UpdateProfileDialog } from "./UpdateProfileDialog";
 
 export const ProfileSidebar = () => {
   const { session, user, signOut } = useAuth();

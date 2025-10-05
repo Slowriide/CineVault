@@ -1,7 +1,7 @@
-import { SearchFilters } from "../components/SearchFilters";
 import { useMoviesByFilter } from "../hooks/useMoviesByFilters";
 import { useSearchParams } from "react-router";
 import { DiscoverContent } from "../components/discover/DiscoverContent";
+import { SearchFilters } from "../components/search/SearchFilters";
 
 export default function DiscoverPage() {
   const [searchParams] = useSearchParams();

@@ -7,12 +7,13 @@ import type {
 
 import { useSearchParams } from "react-router";
 import { getTimeWindow } from "@/interfaces/TimeWindow";
-import { SectionCarrusel } from "../components/SectionCarrusel";
+
 import { useHomeHooks } from "../hooks/home/useHomeHooks";
 import { CustomError } from "@/components/custom/CustomError";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { TimeWindowSelect } from "../components/home/TimeWindowSelect";
+import { SectionCarrusel } from "../components/home/SectionCarrusel";
 
 export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();

@@ -2,8 +2,9 @@ import type {
   MovieMovieDB,
   TvShowMovieDB,
 } from "@/interfaces/MovieDB.response";
-import { Carousel } from "./Carousel";
+
 import { CustomError } from "@/components/custom/CustomError";
+import { Carousel } from "../Carousel";
 
 type SectionProps = {
   title: string;
@@ -27,7 +28,7 @@ export const SectionCarrusel = ({
       <CustomError
         title={"Error loading carrousel"}
         message={"Please try again"}
-        height={40}
+        height={"h-40"}
       />
     );
 
