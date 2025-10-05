@@ -1,9 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Type } from "@/interfaces/MovieCategory";
 import type { PersonDetails } from "@/interfaces/Credits";
-import type { PaginatedResponse } from "../api/get-similar.action";
-import { ActorCard } from "./ActorCard";
-import { MovieCard } from "./MovieCard";
+import type { PaginatedResponse } from "../../api/get-similar.action";
+import { ActorCard } from "../ActorCard";
+import { MovieCard } from "../MovieCard";
 import { Button } from "@/components/ui/button";
 
 interface ContentTabsProps {

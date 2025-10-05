@@ -1,18 +1,18 @@
 import type { supabaseReview } from "@/interfaces/MovieReviews";
-import { useMovieDetails } from "../hooks/useMovieDetails";
+import { useMovieDetails } from "../../hooks/useMovieDetails";
 import { Card } from "@/components/ui/card";
 import { getBackdropUrl } from "@/mocks/tmdb";
 import { Link } from "react-router";
 import { slugify } from "@/utils/slugify";
-import { useTVShowDetails } from "../hooks/useTVShowDetails";
+import { useTVShowDetails } from "../../hooks/useTVShowDetails";
 import { Separator } from "@/components/ui/separator";
-import { useReviewsActions } from "../hooks/supabase/reviews/useReviewsActions";
+import { useReviewsActions } from "../../hooks/supabase/reviews/useReviewsActions";
 import * as React from "react";
 import { useAuth } from "@/context/AuthContext";
 import { CustomError } from "@/components/custom/CustomError";
-import { useSupabaseProfile } from "../hooks/supabase/profile/useSupabaseProfile";
-import { EditOrDeleteDialog } from "./profile/EditOrDeleteDialog";
-import { MyReview } from "./profile/MyReview";
+import { useSupabaseProfile } from "../../hooks/supabase/profile/useSupabaseProfile";
+import { EditOrDeleteDialog } from "./EditOrDeleteDialog";
+import { MyReview } from "./MyReview";
 
 export const MyReviewItem = ({ review }: { review: supabaseReview }) => {
   const { session } = useAuth();

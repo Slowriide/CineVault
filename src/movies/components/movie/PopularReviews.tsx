@@ -1,13 +1,14 @@
 import { Separator } from "@/components/ui/separator";
-import { Reviews } from "./Reviews";
-import { useReviews } from "../hooks/useReviews";
+import { Reviews } from "../reviews/Reviews";
+import { useReviews } from "../../hooks/useReviews";
 import { getImageUrl } from "@/mocks/tmdb";
 import { Link, useParams } from "react-router";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
-import { ReviewDialog } from "./ReviewDialog";
+
 import { useMemo } from "react";
-import { useMyReviewForMovie } from "../hooks/supabase/reviews/useMyReviews";
+import { useMyReviewForMovie } from "../../hooks/supabase/reviews/useMyReviews";
 import { useAuth } from "@/context/AuthContext";
+import { ReviewDialog } from "../reviews/ReviewDialog";
 
 interface Props {
   movie: NormalizedMovieDetailsData;

@@ -1,5 +1,5 @@
 import { TabsContent } from "@/components/ui/tabs";
-import { MyReviewItem } from "../../MyReviewItem";
+import { MyReviewItem } from "../MyReviewItem";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { supabaseReview } from "@/interfaces/MovieReviews";

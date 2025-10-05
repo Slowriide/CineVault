@@ -12,13 +12,13 @@ import {
 import { PopularReviews } from "./PopularReviews";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 import { useAuth } from "@/context/AuthContext";
-import { useToggleFavorite } from "../hooks/favorites/useToggleFavorite";
+import { useToggleFavorite } from "../../hooks/favorites/useToggleFavorite";
 import { toast } from "sonner";
 import { mapMovieDetailsToMovieDB } from "@/utils/NormalizedToMovieMapper";
 import { useParams } from "react-router";
-import { useToggleWatched } from "../hooks/watched/useToggleWatched";
-import { useToggleWatclist } from "../hooks/watchlist/useToggleWatchlist";
-import { ToggleButton } from "./movie/ToggleButton";
+import { useToggleWatched } from "../../hooks/watched/useToggleWatched";
+import { useToggleWatclist } from "../../hooks/watchlist/useToggleWatchlist";
+import { ToggleButton } from "./ToggleButton";
 import { CustomError } from "@/components/custom/CustomError";
 
 interface MovieDetailsProps {

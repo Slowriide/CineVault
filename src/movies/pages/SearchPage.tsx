@@ -4,12 +4,12 @@ import { CustomPagination } from "@/components/custom/CustomPagination";
 import { useMultipleSearchs } from "../hooks/useMultipleSearchs";
 import { ActorCard } from "../components/ActorCard";
 import type { MediaType } from "@/interfaces/SearchResponse";
-import { FilterTabs } from "../components/FilterTabs";
+import { FilterTabs } from "../components/search/FilterTabs";
 import { CustomError } from "@/components/custom/CustomError";
 import { useCallback, useMemo } from "react";
 import { SkeletonGrid } from "../components/skeletons/SkeletonGrid";
-import { InitialState } from "../components/InitialState";
-import { EmptyState } from "../components/EmptyState";
+import { InitialState } from "../components/search/InitialState";
+import { EmptyState } from "../components/search/EmptyState";
 
 export const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();

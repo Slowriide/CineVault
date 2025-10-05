@@ -10,7 +10,7 @@ import { usePerson } from "../hooks/usePerson";
 import { getMovieDetails } from "@/utils/personUtils";
 import { CustomError } from "@/components/custom/CustomError";
 import { MovieStat } from "../components/actor/MovieStat";
-import { PersonDates } from "../components/PersonDates";
+import { PersonDates } from "../components/actor/PersonDates";
 import {
   Select,
   SelectContent,
