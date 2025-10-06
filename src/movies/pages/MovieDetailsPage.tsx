@@ -34,11 +34,11 @@ export default function MovieDetailsPage() {
   const {
     visiblePersons: credits,
     allPersons,
-    isLoading,
+    isLoading: isLoadingPersons,
     error: isErrorCredits,
   } = useCredits(id, type! as Type, visibleCount);
 
-  const { data, trailers, isError } =
+  const { data, trailers, isError, isLoading } =
     type === "movie" ? useMovieDetails(id!) : useTVShowDetails(id!);
 
   const {

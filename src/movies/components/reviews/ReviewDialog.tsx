@@ -21,6 +21,7 @@ import type { supabaseReview } from "@/interfaces/MovieReviews";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { useReviewsActions } from "@/movies/hooks/supabase/reviews/useReviewsActions";
 import { StarRating } from "../movie/StarRating";
+import { toast } from "sonner";
 
 interface Props {
   movie: NormalizedMovieDetailsData;
@@ -41,6 +42,8 @@ export const ReviewDialog = ({ movie, existingReview, trigger }: Props) => {
   const { session } = useAuth();
   const { addOrUpdateReview } = useReviewsActions(session?.user.id);
 
+  const userId = session?.user.id;
+
   const {
     register,
     handleSubmit,
@@ -50,6 +53,10 @@ export const ReviewDialog = ({ movie, existingReview, trigger }: Props) => {
   });
 
   const onSubmit = async (data: FormData) => {
+    if (!userId) {
+      toast.error("you must be logged in to add favorites");
+      return;
+    }
     await addOrUpdateReview.mutateAsync({
       movie_id: movie.id.toString(),
       media_type:
