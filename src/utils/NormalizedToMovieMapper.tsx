@@ -26,7 +26,7 @@ export function mapMovieDetailsToMovieDB(
       adult: false,
       original_language: "en", // default
       video: false, // default
-      release_date: data.release_date.toString(), // obligatorio
+      release_date: data.release_date?.toString() ?? "", // obligatorio
       first_air_date: "", // no aplica para movies
     } as MovieMovieDB;
   } else {
@@ -46,7 +46,7 @@ export function mapMovieDetailsToMovieDB(
       genre_ids: [],
       adult: false,
       original_language: "en",
-      first_air_date: new Date(),
+      first_air_date: data.release_date?.toString() ?? "", // use string as required by TvShowMovieDB
       origin_country: [],
     } as TvShowMovieDB;
   }
