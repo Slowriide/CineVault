@@ -34,7 +34,7 @@ export default function MovieDetailsPage() {
   const {
     visiblePersons: credits,
     allPersons,
-    isLoading: isLoadingPersons,
+    // isLoading: isLoadingPersons,
     error: isErrorCredits,
   } = useCredits(id, type! as Type, visibleCount);
 
