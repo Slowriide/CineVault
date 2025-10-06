@@ -13,14 +13,15 @@ import { SearchPage } from "@/movies/pages/SearchPage";
 
 import { ScrollToTopLayout } from "@/utils/ScrollToTopLayout";
 
-import { createBrowserRouter } from "react-router";
+import { createHashRouter } from "react-router";
 import { MovieReviews } from "@/movies/pages/ReviewsPage";
 import { lazy } from "react";
 
 const AuthLayout = lazy(() => import("@/auth/layout/AuthLayout"));
 const ProfileDashboard = lazy(() => import("@/movies/pages/ProfileDashboard"));
 
-export const appRouter = createBrowserRouter([
+export const appRouter = createHashRouter([
+  // export const appRouter = createBrowserRouter([
   {
     element: <ScrollToTopLayout />,
 
