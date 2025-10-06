@@ -16,9 +16,7 @@ export const useToggleWatclist = (userId?: string) => {
 
       const title = "title" in item ? item.title : item.name;
       const releaseDate =
-        "release_date" in item
-          ? item.release_date
-          : item.first_air_date.toString();
+        "release_date" in item ? item.release_date : item.first_air_date;
       const year = releaseDate ? new Date(releaseDate).getFullYear() : "N/A";
 
       const { error } = await supabase.from("watchlist").insert({

@@ -47,6 +47,7 @@ export const MovieCard = React.memo(
         const itemTitle = "title" in item ? item.title : item.name;
         const releaseDate =
           "release_date" in item ? item.release_date : item.first_air_date;
+
         const itemYear = getYearFromReleaseDate(releaseDate);
         const itemRating = item.vote_average;
         const itemLink =

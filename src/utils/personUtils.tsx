@@ -38,9 +38,11 @@ export function getMovieDetails(
   const isMovie = "title" in item;
   return {
     title: isMovie ? item.title : item.name,
+
     year: isMovie
-      ? new Date(item.release_date).getFullYear()
-      : new Date(item.first_air_date).getFullYear(),
+      ? new Date(item.release_date ?? "").getFullYear()
+      : new Date(item.first_air_date ?? "").getFullYear(),
+
     link: isMovie
       ? `/movie/${slugify(item.title, item.id)}`
       : `/tv/${slugify(item.name, item.id)}`,
