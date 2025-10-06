@@ -14,31 +14,19 @@ export const useHomeHooks = () => {
 
   const queries = useQueries({
     queries: [
+      // PRIORITY 1: Featured
       {
-        queryKey: ["movies", "popular"],
-        queryFn: () => getPopularMoviesAction({ movieCategory: "popular" }),
+        queryKey: ["featured", "movie"],
+        queryFn: () =>
+          getTrendingAction({
+            trendingCategory: "movie",
+            timeWindow: "week",
+          }),
+        staleTime: 5 * 60 * 1000, // 5 min
+        gcTime: 10 * 60 * 1000, // 10 min
       },
 
-      {
-        queryKey: ["movies", "now_playing"],
-        queryFn: () => getPopularMoviesAction({ movieCategory: "now_playing" }),
-      },
-
-      {
-        queryKey: ["movies", "top_rated"],
-        queryFn: () => getPopularMoviesAction({ movieCategory: "top_rated" }),
-      },
-
-      {
-        queryKey: ["movies", "upcoming"],
-        queryFn: () => getPopularMoviesAction({ movieCategory: "upcoming" }),
-      },
-
-      {
-        queryKey: ["tvShows", "popular"],
-        queryFn: () => getPopularTvShowsAction({}),
-      },
-
+      // PRIORITY 2: Trending (above the fold)
       {
         queryKey: ["trending", "movie", timeWindowM],
         queryFn: () =>
@@ -46,6 +34,8 @@ export const useHomeHooks = () => {
             trendingCategory: "movie",
             timeWindow: timeWindowM,
           }),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
       },
 
       {
@@ -55,53 +45,83 @@ export const useHomeHooks = () => {
             trendingCategory: "tv",
             timeWindow: timeWindowT,
           }),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+      },
+
+      // PRIORITY 3: (below the fold - can wait)
+      {
+        queryKey: ["movies", "popular"],
+        queryFn: () => getPopularMoviesAction({ movieCategory: "popular" }),
+        staleTime: 10 * 60 * 1000, // 10 min
+        gcTime: 30 * 60 * 1000, // 30 min
+        // Defer: espera a que las críticas terminen
+        enabled: true,
       },
 
       {
-        queryKey: ["featured", "movie"],
-        queryFn: () =>
-          getTrendingAction({
-            trendingCategory: "movie",
-            timeWindow: "week",
-          }),
+        queryKey: ["movies", "now_playing"],
+        queryFn: () => getPopularMoviesAction({ movieCategory: "now_playing" }),
+        staleTime: 10 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
+      },
+
+      {
+        queryKey: ["movies", "top_rated"],
+        queryFn: () => getPopularMoviesAction({ movieCategory: "top_rated" }),
+        staleTime: 10 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
+      },
+
+      {
+        queryKey: ["movies", "upcoming"],
+        queryFn: () => getPopularMoviesAction({ movieCategory: "upcoming" }),
+        staleTime: 10 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
+      },
+
+      {
+        queryKey: ["tvShows", "popular"],
+        queryFn: () => getPopularTvShowsAction({}),
+        staleTime: 10 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
       },
     ],
   });
 
-  const popularMovies = queries[0].data?.results ?? [];
-  const nowPlayingMovies = queries[1].data?.results ?? [];
-  const topRatedMovies = queries[2].data?.results ?? [];
-  const upcomingMovies = queries[3].data?.results ?? [];
-  const popularTVShows = queries[4].data?.results ?? [];
-  const trendingMovies = queries[5].data?.results ?? [];
-  const trendingTVShows = queries[6].data?.results ?? [];
-  const featuredMovies = queries[7].data?.results ?? [];
+  const featuredMovies = queries[0].data?.results ?? [];
+  const trendingMovies = queries[1].data?.results ?? [];
+  const trendingTVShows = queries[2].data?.results ?? [];
+  const popularMovies = queries[3].data?.results ?? [];
+  const nowPlayingMovies = queries[4].data?.results ?? [];
+  const topRatedMovies = queries[5].data?.results ?? [];
+  const upcomingMovies = queries[6].data?.results ?? [];
+  const popularTVShows = queries[7].data?.results ?? [];
 
   const loadingStates = {
-    popular: queries[0].isLoading,
-    nowPlaying: queries[1].isLoading,
-    topRated: queries[2].isLoading,
-    upcoming: queries[3].isLoading,
-    popularTV: queries[4].isLoading,
-    trendingMovies: queries[5].isLoading,
-    trendingTV: queries[6].isLoading,
-    featured: queries[7].isLoading,
+    featured: queries[0].isLoading,
+    trendingMovies: queries[1].isLoading,
+    trendingTV: queries[2].isLoading,
+    popular: queries[3].isLoading,
+    nowPlaying: queries[4].isLoading,
+    topRated: queries[5].isLoading,
+    upcoming: queries[6].isLoading,
+    popularTV: queries[7].isLoading,
   };
   const errorStates = {
-    popular: queries[0].isError,
-    nowPlaying: queries[1].isError,
-    topRated: queries[2].isLoading,
-    upcoming: queries[3].isError,
-    popularTV: queries[4].isError,
-    trendingMovies: queries[5].isError,
-    trendingTV: queries[6].isError,
-    featured: queries[7].isError,
+    featured: queries[0].isError,
+    trendingMovies: queries[1].isError,
+    trendingTV: queries[2].isError,
+    popular: queries[3].isError,
+    nowPlaying: queries[4].isError,
+    topRated: queries[5].isError,
+    upcoming: queries[6].isError,
+    popularTV: queries[7].isError,
   };
 
   // Error crítico: si TODAS las queries fallan
   const allErrors = queries.every((q) => q.isError);
   const hasError = queries.some((q) => q.isError);
-
   const isLoading = queries.some((q) => q.isLoading);
 
   return {

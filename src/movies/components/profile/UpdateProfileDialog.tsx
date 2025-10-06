@@ -139,3 +139,5 @@ export const UpdateProfileDialog = () => {
     </Dialog>
   );
 };
+
+export default UpdateProfileDialog;

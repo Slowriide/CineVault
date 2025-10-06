@@ -128,3 +128,5 @@ export const ReviewDialog = ({ movie, existingReview, trigger }: Props) => {
     </Dialog>
   );
 };
+
+export default ReviewDialog;

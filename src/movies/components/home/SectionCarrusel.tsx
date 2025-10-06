@@ -5,6 +5,7 @@ import type {
 
 import { CustomError } from "@/components/custom/CustomError";
 import { Carousel } from "../Carousel";
+import React from "react";
 
 type SectionProps = {
   title: string;
@@ -15,30 +16,26 @@ type SectionProps = {
   header?: React.ReactNode;
 };
 
-export const SectionCarrusel = ({
-  title,
-  items,
-  loading,
-  error,
-  mediaType,
-  header,
-}: SectionProps) => {
-  if (error)
+export const SectionCarrusel = React.memo(
+  ({ title, items, loading, error, mediaType, header }: SectionProps) => {
+    if (error)
+      return (
+        <CustomError
+          title={"Error loading carrousel"}
+          message={"Please try again"}
+          height={"h-40"}
+        />
+      );
+
     return (
-      <CustomError
-        title={"Error loading carrousel"}
-        message={"Please try again"}
-        height={"h-40"}
+      <Carousel
+        title={title}
+        items={items ?? []}
+        mediaType={mediaType}
+        loading={loading}
+        header={header}
       />
     );
-
-  return (
-    <Carousel
-      title={title}
-      items={items ?? []}
-      mediaType={mediaType}
-      loading={loading}
-      header={header}
-    />
-  );
-};
+  }
+);
+SectionCarrusel.displayName = "SectionCarrusel";

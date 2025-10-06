@@ -54,7 +54,7 @@ export const CustomHeader = () => {
         >
           <Clapperboard className="h-6 w-6 text-primary" />
           <span className="font-bold text-lg text-gradient-accent hidden md:flex ">
-            CinemaVault
+            CineVault
           </span>
           <span className="font-bold text-lg text-gradient-accent  md:hidden ">
             CV

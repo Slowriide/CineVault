@@ -1,19 +1,14 @@
-import { useEffect, useState } from "react";
 import { HeroSection } from "../components/home/HeroSection";
-import type {
-  MovieMovieDB,
-  TvShowMovieDB,
-} from "@/interfaces/MovieDB.response";
-
 import { useSearchParams } from "react-router";
 import { getTimeWindow } from "@/interfaces/TimeWindow";
-
 import { useHomeHooks } from "../hooks/home/useHomeHooks";
 import { CustomError } from "@/components/custom/CustomError";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { TimeWindowSelect } from "../components/home/TimeWindowSelect";
 import { SectionCarrusel } from "../components/home/SectionCarrusel";
+import { LazySection } from "../components/home/LazySection";
+import { useMemo } from "react";
 
 export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -21,13 +16,16 @@ export const HomePage = () => {
   const timeWindowM = getTimeWindow(searchParams.get("timeWindowMovie"));
   const timeWindowT = getTimeWindow(searchParams.get("timeWindowTV"));
 
-  const updateTimeWindow = (key: string, value: string) => {
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set(key, value);
-      return newParams;
-    });
-  };
+  const updateTimeWindow = useMemo(
+    () => (key: string, value: string) => {
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set(key, value);
+        return newParams;
+      });
+    },
+    [setSearchParams]
+  );
 
   const {
     popularMovies,
@@ -44,17 +42,9 @@ export const HomePage = () => {
     errorStates,
   } = useHomeHooks();
 
-  const [featuredMovie, setFeaturedMovie] = useState<
-    MovieMovieDB | TvShowMovieDB
-  >();
-
-  useEffect(() => {
-    if (featuredMovies && featuredMovies.length > 0) {
-      const randomIndex = Math.floor(
-        Math.random() * Math.min(5, featuredMovies.length)
-      );
-      setFeaturedMovie(featuredMovies[randomIndex]);
-    }
+  const featuredMovie = useMemo(() => {
+    if (!featuredMovies?.length) return undefined;
+    return featuredMovies[Math.floor(Math.min(5, featuredMovies.length))];
   }, [featuredMovies]);
 
   if (isError) {
@@ -125,49 +115,57 @@ export const HomePage = () => {
           loading={loadingStates.trendingTV}
           error={errorStates.trendingTV}
         />
+
         {/* Popular Movies */}
-        <SectionCarrusel
-          title={"Popular Movies"}
-          items={popularMovies}
-          mediaType={"movie"}
-          loading={loadingStates.popular}
-          error={errorStates.popular}
-        />
+        <LazySection>
+          <SectionCarrusel
+            title={"Popular Movies"}
+            items={popularMovies}
+            mediaType={"movie"}
+            loading={loadingStates.popular}
+            error={errorStates.popular}
+          />
+        </LazySection>
 
-        <SectionCarrusel
-          title={"Now Playing"}
-          items={nowPlayingMovies}
-          mediaType={"movie"}
-          loading={loadingStates.nowPlaying}
-          error={errorStates.nowPlaying}
-        />
-
+        <LazySection>
+          <SectionCarrusel
+            title={"Now Playing"}
+            items={nowPlayingMovies}
+            mediaType={"movie"}
+            loading={loadingStates.nowPlaying}
+            error={errorStates.nowPlaying}
+          />
+        </LazySection>
         {/* Popular TV Shows */}
-        <SectionCarrusel
-          title={"Top TV Shows"}
-          items={popularTVShows}
-          mediaType={"tv"}
-          loading={loadingStates.popularTV}
-          error={errorStates.popularTV}
-        />
-
+        <LazySection>
+          <SectionCarrusel
+            title={"Top TV Shows"}
+            items={popularTVShows}
+            mediaType={"tv"}
+            loading={loadingStates.popularTV}
+            error={errorStates.popularTV}
+          />
+        </LazySection>
         {/* Top Rated Movies */}
-        <SectionCarrusel
-          title={"Top Rated Movies"}
-          items={topRatedMovies}
-          mediaType={"movie"}
-          loading={loadingStates.topRated}
-          error={errorStates.topRated}
-        />
-
+        <LazySection>
+          <SectionCarrusel
+            title={"Top Rated Movies"}
+            items={topRatedMovies}
+            mediaType={"movie"}
+            loading={loadingStates.topRated}
+            error={errorStates.topRated}
+          />
+        </LazySection>
         {/* Upcoming Movies */}
-        <SectionCarrusel
-          title={"Upcoming Movies"}
-          items={upcomingMovies}
-          mediaType={"movie"}
-          loading={loadingStates.upcoming}
-          error={errorStates.upcoming}
-        />
+        <LazySection>
+          <SectionCarrusel
+            title={"Upcoming Movies"}
+            items={upcomingMovies}
+            mediaType={"movie"}
+            loading={loadingStates.upcoming}
+            error={errorStates.upcoming}
+          />
+        </LazySection>
       </div>
     </div>
   );

@@ -79,3 +79,4 @@ export const TrailerPlayer = ({ trailers, className }: TrailerPlayerProps) => {
     </>
   );
 };
+export default TrailerPlayer;

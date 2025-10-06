@@ -13,13 +13,14 @@ import { useAuth } from "@/context/AuthContext";
 import { useToggleFavorite } from "../hooks/favorites/useToggleFavorite";
 import { toast } from "sonner";
 import { getYearFromReleaseDate } from "@/utils/getYear";
-import { memo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 interface MovieCardProps {
   item: MovieMovieDB | TvShowMovieDB;
   mediaType: "movie" | "tv";
   size?: "sm" | "md" | "lg" | "xl";
   showFavorite?: boolean;
+  loading?: "lazy" | "eager";
 }
 const sizeClasses = {
   sm: "w-32",
@@ -28,53 +29,66 @@ const sizeClasses = {
   xl: "w-full",
 };
 
-const imageSize = {
-  sm: "w342",
-  md: "w500",
-  lg: "w780",
-  xl: "w780",
-};
-
-export const MovieCard = memo(
-  ({ item, mediaType, size = "md", showFavorite = true }: MovieCardProps) => {
+export const MovieCard = React.memo(
+  ({
+    item,
+    mediaType,
+    size = "md",
+    showFavorite = true,
+    loading = "lazy",
+  }: MovieCardProps) => {
     const { session } = useAuth();
     const userId = session?.user.id;
     const { addFavorite, removeFavorite, favoriteIds } =
       useToggleFavorite(userId);
 
-    const isFav = favoriteIds.has(String(item.id));
-
-    const title = "title" in item ? item.title : item.name;
-
-    const releaseDate =
-      "release_date" in item ? item.release_date : item.first_air_date;
-    const year = getYearFromReleaseDate(releaseDate);
-
-    const rating = item.vote_average;
-
-    const linkTo =
-      mediaType === "movie"
-        ? `/movie/${slugify(title, item.id)}`
-        : `/tv/${slugify(title, item.id)}`;
-
-    const handleFavoriteClick = async (e: React.MouseEvent) => {
-      e.preventDefault();
-
-      if (!userId) {
-        toast.error("you must be logged in to add favorites");
-        return;
-      }
-      if (isFav) {
-        await removeFavorite.mutateAsync(String(item.id));
-        toast.success("removed from favorites");
-      } else {
-        await addFavorite.mutateAsync(
+    const { title, year, rating, linkTo, posterLow, posterHigh, isFav } =
+      useMemo(() => {
+        const itemTitle = "title" in item ? item.title : item.name;
+        const releaseDate =
+          "release_date" in item ? item.release_date : item.first_air_date;
+        const itemYear = getYearFromReleaseDate(releaseDate);
+        const itemRating = item.vote_average;
+        const itemLink =
           mediaType === "movie"
-            ? ({ ...item, media_type: "movie" } as MovieMovieDB)
-            : ({ ...item, media_type: "tv" } as TvShowMovieDB)
-        );
-      }
-    };
+            ? `/movie/${slugify(itemTitle, item.id)}`
+            : `/tv/${slugify(itemTitle, item.id)}`;
+
+        const low = getImageUrl(item.poster_path, "w185");
+        const high = getImageUrl(item.poster_path, "w342");
+
+        return {
+          title: itemTitle,
+          year: itemYear,
+          rating: itemRating,
+          linkTo: itemLink,
+          posterLow: low,
+          posterHigh: high,
+          isFav: favoriteIds.has(String(item.id)),
+        };
+      }, [item, mediaType, favoriteIds]);
+
+    const handleFavoriteClick = useCallback(
+      async (e: React.MouseEvent) => {
+        e.preventDefault();
+
+        if (!userId) {
+          toast.error("you must be logged in to add favorites");
+          return;
+        }
+        if (isFav) {
+          await removeFavorite.mutateAsync(String(item.id));
+          toast.success("removed from favorites");
+        } else {
+          await addFavorite.mutateAsync(
+            mediaType === "movie"
+              ? ({ ...item, media_type: "movie" } as MovieMovieDB)
+              : ({ ...item, media_type: "tv" } as TvShowMovieDB)
+          );
+        }
+      },
+      [userId, isFav, item, mediaType, addFavorite, removeFavorite]
+    );
 
     return (
       <Card className="group relative overflow-hidden bg-gradient-card border-border/50 hover:border-primary/30 transition-all duration-300 shadow-none hover:shadow-glow hover:-translate-y-1 mt-1">
@@ -82,10 +96,17 @@ export const MovieCard = memo(
           <Link to={linkTo}>
             <div className="aspect-[2/3] relative overflow-hidden rounded-t-lg">
               <img
-                src={getImageUrl(item.poster_path, imageSize[size])}
+                src={posterLow}
+                srcSet={`${posterLow} 185w, ${posterHigh} 500w`}
+                sizes="(max-width: 768px) 185px, 500px"
+                loading={loading}
+                fetchPriority={loading === "eager" ? "high" : "low"}
+                decoding="async"
                 alt={title}
-                className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
+                className="w-full h-full object-cover"
+                style={{
+                  contentVisibility: "auto",
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -148,5 +169,15 @@ export const MovieCard = memo(
         </div>
       </Card>
     );
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.item.id === nextProps.item.id &&
+      prevProps.mediaType === nextProps.mediaType &&
+      prevProps.size === nextProps.size &&
+      prevProps.showFavorite === nextProps.showFavorite &&
+      prevProps.loading === nextProps.loading
+    );
   }
 );
+MovieCard.displayName = "MovieCard";

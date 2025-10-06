@@ -5,10 +5,11 @@ import { getImageUrl } from "@/mocks/tmdb";
 import { Link, useParams } from "react-router";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 
-import { useMemo } from "react";
+import { lazy, useMemo } from "react";
 import { useMyReviewForMovie } from "../../hooks/supabase/reviews/useMyReviews";
 import { useAuth } from "@/context/AuthContext";
-import { ReviewDialog } from "../reviews/ReviewDialog";
+
+const ReviewDialog = lazy(() => import("../reviews/ReviewDialog"));
 
 interface Props {
   movie: NormalizedMovieDetailsData;

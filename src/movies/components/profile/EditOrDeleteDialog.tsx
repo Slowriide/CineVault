@@ -7,7 +7,8 @@ import {
 import { Edit, EllipsisVertical, Trash } from "lucide-react";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 import type { supabaseReview } from "@/interfaces/MovieReviews";
-import { ReviewDialog } from "../reviews/ReviewDialog";
+import { lazy } from "react";
+const ReviewDialog = lazy(() => import("../reviews/ReviewDialog"));
 
 interface DeleteDialogProps {
   onDelete: (e: React.MouseEvent<Element, MouseEvent>) => Promise<void>;
