@@ -1,94 +1,150 @@
-import { Separator } from "@/components/ui/separator";
-import { Reviews } from "../reviews/Reviews";
-import { useReviews } from "../../hooks/useReviews";
-import { getImageUrl } from "@/utils/tmdb";
-import { Link, useParams } from "react-router";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
-
-import { lazy, useMemo } from "react";
-import { useMyReviewForMovie } from "../../hooks/supabase/reviews/useMyReviews";
+import { getImageUrl } from "@/utils/tmdb";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useAuth } from "@/context/AuthContext";
-
-// Lazy load the review dialog for performance optimization
-const ReviewDialog = lazy(() => import("../reviews/ReviewDialog"));
+import { useParams } from "react-router";
+import type { supabaseReview } from "@/interfaces/MovieReviews";
+import { DialogTitle } from "@radix-ui/react-dialog";
+import { useReviewsActions } from "@/movies/hooks/supabase/reviews/useReviewsActions";
+import { StarRating } from "../movie/StarRating";
+import { toast } from "sonner";
 
 interface Props {
   movie: NormalizedMovieDetailsData;
+  existingReview?: supabaseReview;
+  icon?: React.ReactNode;
+  hover?: boolean;
+  trigger?: React.ReactNode;
+}
+
+interface FormData {
+  review: string;
 }
 
 /**
- * PopularReviews component displays the most popular reviews for a movie or TV show.
- * It also provides:
- * - A button to add a new review using the ReviewDialog component
- * - A link to view all reviews for the movie/TV show
- * - Handles user-specific reviews (fetching current user's review)
- * - Lazy loads review dialog for performance
+ * Dialog component for creating or editing a review for a movie or TV show.
+ * Includes star rating, text area for review content, and handles submission.
  */
-export const PopularReviews = ({ movie }: Props) => {
-  // Fetch popular and all reviews using a custom hook
-  const { popularReviews: reviews, reviews: allReviews } = useReviews();
-
-  // Get movie/TV slug and type from URL
-  const { slug, type } = useParams();
+export const ReviewDialog = ({ movie, existingReview, trigger }: Props) => {
+  const [rating, setRating] = useState(existingReview?.rating ?? 0);
+  const [open, setOpen] = useState(false);
+  const { type } = useParams();
   const { session } = useAuth();
+  const { addOrUpdateReview } = useReviewsActions(session?.user.id);
   const userId = session?.user.id;
 
-  // Parse movie/TV id from slug (assumes slug ends with the id)
-  const id = useMemo(
-    () => (slug ? parseInt(slug.split("-").pop()!) : null),
-    [slug]
-  );
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: { review: existingReview?.content ?? "" },
+  });
 
-  // Fetch the current user's review for this movie/TV
-  const { review } = useMyReviewForMovie(
-    userId,
-    id?.toString(),
-    type as "movie" | "tv"
-  );
+  const onSubmit = async (data: FormData) => {
+    if (!userId) {
+      toast.error("You must be logged in to add reviews");
+      return;
+    }
 
-  // Determine if there are any popular reviews
-  const areReviews = useMemo(() => reviews && reviews.length > 0, [reviews]);
+    await addOrUpdateReview.mutateAsync({
+      movie_id: movie.id.toString(),
+      media_type:
+        (existingReview?.media_type as "movie" | "tv") ??
+        (type as "movie" | "tv"),
+      rating: rating,
+      content: data.review,
+    });
+
+    setOpen(false);
+  };
+
+  const isEditing = !!existingReview;
 
   return (
-    <div className="space-x-1 pt-4 lg:pt-10 max-w-[1600px] mx-auto">
-      {/* Header section: title + actions */}
-      <div className="flex justify-between mb-1 text-md">
-        <span>Popular Reviews</span>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        {trigger ?? (
+          <span className="hover:text-blue-500 cursor-pointer">
+            {existingReview ? "Edit review" : "Create review"}
+          </span>
+        )}
+      </DialogTrigger>
 
-        <div className="flex space-x-4">
-          {/* Button to open review dialog */}
-          <ReviewDialog movie={movie} hover={true} existingReview={review} />
+      <DialogContent className="max-w-[350px] max-h-[350px] sm:max-w-[520px] sm:max-h-[400px] md:max-w-[700px] md:max-h-[500px]">
+        <DialogHeader>
+          <DialogTitle className="sr-only">Create review</DialogTitle>
+          <DialogDescription className="sr-only">
+            Create your own review
+          </DialogDescription>
+        </DialogHeader>
 
-          {/* Link to view all reviews */}
-          <Link to={`/${type}/${id}/reviews`}>
-            <span className="hover:text-blue-500 cursor-pointer">
-              {`All reviews (${allReviews?.length ?? ""})`}
+        <div className="grid grid-cols-3 gap-4 mt-5 max-w-[350px] max-h-[350px] sm:max-w-[520px] sm:max-h-[400px] md:max-w-[700px] md:max-h-[500px]">
+          {/* Movie Poster and Title */}
+          <div className="grid col-span-1 gap-1">
+            <Card className="overflow-hidden bg-gradient-card border-border/50 shadow-elegant">
+              <img
+                src={getImageUrl(movie.poster_path, "w780")}
+                alt={movie.title}
+                className="w-full h-full aspect-[2/3] object-cover"
+              />
+            </Card>
+            <span className="hidden md:flex items-center justify-center text-xl text-foreground">
+              {movie.title}
             </span>
-          </Link>
+          </div>
+
+          {/* Review Form */}
+          <div className="col-span-2 flex flex-col gap-2 flex-1">
+            {/* Star Rating */}
+            <div className="flex space-x-2">
+              <StarRating value={rating} onChange={setRating} />
+              <span className="text-lg text-foreground hidden md:flex">
+                Rating
+              </span>
+            </div>
+
+            {/* Review Text Area */}
+            <Textarea
+              id="review"
+              {...register("review", { required: true })}
+              rows={5}
+              placeholder="Other users may be interested in your thoughts!"
+              className="resize-none w-full md:h-82 h-40 overflow-y-auto text-sm sm:text-md"
+            />
+            {errors.review && (
+              <p className="text-sm text-destructive">Must be a review</p>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Separator line */}
-      <Separator className="mt-1 mb-5" />
-
-      {/* Display placeholder if there are no reviews */}
-      {!areReviews && (
-        <span className="flex justify-center mt-10">
-          Be the first to review!!!
-        </span>
-      )}
-
-      {/* Render popular reviews */}
-      {reviews.map((review) => (
-        <Reviews
-          key={`${review.id}-${review.author}`}
-          image={getImageUrl(review.author_details.avatar_path ?? "")}
-          name={review.author}
-          review={review.content}
-          rating={review.author_details.rating}
-          likes={7} // Placeholder, could be dynamic later
-        />
-      ))}
-    </div>
+        {/* Dialog Action Buttons */}
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant={"outline"} className="hidden sm:flex">
+              Close
+            </Button>
+          </DialogClose>
+          <Button type="submit" onClick={handleSubmit(onSubmit)}>
+            {isEditing ? "Update Review" : "Save Review"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
+
+export default ReviewDialog;
