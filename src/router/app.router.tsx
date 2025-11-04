@@ -11,7 +11,7 @@ import MovieDetailsPage from "@/movies/pages/MovieDetailsPage";
 import { SearchPage } from "@/movies/pages/SearchPage";
 import { ScrollToTopLayout } from "@/utils/ScrollToTopLayout"; // Ensures scroll-to-top on navigation
 
-import { createHashRouter } from "react-router"; // Using hash-based routing
+import { createBrowserRouter } from "react-router";
 import { MovieReviews } from "@/movies/pages/ReviewsPage";
 import { lazy } from "react";
 
@@ -20,7 +20,7 @@ const AuthLayout = lazy(() => import("@/auth/layout/AuthLayout"));
 const ProfileDashboard = lazy(() => import("@/movies/pages/ProfileDashboard"));
 
 // Application Router
-export const appRouter = createHashRouter([
+export const appRouter = createBrowserRouter([
   {
     // Top-level layout to handle scroll-to-top behavior
     element: <ScrollToTopLayout />,
