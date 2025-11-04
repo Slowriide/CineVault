@@ -18,13 +18,16 @@ import { useSupabaseProfile } from "@/movies/hooks/supabase/profile/useSupabaseP
 import { Edit3 } from "lucide-react";
 import { useEffect, useState, type ChangeEvent } from "react";
 
+/**
+ * Dialog component to update the user's profile.
+ * Allows changing the username and uploading a new avatar.
+ */
 export const UpdateProfileDialog = () => {
   const [open, setOpen] = useState(false);
   const { session } = useAuth();
   const userId = session?.user.id;
 
   const { updateProfile, getProfile } = useSupabaseProfile(userId);
-
   const profileData = getProfile.data;
 
   const { updateAvatar } = useUploadAvatar(userId!);
@@ -32,6 +35,7 @@ export const UpdateProfileDialog = () => {
   const [username, setUsername] = useState(profileData?.username ?? "");
   const [avatarUrl, setAvatarUrl] = useState(profileData?.avatar_url ?? "");
 
+  // Update local state whenever profile data changes
   useEffect(() => {
     if (profileData) {
       setUsername(profileData.username ?? "");
@@ -51,7 +55,7 @@ export const UpdateProfileDialog = () => {
 
   const handleAvatarUpload = (file: File) => {
     updateAvatar.mutate(file, {
-      onSuccess: (url) => setAvatarUrl(url),
+      onSuccess: (url) => setAvatarUrl(url), // Update avatarUrl state on successful upload
     });
   };
 
@@ -65,7 +69,7 @@ export const UpdateProfileDialog = () => {
       </DialogTrigger>
       <DialogPortal>
         <DialogContent
-          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[400px] max-h-[320px]  bg-background p-6 rounded-lg shadow-lg w-full h-full"
+          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[400px] max-h-[320px] bg-background p-6 rounded-lg shadow-lg w-full h-full"
           aria-describedby="Dialog for profile editing"
           aria-description="Dialog for profile editing"
         >
@@ -75,8 +79,8 @@ export const UpdateProfileDialog = () => {
               Edit your username or avatar
             </DialogDescription>
           </DialogHeader>
-          <div className="flex flex-col  items-center  gap-6">
-            {/* Avatar */}
+          <div className="flex flex-col items-center gap-6">
+            {/* Avatar Upload */}
             <label
               htmlFor="avatar-upload"
               className="cursor-pointer relative w-20 h-20"
@@ -86,11 +90,10 @@ export const UpdateProfileDialog = () => {
                   src={avatarUrl || "/profile_placeholder.png"}
                   className="object-cover"
                 />
-                <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold ">
+                <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
                   <img src="/profile_placeholder.png" alt="placeholder" />
                 </AvatarFallback>
               </Avatar>
-
               <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition rounded-full">
                 <Edit3 className="text-white w-6 h-6" />
               </div>
@@ -102,13 +105,11 @@ export const UpdateProfileDialog = () => {
               className="hidden"
               aria-label="Profile image"
               onChange={(e) => {
-                if (e.target.files?.[0]) {
-                  handleAvatarUpload(e.target.files[0]);
-                }
+                if (e.target.files?.[0]) handleAvatarUpload(e.target.files[0]);
               }}
-            ></input>
+            />
 
-            {/* Username */}
+            {/* Username Input */}
             <div className="flex-1 flex flex-col gap-2 w-full">
               <Input
                 value={username}
@@ -119,7 +120,7 @@ export const UpdateProfileDialog = () => {
             </div>
           </div>
 
-          {/* Buttons */}
+          {/* Action Buttons */}
           <DialogFooter className="mt-10 flex justify-end gap-2">
             <DialogClose asChild>
               <Button

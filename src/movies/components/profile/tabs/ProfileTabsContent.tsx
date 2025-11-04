@@ -19,6 +19,10 @@ interface ProfileTabsContentProps {
   subtitle: string;
 }
 
+/**
+ * Renders content for a profile tab including loading, error, empty state,
+ * or a grid of favorite movies/TV shows.
+ */
 export const ProfileTabsContent = ({
   movies,
   isError,

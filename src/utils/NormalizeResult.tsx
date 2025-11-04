@@ -8,11 +8,18 @@ import type {
   NormalizedSearchResult,
 } from "@/interfaces/SearchResponse";
 
+/**
+ * Normalizes raw search results from TMDB API into a consistent format.
+ *
+ * @param item - A single result from a multi-search (movie, TV, or person)
+ * @returns A normalized result of type MovieMovieDB | TvShowMovieDB | MultiPersonSearch | null
+ */
 export function normalizeSearchResults(
   item: MultiSearchResult
 ): NormalizedSearchResult | null {
   switch (item.media_type) {
     case "movie":
+      // Map movie result
       return {
         id: item.id,
         title: item.title ?? "Untitled",
@@ -32,6 +39,7 @@ export function normalizeSearchResults(
       } as MovieMovieDB;
 
     case "tv":
+      // Map TV show result
       return {
         adult: item.adult ?? false,
         backdrop_path: item.backdrop_path ?? "",
@@ -51,6 +59,7 @@ export function normalizeSearchResults(
       } as TvShowMovieDB;
 
     case "person":
+      // Map person result
       return {
         adult: item.adult ?? false,
         id: item.id ?? 0,
@@ -64,6 +73,7 @@ export function normalizeSearchResults(
       } as MultiPersonSearch;
 
     default:
+      // Return null for unknown media types
       return null;
   }
 }

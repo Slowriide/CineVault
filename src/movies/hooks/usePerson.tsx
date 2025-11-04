@@ -6,6 +6,18 @@ import type {
 } from "@/interfaces/MovieDB.response";
 import { getRatedMovie, normalizeCredit } from "@/utils/personUtils";
 
+/**
+ * usePerson
+ *
+ * Fetches and processes detailed information about a person (actor, director, etc.).
+ * Normalizes movie/TV credits, calculates top/worst rated, and allows filtering by popularity or score.
+ *
+ * @param personId - The TMDB person ID.
+ * @param append_to_response - Extra data to append from TMDB API (default "movie_credits").
+ * @param visibleCount - Number of items to show when filtering.
+ * @param orderBy - Strategy to filter credits: "all", "score", or "popular".
+ * @param language - Language for API response (default "us-US").
+ */
 export const usePerson = (
   personId: string,
   append_to_response: string = "movie_credits",
@@ -13,15 +25,17 @@ export const usePerson = (
   orderBy: "all" | "score" | "popular" = "all",
   language: string = "us-US"
 ) => {
+  // Fetch person data from API using React Query
   const query = useQuery({
     queryKey: ["person", personId, append_to_response, language],
     queryFn: () => getPerson({ personId, append_to_response, language }),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 5, // cache for 5 minutes
     enabled: !!personId,
   });
 
   const personData = query.data;
 
+  // If no data, return defaults to prevent UI errors
   if (!personData)
     return {
       ...query,
@@ -37,7 +51,7 @@ export const usePerson = (
       deathYear: undefined,
     };
 
-  //Person Data
+  // Extract birth and death year
   const birthYear = personData.birthday
     ? new Date(personData.birthday).getFullYear()
     : undefined;
@@ -46,48 +60,41 @@ export const usePerson = (
     ? new Date(personData.deathday).getFullYear()
     : undefined;
 
-  //Normalize credits
+  // Normalize movie and TV credits
   const movieCredits: MovieMovieDB[] = (
     personData.movie_credits?.cast || []
   ).map(normalizeCredit);
-
   const tvCredits: TvShowMovieDB[] = (personData.tv_credits?.cast || []).map(
     normalizeCredit
   );
 
-  //Movies Data
+  // Merge all credits
   const allCredits: (MovieMovieDB | TvShowMovieDB)[] = [
     ...movieCredits,
     ...tvCredits,
   ];
 
-  //delete duplicated movies
+  // Remove duplicates
   const uniqueMovies = Array.from(
     new Map(allCredits.map((movie) => [movie.id, movie])).values()
   );
 
-  //only movies with +5 votes
+  // Only consider movies with more than 5 votes
   const votedMovies = uniqueMovies.filter((movie) => movie.vote_count > 5);
 
-  //movies ordered by popularity
+  // Movies ordered by popularity
   const byPopularity = uniqueMovies.sort((a, b) => b.popularity - a.popularity);
 
-  //Credits Filter
-
-  //movies without order and sliced
-  const allForFilter = allCredits.slice(0, visibleCount);
-
-  //movies ordered by score and sliced
+  // Prepare filtered sets for UI
+  const allForFilter = allCredits.slice(0, visibleCount); // top N
   const votedByScore = votedMovies
     .sort((a, b) => b.vote_average - a.vote_average)
     .slice(0, visibleCount);
-
-  //movies ordered by popularity and sliced
   const byPopularityForFilter = uniqueMovies
     .sort((a, b) => b.popularity - a.popularity)
     .slice(0, visibleCount);
 
-  // Filter credits strategy
+  // Credit filtering strategy
   const filterCredits = (order: "all" | "score" | "popular") => {
     const strategies: Record<
       "all" | "score" | "popular",
@@ -114,8 +121,10 @@ export const usePerson = (
 
   const { filteredCredits, totalMovies } = filterCredits(orderBy);
 
-  //
+  // Known-for (top 5 by score)
   const knownFor = votedByScore.slice(0, 5);
+
+  // Best and worst rated movie
   const topRatedMovie = getRatedMovie(votedMovies, "best");
   const worstRatedMovie = getRatedMovie(votedMovies, "worst");
 

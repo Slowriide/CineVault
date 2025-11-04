@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Info, Star, Calendar } from "lucide-react";
-import { getBackdropUrl } from "@/mocks/tmdb";
+import { getBackdropUrl } from "@/utils/tmdb";
 import { Link } from "react-router";
 import type {
   MovieMovieDB,

@@ -7,32 +7,37 @@ export const useTVShowDetails = (id: string, language: string = "us-US") => {
   const query = useQuery({
     queryKey: ["tvShowDetails", id, language],
     queryFn: () => getTvShowDetails({ id, language }),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  const { trailers } = useTrailers();
+  const { trailers } = useTrailers(id, "tv", language);
 
   const normalizedData: NormalizedMovieDetailsData | null = query.data
     ? {
         id: query.data.id,
-        title: query.data.name,
-        overview: query.data.overview,
+        title: query.data.name ?? "Untitled",
+        overview: query.data.overview ?? "",
         poster_path: query.data.poster_path ?? "/placeholder.svg",
         backdrop_path: query.data.backdrop_path ?? "",
-        release_date: query.data.first_air_date,
-        runtime: query.data.episode_run_time[0],
-        vote_average: query.data.vote_average,
-        vote_count: query.data.vote_count,
+        release_date: query.data.first_air_date ?? "",
+        // If episode_run_time is empty, default to 0
+        runtime:
+          Array.isArray(query.data.episode_run_time) &&
+          query.data.episode_run_time.length > 0
+            ? query.data.episode_run_time[0]
+            : 0,
+        vote_average: query.data.vote_average ?? 0,
+        vote_count: query.data.vote_count ?? 0,
         genres: query.data.genres ?? [],
         homepage: query.data.homepage ?? null,
         tagline: query.data.tagline ?? "",
-        seasons: query.data?.number_of_seasons ?? 0,
+        seasons: query.data.number_of_seasons ?? 0,
       }
     : null;
 
   return {
-    ...query,
+    ...query, // includes isLoading, isError, error, data
     data: normalizedData,
-    trailers,
+    trailers, // YouTube trailers filtered by useTrailers
   };
 };

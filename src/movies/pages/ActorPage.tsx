@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, MapPin } from "lucide-react";
 import { useMemo, useState } from "react";
-import { getImageUrl } from "@/mocks/tmdb";
+import { getImageUrl } from "@/utils/tmdb";
 import { MovieCard } from "../components/MovieCard";
 import { usePerson } from "../hooks/usePerson";
 import { getMovieDetails } from "@/utils/personUtils";
@@ -21,24 +21,25 @@ import {
 import { ActorPageSkeleton } from "./skeletons/ActorPageSkeleton";
 
 export default function ActorPage() {
-  // const { id } = useParams<{ id: string }>();
-
+  // Get the URL slug parameter from React Router
   const { slug } = useParams();
 
+  // Extract the numeric ID from the slug
   const id = slug ? slug?.split("-").pop() : null;
 
-  const [isBiographyOpen, setIsBiographyOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(21);
-  const [searchParams, setSearchParams] = useSearchParams();
+  // Local state
+  const [isBiographyOpen, setIsBiographyOpen] = useState(false); // toggle full/short biography
+  const [visibleCount, setVisibleCount] = useState(21); // how many credits to display initially
+  const [searchParams, setSearchParams] = useSearchParams(); // for query params (sorting)
 
+  // Get `orderBy` from query params or default to "all"
   const orderByParam = searchParams.get("orderBy") || "all";
-
   const validOrders = ["all", "score", "popular"] as const;
-
   const orderBy = validOrders.includes(orderByParam as any)
     ? (orderByParam as (typeof validOrders)[number])
     : "all";
 
+  // Fetch actor data using custom hook
   const {
     data: person,
     isLoading,
@@ -51,8 +52,7 @@ export default function ActorPage() {
     totalMovies,
   } = usePerson(id ?? "1", "movie_credits,tv_credits", visibleCount, orderBy);
 
-  // const isLoading = true;
-
+  // Memoize top-rated and worst-rated movie details for performance
   const topRatedDetails = useMemo(
     () => getMovieDetails(topRatedMovie),
     [topRatedMovie]
@@ -63,6 +63,7 @@ export default function ActorPage() {
     [worstRatedMovie]
   );
 
+  // If no ID is provided, render a custom error page
   if (!id) {
     return (
       <CustomError
@@ -73,10 +74,12 @@ export default function ActorPage() {
     );
   }
 
+  // Show skeleton loading while fetching data
   if (isLoading) {
     return <ActorPageSkeleton />;
   }
 
+  // Show error page if fetching fails or no person is returned
   if (error || !person) {
     return (
       <CustomError
@@ -87,6 +90,7 @@ export default function ActorPage() {
     );
   }
 
+  // Determine if biography is long (>200 words)
   const hasLongBio = person.biography
     ? person.biography.split(/\s+/).length > 200
     : false;
@@ -112,6 +116,7 @@ export default function ActorPage() {
 
               {/* Actor Info */}
               <div className="md:col-span-2 space-y-6">
+                {/* Name and department */}
                 <div>
                   <h1 className="text-4xl font-bold text-foreground mb-2">
                     {person.name}
@@ -137,6 +142,7 @@ export default function ActorPage() {
                   emptyMessage="There is not a worst rated movie"
                 />
 
+                {/* Birth/death dates and place of birth */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                   {person.birthday && (
                     <PersonDates
@@ -204,7 +210,7 @@ export default function ActorPage() {
                     {person.biography}
                   </p>
 
-                  {/* Botón */}
+                  {/* Toggle button for long biographies */}
                   {hasLongBio && (
                     <Button
                       variant="ghost"
@@ -224,6 +230,7 @@ export default function ActorPage() {
         {/* Full Filmography */}
         {filteredCredits.length > 0 && (
           <div className="space-y-4">
+            {/* Header with sorting */}
             <div className="flex items-center gap-4">
               <h2 className="text-2xl font-bold text-foreground">
                 Filmography
@@ -249,6 +256,7 @@ export default function ActorPage() {
               </Select>
             </div>
 
+            {/* Grid of movies/TV shows */}
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-4">
               {filteredCredits.map((credit) => (
                 <MovieCard
@@ -265,6 +273,7 @@ export default function ActorPage() {
           </div>
         )}
 
+        {/* Load more button if there are more credits to show */}
         {visibleCount < totalMovies && (
           <div className="flex justify-center mt-4">
             <Button

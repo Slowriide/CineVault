@@ -8,9 +8,13 @@ import { useSupabaseProfile } from "@/movies/hooks/supabase/profile/useSupabaseP
 import { lazy } from "react";
 const UpdateProfileDialog = lazy(() => import("./UpdateProfileDialog"));
 
+/**
+ * Sidebar component displaying user profile information and actions.
+ * Shows avatar, username, email, and buttons for updating profile or signing out.
+ * Displays skeletons while profile data is loading.
+ */
 export const ProfileSidebar = () => {
   const { session, user, signOut } = useAuth();
-
   const userId = session?.user.id;
 
   const { getProfile } = useSupabaseProfile(userId);

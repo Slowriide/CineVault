@@ -8,19 +8,23 @@ interface Props {
   onClick?: (e: React.MouseEvent<Element, MouseEvent>) => Promise<void>;
 }
 
-export const ToggleButton = (props: Props) => {
-  const { icon, isActive, labelOff, labelOn, onClick } = props;
+// A simple toggle button that changes label and style based on `isActive`
+export const ToggleButton = ({
+  icon,
+  isActive,
+  labelOff,
+  labelOn,
+  onClick,
+}: Props) => {
   return (
-    <>
-      <Button
-        size="lg"
-        onClick={onClick}
-        variant={isActive ? "default" : "outline"}
-        className={isActive ? "bg-primary hover:bg-chart-5 col-span-1" : ""}
-      >
-        <span className="hidden xl:flex">{icon}</span>
-        {isActive ? `${labelOn}` : `${labelOff}`}
-      </Button>
-    </>
+    <Button
+      size="lg"
+      onClick={onClick}
+      variant={isActive ? "default" : "outline"}
+      className={isActive ? "bg-primary hover:bg-chart-5 col-span-1" : ""}
+    >
+      <span className="hidden xl:flex">{icon}</span>
+      {isActive ? labelOn : labelOff}
+    </Button>
   );
 };

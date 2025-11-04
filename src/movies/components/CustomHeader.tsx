@@ -14,19 +14,25 @@ import { NavButton } from "./NavButton";
 import { cn } from "@/lib/utils";
 
 export const CustomHeader = () => {
-  const { session, signOut } = useAuth();
+  const { session, signOut } = useAuth(); // Auth context for session info and logout
 
+  // Track if the page has been scrolled to apply sticky header styling
   const [scrolled, setScrolled] = useState(false);
+
+  // Track if the search bar is focused to expand it and hide nav links on mobile
   const [searchFocused, setSearchFocused] = useState(false);
 
-  const location = useLocation();
+  const location = useLocation(); // React Router location to determine active nav link
 
+  // Log out the user
   const handleLogout = async () => {
     await signOut();
   };
 
+  // Check if a path matches current location for active nav button
   const isActive = (path: string) => location.pathname === path;
 
+  // Add scroll event listener to toggle `scrolled` state
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 0);
@@ -44,7 +50,7 @@ export const CustomHeader = () => {
       }`}
     >
       <div className="max-w-[1600px] mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
+        {/* Logo / Branding */}
         <Link
           to="/"
           className={cn(
@@ -52,10 +58,13 @@ export const CustomHeader = () => {
             searchFocused ? "hidden md:flex" : "flex"
           )}
         >
+          {/* Icon */}
           <Clapperboard className="h-6 w-6 text-primary" />
+          {/* Full name for desktop */}
           <span className="font-bold text-lg text-gradient-accent hidden md:flex ">
             CineVault
           </span>
+          {/* Abbreviated logo for mobile */}
           <span className="font-bold text-lg text-gradient-accent  md:hidden ">
             CV
           </span>
@@ -80,9 +89,10 @@ export const CustomHeader = () => {
         <nav
           className={cn(
             "flex items-center space-x-2 transition-opacity duration-300 ease-in-out",
-            searchFocused ? "hidden md:flex" : "flex"
+            searchFocused ? "hidden md:flex" : "flex" // Hide nav on mobile when search focused
           )}
         >
+          {/* Home Button */}
           <NavButton
             to={"/"}
             icon={<Home className="h-4 w-4 md:mr-2" />}
@@ -90,6 +100,7 @@ export const CustomHeader = () => {
             isActive={isActive("/")}
           />
 
+          {/* Discover Button */}
           <NavButton
             to={"/discover"}
             icon={<Popcorn className="h-4 w-4 md:mr-2" />}
@@ -97,6 +108,7 @@ export const CustomHeader = () => {
             isActive={isActive("/discover")}
           />
 
+          {/* Profile Button */}
           <NavButton
             to={"/profile"}
             icon={<User className="h-4 w-4 md:mr-2" />}
@@ -104,6 +116,7 @@ export const CustomHeader = () => {
             isActive={isActive("/profile")}
           />
 
+          {/* Auth Button */}
           {session ? (
             <NavButton
               to={"/auth"}

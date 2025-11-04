@@ -13,5 +13,5 @@ export interface NormalizedMovieDetailsData {
   genres: Genre[];
   homepage: string;
   tagline: string;
-  seasons: number;
+  seasons?: number;
 }

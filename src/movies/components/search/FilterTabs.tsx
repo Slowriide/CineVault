@@ -9,9 +9,14 @@ import { useMemo } from "react";
 interface FilterTabsProps {
   filter: string;
   normalicedData: NormalizedSearchResult[];
-
   handleFilterChanged: (newFilter: MediaType | "all") => void;
 }
+
+/**
+ * Renders a set of filter tabs (All, Movies, TV Shows, Persons) for a search results list.
+ * Each tab displays a count of items matching that category and allows the user to filter results.
+ * It supports an "active" state to indicate the currently selected filter.
+ */
 const tabDefinitions: { label: string; value: MediaType | "all" }[] = [
   { label: "All", value: "all" },
   { label: "Movies", value: "movie" },
@@ -24,18 +29,21 @@ export const FilterTabs = ({
   normalicedData,
   handleFilterChanged,
 }: FilterTabsProps) => {
+  // Compute counts for each tab type based on current search results
   const counts = useMemo(() => {
-    const result: Record<string, number> = {}; //object with filter types keys
+    const result: Record<string, number> = {};
 
     tabDefinitions.forEach(({ value }) => {
       if (value === "all") {
-        result[value] = normalicedData.length;
+        result[value] = normalicedData.length; // total items
       } else {
+        // count items matching this media_type
         result[value] = normalicedData.filter(
           (r) => r.media_type === value
         ).length;
       }
     });
+
     return result;
   }, [normalicedData]);
 

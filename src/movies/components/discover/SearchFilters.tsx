@@ -25,7 +25,7 @@ import { Popover } from "@/components/ui/popover";
 import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import { ChevronDown } from "lucide-react";
 import { slugify } from "@/utils/slugify";
-import { getImageUrl } from "@/mocks/tmdb";
+import { getImageUrl } from "@/utils/tmdb";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomError } from "@/components/custom/CustomError";
@@ -33,13 +33,20 @@ import { useGenres } from "@/movies/hooks/useGenres";
 import { useSearchPerson } from "@/movies/hooks/useSearchPerson";
 import { deslugify } from "@/utils/deslugify";
 
+/**
+ * Component Purpose:
+ * Renders a set of search filters for movies/TV shows including:
+ * - Genre, Year, Language, Sort, Type, Cast (actor)
+ * - Provides clear filters button
+ * - Handles search param synchronization with URL
+ * - Supports actor search with live results in a popover
+ */
 export const SearchFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // Popover open state
   const [year, setYear] = useState(searchParams.get("year") ?? "");
 
-  const { data: genres, isLoading, isError } = useGenres("movie");
+  const { data: genres, isLoading, isError } = useGenres("movie"); // fetch genres
   const castParam = searchParams.get("cast") ?? "";
 
   const {
@@ -47,14 +54,16 @@ export const SearchFilters = () => {
     setQuery,
     results: searchPersonResults,
     isLoading: loadingSearchPersons,
-  } = useSearchPerson();
+  } = useSearchPerson(); // search actors for cast filter
 
+  // Update search params in URL
   const handleParamChange = (key: string, value: string) => {
     if (value) searchParams.set(key, value);
     else searchParams.delete(key);
     setSearchParams(searchParams);
   };
 
+  // Select an actor from search results
   const handleCastSearch = (actor: PersonSearch) => {
     const actorSlug = slugify(actor.name, actor.id);
     searchParams.set("cast", actorSlug);
@@ -70,6 +79,7 @@ export const SearchFilters = () => {
     setSearchParams(searchParams);
   };
 
+  // Loading and error skeletons
   if (isLoading) {
     return (
       <div className="flex container mx-auto px-4 pt-12 pb-5 justify-between">
@@ -216,7 +226,6 @@ export const SearchFilters = () => {
                   defaultValue={searchParams.get("cast") ?? ""}
                 >
                   {castParam ? deslugify(castParam) : "Select actor"}
-
                   <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
@@ -229,6 +238,7 @@ export const SearchFilters = () => {
                 avoidCollisions={false}
               >
                 <Command>
+                  {/* Actor search input */}
                   <CommandInput
                     placeholder="search actor"
                     value={searchPersonQuery}
@@ -240,6 +250,7 @@ export const SearchFilters = () => {
                       ? "Searching persons"
                       : "No actor found."}
                   </CommandEmpty>
+
                   <CommandGroup>
                     {searchPersonResults.map((actor) => (
                       <CommandItem
@@ -257,7 +268,6 @@ export const SearchFilters = () => {
                           className="w-10 h-16 object-cover rounded-xs mr-2"
                           loading="lazy"
                         />
-
                         <span>{actor.name}</span>
                       </CommandItem>
                     ))}

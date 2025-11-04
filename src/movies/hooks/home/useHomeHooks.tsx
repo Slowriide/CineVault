@@ -1,20 +1,35 @@
 import { getTimeWindow } from "@/interfaces/TimeWindow";
-
 import { getPopularMoviesAction } from "@/movies/api/get-popular-movies.action";
 import { getPopularTvShowsAction } from "@/movies/api/get-popular-tvshow.action";
 import { getTrendingAction } from "@/movies/api/get-trending-movies.action";
 import { useQueries } from "@tanstack/react-query";
 import { useSearchParams } from "react-router";
 
+/**
+ * useHomeHooks
+ *
+ * Custom hook to fetch all home page data including:
+ * - Featured movies
+ * - Trending movies & TV shows
+ * - Popular movies & TV shows
+ * - Now playing, top rated, and upcoming movies
+ *
+ * Utilizes React Query's useQueries for parallel data fetching.
+ * Supports query-based time windows for trending items.
+ *
+ * Returns structured data, loading states, and error states for UI consumption.
+ */
 export const useHomeHooks = () => {
   const [searchParams] = useSearchParams();
 
+  // Get time window params from URL query for trending movies/TV shows
   const timeWindowM = getTimeWindow(searchParams.get("timeWindowMovie"));
   const timeWindowT = getTimeWindow(searchParams.get("timeWindowTV"));
 
+  // Execute multiple queries in parallel using useQueries
   const queries = useQueries({
     queries: [
-      // PRIORITY 1: Featured
+      // PRIORITY 1: Featured movies (top trending movies of the week)
       {
         queryKey: ["featured", "movie"],
         queryFn: () =>
@@ -22,11 +37,11 @@ export const useHomeHooks = () => {
             trendingCategory: "movie",
             timeWindow: "week",
           }),
-        staleTime: 5 * 60 * 1000, // 5 min
-        gcTime: 10 * 60 * 1000, // 10 min
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        gcTime: 10 * 60 * 1000, // 10 minutes
       },
 
-      // PRIORITY 2: Trending (above the fold)
+      // PRIORITY 2: Trending movies (based on selected time window)
       {
         queryKey: ["trending", "movie", timeWindowM],
         queryFn: () =>
@@ -38,6 +53,7 @@ export const useHomeHooks = () => {
         gcTime: 10 * 60 * 1000,
       },
 
+      // Trending TV shows (based on selected time window)
       {
         queryKey: ["trending", "tv", timeWindowT],
         queryFn: () =>
@@ -49,13 +65,12 @@ export const useHomeHooks = () => {
         gcTime: 10 * 60 * 1000,
       },
 
-      // PRIORITY 3: (below the fold - can wait)
+      // PRIORITY 3: Below the fold content (popular movies)
       {
         queryKey: ["movies", "popular"],
         queryFn: () => getPopularMoviesAction({ movieCategory: "popular" }),
-        staleTime: 10 * 60 * 1000, // 10 min
-        gcTime: 30 * 60 * 1000, // 30 min
-        // Defer: espera a que las críticas terminen
+        staleTime: 10 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
         enabled: true,
       },
 
@@ -80,6 +95,7 @@ export const useHomeHooks = () => {
         gcTime: 30 * 60 * 1000,
       },
 
+      // Popular TV shows
       {
         queryKey: ["tvShows", "popular"],
         queryFn: () => getPopularTvShowsAction({}),
@@ -89,6 +105,7 @@ export const useHomeHooks = () => {
     ],
   });
 
+  // Extract results for easier consumption
   const featuredMovies = queries[0].data?.results ?? [];
   const trendingMovies = queries[1].data?.results ?? [];
   const trendingTVShows = queries[2].data?.results ?? [];
@@ -98,6 +115,7 @@ export const useHomeHooks = () => {
   const upcomingMovies = queries[6].data?.results ?? [];
   const popularTVShows = queries[7].data?.results ?? [];
 
+  // Aggregate loading states
   const loadingStates = {
     featured: queries[0].isLoading,
     trendingMovies: queries[1].isLoading,
@@ -108,6 +126,8 @@ export const useHomeHooks = () => {
     upcoming: queries[6].isLoading,
     popularTV: queries[7].isLoading,
   };
+
+  // Aggregate error states
   const errorStates = {
     featured: queries[0].isError,
     trendingMovies: queries[1].isError,
@@ -119,13 +139,13 @@ export const useHomeHooks = () => {
     popularTV: queries[7].isError,
   };
 
-  // Error crítico: si TODAS las queries fallan
+  // Determine if all queries failed (critical error)
   const allErrors = queries.every((q) => q.isError);
   const hasError = queries.some((q) => q.isError);
   const isLoading = queries.some((q) => q.isLoading);
 
   return {
-    //Movies
+    // Movie and TV data
     popularMovies,
     nowPlayingMovies,
     topRatedMovies,
@@ -136,12 +156,12 @@ export const useHomeHooks = () => {
     featuredMovies,
     isLoading,
 
-    //Loading
+    // Loading states per section
     loadingStates,
 
-    //Errors
-    isError: allErrors ? queries[0].error : null,
-    errorStates,
-    hasPartialError: hasError,
+    // Error handling
+    isError: allErrors ? queries[0].error : null, // critical error
+    errorStates, // individual errors
+    hasPartialError: hasError, // true if some queries failed
   };
 };

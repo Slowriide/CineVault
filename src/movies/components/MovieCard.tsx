@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getImageUrl } from "@/mocks/tmdb";
+import { getImageUrl } from "@/utils/tmdb";
 import { Heart, Star, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router";
@@ -22,6 +22,8 @@ interface MovieCardProps {
   showFavorite?: boolean;
   loading?: "lazy" | "eager";
 }
+
+// Classes to control card width based on size prop
 const sizeClasses = {
   sm: "w-32",
   md: "w-40",
@@ -39,22 +41,25 @@ export const MovieCard = React.memo(
   }: MovieCardProps) => {
     const { session } = useAuth();
     const userId = session?.user.id;
+
+    // Hook to manage user's favorites
     const { addFavorite, removeFavorite, favoriteIds } =
       useToggleFavorite(userId);
 
+    // Memoize commonly derived values for efficiency
     const { title, year, rating, linkTo, posterLow, posterHigh, isFav } =
       useMemo(() => {
-        const itemTitle = "title" in item ? item.title : item.name;
+        const itemTitle = "title" in item ? item.title : item.name; // movie vs tv title
         const releaseDate =
           "release_date" in item ? item.release_date : item.first_air_date;
-
-        const itemYear = getYearFromReleaseDate(releaseDate);
+        const itemYear = getYearFromReleaseDate(releaseDate); // Extract year
         const itemRating = item.vote_average;
         const itemLink =
           mediaType === "movie"
             ? `/movie/${slugify(itemTitle, item.id)}`
             : `/tv/${slugify(itemTitle, item.id)}`;
 
+        // Low and high resolution images
         const low = getImageUrl(item.poster_path, "w185");
         const high = getImageUrl(item.poster_path, "w342");
 
@@ -69,14 +74,16 @@ export const MovieCard = React.memo(
         };
       }, [item, mediaType, favoriteIds]);
 
+    // Handle favorite/unfavorite click
     const handleFavoriteClick = useCallback(
       async (e: React.MouseEvent) => {
-        e.preventDefault();
+        e.preventDefault(); // prevent navigation when clicking favorite
 
         if (!userId) {
           toast.error("you must be logged in to add favorites");
           return;
         }
+
         if (isFav) {
           await removeFavorite.mutateAsync(String(item.id));
           toast.success("removed from favorites");
@@ -94,8 +101,10 @@ export const MovieCard = React.memo(
     return (
       <Card className="group relative overflow-hidden bg-gradient-card border-border/50 hover:border-primary/30 transition-all duration-300 shadow-none hover:shadow-glow hover:-translate-y-1 mt-1">
         <div className={`${sizeClasses[size]} relative`}>
+          {/* Link to movie/tv page */}
           <Link to={linkTo}>
             <div className="aspect-[2/3] relative overflow-hidden rounded-t-lg">
+              {/* Poster image */}
               <img
                 src={posterLow}
                 srcSet={`${posterLow} 185w, ${posterHigh} 500w`}
@@ -105,13 +114,12 @@ export const MovieCard = React.memo(
                 decoding="async"
                 alt={title}
                 className="w-full h-full object-cover"
-                style={{
-                  contentVisibility: "auto",
-                }}
+                style={{ contentVisibility: "auto" }}
               />
+              {/* Gradient overlay on hover */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-              {/* Rating Badge */}
+              {/* Rating badge */}
               {rating > 0 && (
                 <Badge className="absolute top-2 left-2 bg-background/90 text-primary border-primary/20">
                   <Star className="w-3 h-3 mr-1 fill-primary text-primary hidden sm:flex" />
@@ -119,7 +127,7 @@ export const MovieCard = React.memo(
                 </Badge>
               )}
 
-              {/* Favorite Button */}
+              {/* Favorite button */}
               {showFavorite && (
                 <Button
                   size="sm"
@@ -140,15 +148,17 @@ export const MovieCard = React.memo(
             </div>
           </Link>
 
-          {/* Card Content */}
+          {/* Card content */}
           <div className="p-3 space-y-1 justify-between">
             <Link to={linkTo}>
+              {/* Title */}
               <h3 className="font-medium text-sm leading-tight line-clamp-1 min- group-hover:text-primary transition-colors duration-200 mb-1">
                 {title}
               </h3>
             </Link>
 
-            <div className="flex items-center text-xs text-muted-foreground space-x-2 ">
+            {/* Year and media type */}
+            <div className="flex items-center text-xs text-muted-foreground space-x-2">
               <Calendar className="w-3 h-3 hidden sm:flex" />
               <span>{year ?? ""}</span>
               {mediaType && (
@@ -161,6 +171,7 @@ export const MovieCard = React.memo(
               )}
             </div>
 
+            {/* Overview / description */}
             {item.overview && size !== "sm" && (
               <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                 {item.overview}
@@ -171,6 +182,7 @@ export const MovieCard = React.memo(
       </Card>
     );
   },
+  // Only re-render if props change
   (prevProps, nextProps) => {
     return (
       prevProps.item.id === nextProps.item.id &&
@@ -181,4 +193,5 @@ export const MovieCard = React.memo(
     );
   }
 );
+
 MovieCard.displayName = "MovieCard";

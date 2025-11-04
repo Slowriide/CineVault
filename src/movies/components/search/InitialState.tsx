@@ -1,6 +1,11 @@
 import { SearchIcon } from "lucide-react";
 import { memo } from "react";
 
+/**
+ * Displays an initial empty state for the search page.
+ * Encourages users to start exploring movies, TV shows, or actors.
+ * Shows a centered icon, title, and brief description.
+ */
 export const InitialState = memo(() => {
   return (
     <div className="text-center py-12">

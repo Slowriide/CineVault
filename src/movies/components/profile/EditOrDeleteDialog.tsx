@@ -8,6 +8,8 @@ import { Edit, EllipsisVertical, Trash } from "lucide-react";
 import type { NormalizedMovieDetailsData } from "@/interfaces/NormalizedMovieDetailsData";
 import type { supabaseReview } from "@/interfaces/MovieReviews";
 import { lazy } from "react";
+
+// Lazy load the review dialog to avoid loading it until needed
 const ReviewDialog = lazy(() => import("../reviews/ReviewDialog"));
 
 interface DeleteDialogProps {
@@ -16,6 +18,10 @@ interface DeleteDialogProps {
   movie: NormalizedMovieDetailsData;
 }
 
+/**
+ * Renders a dropdown menu for editing or deleting a review.
+ * Includes lazy-loaded ReviewDialog for editing and a delete action.
+ */
 export const EditOrDeleteDialog = ({
   review,
   movie,
@@ -23,17 +29,21 @@ export const EditOrDeleteDialog = ({
 }: DeleteDialogProps) => {
   return (
     <DropdownMenu>
+      {/* Trigger button for the dropdown */}
       <DropdownMenuTrigger>
         <EllipsisVertical className="text-primary cursor-pointer hover:text-chart-5" />
       </DropdownMenuTrigger>
+
+      {/* Dropdown content */}
       <DropdownMenuContent className="bg-background w-30">
+        {/* Edit option opens a lazy-loaded review dialog */}
         <ReviewDialog
           movie={movie}
           existingReview={review}
           trigger={
             <DropdownMenuItem
               className="cursor-pointer text-md"
-              onSelect={(e) => e.preventDefault()}
+              onSelect={(e) => e.preventDefault()} // Prevent default focus behavior
               aria-label="Add or edit review"
             >
               <Edit className="text-primary size-5" />
@@ -41,6 +51,8 @@ export const EditOrDeleteDialog = ({
             </DropdownMenuItem>
           }
         />
+
+        {/* Delete option triggers the passed onDelete handler */}
         <DropdownMenuItem
           onClick={onDelete}
           className="cursor-pointer text-md"

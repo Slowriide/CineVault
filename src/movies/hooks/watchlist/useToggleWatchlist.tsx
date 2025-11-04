@@ -7,9 +7,23 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useWatchlist } from "./useWatchlist";
 
-export const useToggleWatclist = (userId?: string) => {
+/**
+ * useToggleWatchlist
+ *
+ * Custom hook to handle adding/removing movies or TV shows
+ * from a user's watchlist in Supabase.
+ * Uses React Query to automatically manage caching, invalidation, and reactivity.
+ *
+ * @param userId - Current user's ID
+ * @returns
+ *   - addWatchlist: mutation to add an item to watchlist
+ *   - removeWatchlist: mutation to remove an item from watchlist
+ *   - watchListIds: Set of movie IDs currently in the user's watchlist
+ */
+export const useToggleWatchlist = (userId?: string) => {
   const queryClient = useQueryClient();
 
+  // Mutation to add an item to the watchlist
   const addWatchlist = useMutation({
     mutationFn: async (item: MovieMovieDB | TvShowMovieDB) => {
       if (!userId) throw new Error("No user logged in");
@@ -24,21 +38,24 @@ export const useToggleWatclist = (userId?: string) => {
         movie_id: String(item.id),
         media_type: item.media_type,
         metadata: {
-          title: title,
+          title,
           poster_path: item.poster_path,
           vote_average: item.vote_average,
           release_date: year,
           overview: item.overview,
         },
       });
+
       if (error) throw new Error(error.message);
     },
     onSuccess: () => {
+      // Invalidate and refetch the watchlist query
       queryClient.invalidateQueries({ queryKey: ["watchlist", userId] });
-      toast.success("Marqued to watch");
+      toast.success("Marked to watch");
     },
   });
 
+  // Mutation to remove an item from the watchlist
   const removeWatchlist = useMutation({
     mutationFn: async (movieId: string) => {
       if (!userId) throw new Error("No user logged in");
@@ -52,10 +69,15 @@ export const useToggleWatclist = (userId?: string) => {
       if (error) throw new Error(error.message);
     },
     onSuccess: () => {
+      // Invalidate and refetch the watchlist query
       queryClient.invalidateQueries({ queryKey: ["watchlist", userId] });
     },
   });
+
+  // Fetch the current user's watchlist
   const { data: watchlisted } = useWatchlist(userId);
+
+  // Create a Set of movie IDs currently in the watchlist for easy lookup
   const watchListIds = new Set(watchlisted?.map((f) => f.movie_id));
 
   return { addWatchlist, removeWatchlist, watchListIds };

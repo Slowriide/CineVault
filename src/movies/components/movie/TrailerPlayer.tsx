@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import type { Trailer } from "@/interfaces/Trailers";
 import { cn } from "@/lib/utils";
 import { Play, X } from "lucide-react";
-
 import { useMemo, useState } from "react";
 import YouTube from "react-youtube";
 
@@ -11,6 +10,9 @@ interface TrailerPlayerProps {
   className?: string;
 }
 
+/**
+ * Renders a list of trailer buttons and opens a YouTube modal when a trailer is selected.
+ */
 export const TrailerPlayer = ({ trailers, className }: TrailerPlayerProps) => {
   const [selectedTrailer, setSelectedTrailer] = useState<Trailer | null>(null);
 
@@ -25,8 +27,7 @@ export const TrailerPlayer = ({ trailers, className }: TrailerPlayerProps) => {
 
   return (
     <>
-      {/* Buttons */}
-
+      {/* Trailer buttons */}
       <div
         className={cn(
           className ? className : "flex flex-wrap items-center space-x-4"
@@ -48,7 +49,8 @@ export const TrailerPlayer = ({ trailers, className }: TrailerPlayerProps) => {
           </Button>
         ))}
       </div>
-      {/* Modal */}
+
+      {/* Trailer modal */}
       {selectedTrailer && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
@@ -79,4 +81,5 @@ export const TrailerPlayer = ({ trailers, className }: TrailerPlayerProps) => {
     </>
   );
 };
+
 export default TrailerPlayer;

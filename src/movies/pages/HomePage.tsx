@@ -11,11 +11,14 @@ import { LazySection } from "../components/home/LazySection";
 import { useMemo } from "react";
 
 export const HomePage = () => {
+  // Read URL query params (used for time window selections)
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // Get time window selection from URL, fallback to default
   const timeWindowM = getTimeWindow(searchParams.get("timeWindowMovie"));
   const timeWindowT = getTimeWindow(searchParams.get("timeWindowTV"));
 
+  // Memoized function to update query params without refreshing the page
   const updateTimeWindow = useMemo(
     () => (key: string, value: string) => {
       setSearchParams((prev) => {
@@ -27,6 +30,7 @@ export const HomePage = () => {
     [setSearchParams]
   );
 
+  // Fetch all the home page data (movies, TV shows, trending, featured) using a custom hook
   const {
     popularMovies,
     nowPlayingMovies,
@@ -42,11 +46,13 @@ export const HomePage = () => {
     errorStates,
   } = useHomeHooks();
 
+  // Pick a featured movie to show in the hero section (randomly picking from first 5)
   const featuredMovie = useMemo(() => {
     if (!featuredMovies?.length) return undefined;
     return featuredMovies[Math.floor(Math.min(5, featuredMovies.length))];
   }, [featuredMovies]);
 
+  // If the main data fetching fails completely, show a full-page error
   if (isError) {
     return (
       <CustomError
@@ -59,15 +65,15 @@ export const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero ">
-      {/* Hero Section */}
+      {/* Hero Section - displays featured movie prominently */}
       <HeroSection
         featuredMovie={featuredMovie}
         isLoading={loadingStates.featured}
       />
 
-      {/* Content Sections */}
+      {/* Main content sections */}
       <div className="max-w-[1600px] mx-auto py-12 space-y-12 px-4">
-        {/* Banner de advertencia si hay errores parciales */}
+        {/* Partial error alert */}
         {hasPartialError && (
           <Alert variant="destructive" className="mb-8">
             <AlertCircle className="h-4 w-4" />
@@ -76,11 +82,13 @@ export const HomePage = () => {
             </AlertDescription>
           </Alert>
         )}
-        {/* Trending Movies */}
+
+        {/* Trending Movies Section */}
         <SectionCarrusel
           header={
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-bold">Trending Movies</h2>
+              {/* Time Window selector */}
               <TimeWindowSelect
                 value={timeWindowM}
                 onValueChange={(value) =>
@@ -96,7 +104,7 @@ export const HomePage = () => {
           error={errorStates.trendingMovies}
         />
 
-        {/* Trending TV shows */}
+        {/* Trending TV Shows Section */}
         <SectionCarrusel
           header={
             <div className="flex items-center gap-4">
@@ -116,7 +124,7 @@ export const HomePage = () => {
           error={errorStates.trendingTV}
         />
 
-        {/* Popular Movies */}
+        {/* Below-the-fold sections are lazily loaded for performance */}
         <LazySection>
           <SectionCarrusel
             title={"Popular Movies"}
@@ -136,7 +144,7 @@ export const HomePage = () => {
             error={errorStates.nowPlaying}
           />
         </LazySection>
-        {/* Popular TV Shows */}
+
         <LazySection>
           <SectionCarrusel
             title={"Top TV Shows"}
@@ -146,7 +154,7 @@ export const HomePage = () => {
             error={errorStates.popularTV}
           />
         </LazySection>
-        {/* Top Rated Movies */}
+
         <LazySection>
           <SectionCarrusel
             title={"Top Rated Movies"}
@@ -156,7 +164,7 @@ export const HomePage = () => {
             error={errorStates.topRated}
           />
         </LazySection>
-        {/* Upcoming Movies */}
+
         <LazySection>
           <SectionCarrusel
             title={"Upcoming Movies"}

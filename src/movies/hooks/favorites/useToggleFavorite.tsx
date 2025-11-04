@@ -7,9 +7,28 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useFavs } from "./useFavs";
 
+/**
+ * useToggleFavorite Hook
+ *
+ * Provides functionality to add or remove a movie/TV show
+ * from the current user's favorites. Works with Supabase and React Query.
+ *
+ * @param userId - Supabase user ID (optional)
+ * @returns
+ *  - addFavorite: mutation to add an item to favorites
+ *  - removeFavorite: mutation to remove an item from favorites
+ *  - favoriteIds: a Set of favorite movie IDs for quick lookup
+ *
+ * Usage Example:
+ * const { addFavorite, removeFavorite, favoriteIds } = useToggleFavorite(user?.id);
+ * const isFavorite = favoriteIds.has(String(movie.id));
+ */
 export const useToggleFavorite = (userId?: string) => {
   const queryClient = useQueryClient();
 
+  /**
+   * Mutation to add a movie/TV show to the favorites table.
+   */
   const addFavorite = useMutation({
     mutationFn: async (item: MovieMovieDB | TvShowMovieDB) => {
       if (!userId) {
@@ -18,7 +37,6 @@ export const useToggleFavorite = (userId?: string) => {
       }
 
       const title = "title" in item ? item.title : item.name;
-
       const releaseDate =
         "release_date" in item
           ? item.release_date
@@ -42,20 +60,26 @@ export const useToggleFavorite = (userId?: string) => {
         toast.error("Error adding to favorites");
         throw new Error(error.message);
       }
+
       toast.success("Added to favorites");
     },
 
+    // Invalidate favorites cache so UI updates automatically
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["favorites", userId] });
     },
   });
 
+  /**
+   * Mutation to remove a movie/TV show from the favorites table.
+   */
   const removeFavorite = useMutation({
     mutationFn: async (movieId: string) => {
       if (!userId) {
         toast.error("Must be logged in to save movies in favorites");
         throw new Error("No user logged in");
       }
+
       const { error } = await supabase
         .from("favorites")
         .delete()
@@ -67,12 +91,17 @@ export const useToggleFavorite = (userId?: string) => {
         throw new Error(error.message);
       }
     },
+
+    // Invalidate favorites cache so UI updates automatically
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["favorites", userId] });
     },
   });
 
+  // Get the current user's favorites using the useFavs hook
   const { data: favorites } = useFavs(userId);
+
+  // Create a Set for efficient lookups of favorite movie IDs
   const favoriteIds = new Set(favorites?.map((f) => f.movie_id));
 
   return { addFavorite, removeFavorite, favoriteIds };

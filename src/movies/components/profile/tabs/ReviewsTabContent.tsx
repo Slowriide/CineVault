@@ -12,6 +12,10 @@ interface ReviewsTabContentProps {
   isLoading: boolean;
 }
 
+/**
+ * Renders the content for the "Reviews" profile tab.
+ * Handles loading, error, empty state, or displays a list of user reviews.
+ */
 export const ReviewsTabContent = ({
   myReviews,
   isError,
@@ -39,7 +43,7 @@ export const ReviewsTabContent = ({
           </Button>
         </div>
       ) : (
-        <div className=" space-y-4 ">
+        <div className="space-y-4">
           {myReviews.map((review) => (
             <MyReviewItem key={review.id} review={review} />
           ))}

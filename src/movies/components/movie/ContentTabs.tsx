@@ -7,17 +7,21 @@ import { MovieCard } from "../MovieCard";
 import { Button } from "@/components/ui/button";
 
 interface ContentTabsProps {
-  credits?: PersonDetails[];
-  similarMovies?: PaginatedResponse;
-  isErrorCredits?: Error | null;
-  isLoadingSimilar?: boolean;
-  isErrorSimilar?: Error | null;
-  type: Type;
-  visibleCount: number;
-  allPersons: number;
-  onClick: () => void;
+  credits?: PersonDetails[]; // Cast details
+  similarMovies?: PaginatedResponse; // Similar movies
+  isErrorCredits?: Error | null; // Error state for credits
+  isLoadingSimilar?: boolean; // Loading state for similar movies
+  isErrorSimilar?: Error | null; // Error state for similar movies
+  type: Type; // Media type for MovieCard
+  visibleCount: number; // Number of visible cast members
+  allPersons: number; // Total number of cast members
+  onClick: () => void; // Handler to load more cast members
 }
 
+/**
+ * ContentTabs renders two tabs: "Cast" and "Similar Movies".
+ * Handles multiple states including errors, empty results, and pagination.
+ */
 export const ContentTabs: React.FC<ContentTabsProps> = ({
   credits,
   similarMovies,
@@ -30,22 +34,28 @@ export const ContentTabs: React.FC<ContentTabsProps> = ({
 }) => {
   return (
     <Tabs defaultValue="cast" className="space-y-6">
+      {/* Tab triggers */}
       <TabsList className="bg-muted/50">
         <TabsTrigger value="cast">Cast</TabsTrigger>
         <TabsTrigger value="similar">Similar Movies</TabsTrigger>
       </TabsList>
 
+      {/* Cast tab content */}
       <TabsContent value="cast" className="space-y-4">
         <h2 className="text-xl font-semibold">Cast</h2>
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-4">
           {isErrorCredits ? (
+            // Error state for cast
             <p className="text-red-500">Error loading movies</p>
           ) : (
+            // Map over cast members and render ActorCard
             credits!.map((actor) => (
               <ActorCard key={`${actor.id}-${actor.name}`} {...actor} />
             ))
           )}
         </div>
+
+        {/* "Load more" button for cast */}
         {credits && visibleCount < allPersons && (
           <div className="flex justify-center mt-8">
             <Button variant="outline" onClick={onClick}>
@@ -55,14 +65,18 @@ export const ContentTabs: React.FC<ContentTabsProps> = ({
         )}
       </TabsContent>
 
+      {/* Similar Movies tab content */}
       <TabsContent value="similar">
         <h2 className="text-xl font-semibold">Cast</h2>
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-4">
           {isErrorSimilar ? (
+            // Error state for similar movies
             <p className="text-red-500">Error loading similar movies</p>
           ) : !similarMovies || !similarMovies.results ? (
+            // Empty state
             <p className="text-muted-foreground">No similar movies found</p>
           ) : (
+            // Map over similar movies and render MovieCard
             similarMovies.results.map((movie) => (
               <MovieCard
                 key={`${movie.id}-${movie.media_type}`}

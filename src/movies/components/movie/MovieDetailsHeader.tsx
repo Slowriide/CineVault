@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { mapMovieDetailsToMovieDB } from "@/utils/NormalizedToMovieMapper";
 import { useParams } from "react-router";
 import { useToggleWatched } from "../../hooks/watched/useToggleWatched";
-import { useToggleWatclist } from "../../hooks/watchlist/useToggleWatchlist";
+import { useToggleWatchlist } from "../../hooks/watchlist/useToggleWatchlist";
 import { ToggleButton } from "./ToggleButton";
 import { CustomError } from "@/components/custom/CustomError";
 
@@ -25,31 +25,46 @@ interface MovieDetailsProps {
   data: NormalizedMovieDetailsData;
 }
 
+/**
+ * MovieDetailsHeader renders the header section of a movie or TV show.
+ * It includes:
+ * - Title, tagline, seasons, vote stats, release date, runtime
+ * - Genres badges
+ * - Overview description
+ * - Action buttons: Favorites, Watched, Watchlist, Homepage link
+ * - Popular reviews
+ *
+ * Handles user interactions with favorites, watched, and watchlist using custom hooks.
+ * Displays error message if type parameter is missing.
+ */
+
 export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
-  const { type } = useParams();
+  const { type } = useParams(); // media type from URL (movie or tv)
   const { session } = useAuth();
   const userId = session?.user.id;
 
+  // Hooks for managing user interactions
   const { addFavorite, removeFavorite, favoriteIds } =
     useToggleFavorite(userId);
 
   const { addWatched, removeWatched, watchedsIds } = useToggleWatched(userId);
 
   const { addWatchlist, removeWatchlist, watchListIds } =
-    useToggleWatclist(userId);
+    useToggleWatchlist(userId);
 
+  // If type param is missing, show an error
   if (!type) {
     return (
       <CustomError title={"No movie info"} message={"Error loading info"} />
     );
   }
 
+  // Determine current states
   const isFav = favoriteIds.has(String(data.id));
-
   const isWatched = watchedsIds.has(String(data.id));
-
   const isInWatchList = watchListIds.has(String(data.id));
 
+  // Handlers for toggle buttons with login check
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!userId) {
@@ -120,6 +135,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
           )}
         </div>
 
+        {/* Stats: vote, release date, runtime */}
         <div className="flex flex-wrap items-center gap-4 mb-6">
           {data.vote_average > 0 && (
             <div className="flex items-center space-x-1 text-primary">
@@ -130,7 +146,6 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
               <span className="text-muted-foreground">
                 ({data.vote_count} votes)
               </span>
-              <span className="text-muted-foreground">({data.seasons} )</span>
             </div>
           )}
 
@@ -158,6 +173,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
           </div>
         )}
 
+        {/* Overview */}
         <p className="text-muted-foreground leading-relaxed mb-6">
           {data.overview}
         </p>
@@ -212,7 +228,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
           )}
         </div>
 
-        {/* Reviews */}
+        {/* Popular reviews section */}
         <PopularReviews movie={data} />
       </div>
     </div>
