@@ -154,7 +154,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
             <span>{data.release_date?.toString()}</span>
           </div>
 
-          {data.runtime && (
+          {data.runtime > 0 && (
             <div className="flex items-center space-x-1 text-muted-foreground">
               <Clock className="w-4 h-4" />
               <span>{data.runtime} min</span>
