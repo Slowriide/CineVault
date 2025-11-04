@@ -26,6 +26,7 @@ export const useTVShowDetails = (id: string, language: string = "us-US") => {
         genres: query.data.genres ?? [],
         homepage: query.data.homepage ?? null,
         tagline: query.data.tagline ?? "",
+        seasons: query.data?.number_of_seasons ?? 0,
       }
     : null;
 

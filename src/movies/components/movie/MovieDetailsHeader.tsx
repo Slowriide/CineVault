@@ -107,11 +107,18 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
           {data.title}
         </h1>
 
-        {data.tagline && (
-          <p className="text-lg text-muted-foreground italic mb-4">
-            "{data.tagline}"
-          </p>
-        )}
+        <div className="flex gap-2 justify-items-center">
+          {data.tagline && (
+            <p className="text-lg text-muted-foreground italic mb-4">
+              "{data.tagline}"
+            </p>
+          )}
+          {data.seasons && (
+            <Badge variant={"secondary"} className="w-20 h-8">
+              {data.seasons} Seasons
+            </Badge>
+          )}
+        </div>
 
         <div className="flex flex-wrap items-center gap-4 mb-6">
           {data.vote_average > 0 && (
@@ -123,6 +130,7 @@ export const MovieDetailsHeader = ({ data }: MovieDetailsProps) => {
               <span className="text-muted-foreground">
                 ({data.vote_count} votes)
               </span>
+              <span className="text-muted-foreground">({data.seasons} )</span>
             </div>
           )}
 
